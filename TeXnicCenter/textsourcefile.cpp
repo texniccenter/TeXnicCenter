@@ -57,7 +57,7 @@ BOOL CTextSourceFile::GetNextLine(LPCTSTR &lpLine, int &nLength)
 {
 	std::wstring line;
 	std::getline(is_, line);
-	bool result = !line.empty();
+	const bool result = (is_.rdstate() == std::ios_base::goodbit);
 
 	if (result) {
 		lpLine = m_strCurrentLine = line.c_str();
