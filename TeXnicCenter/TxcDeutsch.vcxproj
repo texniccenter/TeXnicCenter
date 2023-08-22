@@ -333,12 +333,6 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="TeXnicCenter.vcxproj">
-      <Project>{7795423e-417e-4c41-a629-11efd0ebf8ad}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

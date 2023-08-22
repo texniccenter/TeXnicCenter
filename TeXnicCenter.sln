@@ -13,7 +13,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Documentation", "TCHelp\Sou
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TeXnicCenter", "TeXnicCenter\TeXnicCenter.vcxproj", "{7795423E-417E-4C41-A629-11EFD0EBF8AD}"
 	ProjectSection(ProjectDependencies) = postProject
+		{08362FD8-04F1-4366-BF4D-31A7707944B9} = {08362FD8-04F1-4366-BF4D-31A7707944B9}
 		{12243F23-547E-4676-A36D-7DE0EE131354} = {12243F23-547E-4676-A36D-7DE0EE131354}
+		{E8E006D1-6599-43C2-AD30-75E5B5B9F68F} = {E8E006D1-6599-43C2-AD30-75E5B5B9F68F}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TeXnicCenterObjects", "TeXnicCenterObjects\Source\TeXnicCenterObjects.vcxproj", "{7D010430-948A-4400-85C4-7D18CB92068F}"
@@ -163,5 +165,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4AE5981-F1B1-455E-880F-810E66E21992}
 	EndGlobalSection
 EndGlobal
