@@ -408,6 +408,7 @@
     <ClCompile Include="ProfilePage.cpp" />
     <ClCompile Include="ProfilePageLatex.cpp" />
     <ClCompile Include="ProfilePagePprocessor.cpp" />
+    <ClCompile Include="ProfilePagePreview.cpp" />
     <ClCompile Include="ProfilePageViewer.cpp" />
     <ClCompile Include="Project.cpp" />
     <ClCompile Include="projectnewdialog.cpp" />
@@ -579,6 +580,7 @@
     <ClInclude Include="ProfilePage.h" />
     <ClInclude Include="ProfilePageLatex.h" />
     <ClInclude Include="ProfilePagePprocessor.h" />
+    <ClInclude Include="ProfilePagePreview.h" />
     <ClInclude Include="ProfilePageViewer.h" />
     <ClInclude Include="Project.h" />
     <ClInclude Include="ProjectNewDialog.h" />

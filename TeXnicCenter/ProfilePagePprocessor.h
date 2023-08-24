@@ -58,7 +58,7 @@ class CProfilePagePprocessor : public CProfilePage
 {
 // construction/destruction
 public:
-	CProfilePagePprocessor(UINT unIDCaption, CPProcessorArray& (CProfile::*GetPProcessorArray)());
+	CProfilePagePprocessor(UINT unIDTemplate, UINT unIDCaption, CPProcessorArray& (CProfile::*GetPProcessorArray)());
 
 // implementation
 protected:

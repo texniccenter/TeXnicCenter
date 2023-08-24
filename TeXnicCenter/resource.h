@@ -489,6 +489,7 @@
 #define IDC_EDIT_PPINPUT                1523
 #define IDC_EDIT_PPOUTPUT               1524
 #define IDC_EDIT_PROJECTNAME            1525
+#define IDC_EDIT_PREVIEW                1525
 #define IDC_EDIT_PROJECTPATH            1526
 #define IDC_EDIT_SCOPE_SELECTION        1530
 #define IDC_EDIT_SCOPE_WHOLE_FILE       1531
@@ -559,6 +560,8 @@
 #define IDC_INSERTPH_PPINPUT            2108
 #define IDC_INSERTPH_PPOUTPUT           2110
 #define IDC_BROWSELATEX                 2111
+#define IDC_INSERTPH_PPOUTPUT2          2111
+#define IDC_INSERTPH_PREVIEW            2111
 #define IDC_TITLE_LATEXARGUMENTS        2112
 #define IDC_LATEXPH                     2114
 #define IDC_BROWSEBIBTEX                2116
@@ -568,6 +571,7 @@
 #define IDC_TITLE_INPUT                 2121
 #define IDC_BIBTEXPH                    2122
 #define IDC_TITLE_OUTPUT                2123
+#define IDC_TITLE_PREVIEW               2124
 #define IDC_BROWSEMAKEINDEX             2125
 #define IDC_TITLE_VIEWDDESERVER         2126
 #define IDC_TITLE_MAKEINDEXARGUMENTS    2127
@@ -1487,13 +1491,14 @@
 #define IDR_MAINFRAMEOLD                57675
 #define IDR_LATEXDOCTYPEOLD             57676
 #define IDD_PROFILE_PPROCESSOR          57679
+#define IDD_PROFILE_PREVIEW             57684
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        57684
+#define _APS_NEXT_RESOURCE_VALUE        57686
 #define _APS_NEXT_COMMAND_VALUE         40690
 #define _APS_NEXT_CONTROL_VALUE         8688
 #define _APS_NEXT_SYMED_VALUE           57773

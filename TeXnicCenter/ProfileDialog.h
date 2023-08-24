@@ -44,18 +44,21 @@
 #include "ProfilePageLatex.h"
 #include "ProfilePagePprocessor.h"
 #include "ProfilePageViewer.h"
+#include "ProfilePagePreview.h"
 
 /**	Dialog for defining output profiles.
 
-@ingroup dialogs
-@ingroup profiles
+	@ingroup dialogs
+	@ingroup profiles
 
-@see CProfilePageLaTeX
-@see CProfilePagePreprocessor
-@see CProfilePagePostprocessor
-@see CProfilePageViewer
+	@see CProfilePageLaTeX
+	@see CProfilePagePreprocessor
+	@see CProfilePagePostprocessor
+	@see CProfilePageViewer
+	@see CProfilePagePreview
 
-@author Sven Wiegand
+	@author Sven Wiegand
+	@author Tino Weinkauf
  */
 class CProfileDialog : public CPropertyDialog
 {
@@ -153,6 +156,7 @@ protected:
 	CProfilePagePprocessor m_wndPagePreprocessor;
 	CProfilePagePprocessor m_wndPagePostprocessor;
 	CProfilePageViewer m_wndPageViewer;
+	CProfilePagePreview m_wndPagePreview;
 
 	CProfileMap m_profiles;
 

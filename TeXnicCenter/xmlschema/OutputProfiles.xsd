@@ -47,6 +47,12 @@
 					<xs:field xpath="@name" />
 				</xs:unique>
 			</xs:element>
+			<xs:element name="previewProcessors" type="PreviewProcessorList" minOccurs="0">
+				<xs:unique name="previewProcessorNames">
+					<xs:selector xpath="processor" />
+					<xs:field xpath="@name" />
+				</xs:unique>
+			</xs:element>
 			<xs:element name="viewer" type="ViewerDefinition" />
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required" />
@@ -65,8 +71,8 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+	<!-- Definition for pre- and postprocessors, and their extension for preview processors -->
 	
-	<!-- Definition for pre- and postprocessors -->
 	<xs:complexType name="ProcessorList">
 		<xs:sequence>
 			<xs:element name="processor" minOccurs="0" maxOccurs="unbounded" type="ProcessorDefinition" />
@@ -79,7 +85,14 @@
 		<xs:attribute name="inputFile" type="filePath" use="required" />
 		<xs:attribute name="outputFile" type="filePath" use="required" />
 	</xs:complexType>
-	
+	<xs:complexType name="PreviewProcessorList">
+		<xs:complexContent>
+			<xs:extension base="ProcessorList">
+				<xs:attribute name="imagepath" type="xs:string" use="required" />		                                
+		</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- definition for viewer related stuff -->
 	<xs:complexType name="ViewerDefinition">
 		<xs:sequence>

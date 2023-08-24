@@ -68,14 +68,16 @@ END_MESSAGE_MAP()
 
 CProfileDialog::CProfileDialog(CWnd* pParent /*=NULL*/)
 		: CPropertyDialog(CProfileDialog::IDD, IDC_TAB_PROFILEPAGES, pParent),
-		m_wndPagePreprocessor(IDS_PREPROCESSOR, &CProfile::GetPreProcessorArray),
-		m_wndPagePostprocessor(IDS_POSTPROCESSOR, &CProfile::GetPostProcessorArray),
+		m_wndPagePreprocessor(IDD_PROFILE_PPROCESSOR, IDS_PREPROCESSOR, &CProfile::GetPreProcessorArray),
+		m_wndPagePostprocessor(IDD_PROFILE_PPROCESSOR, IDS_POSTPROCESSOR, &CProfile::GetPostProcessorArray),
+		m_wndPagePreview(IDD_PROFILE_PREVIEW, &CProfile::GetPreviewProcessorArray),
 		m_pCurrentProfile(NULL)
 {
 	AddPage(&m_wndPageLatex);
 	AddPage(&m_wndPagePreprocessor);
 	AddPage(&m_wndPagePostprocessor);
 	AddPage(&m_wndPageViewer);
+	AddPage(&m_wndPagePreview);
 
 	// copy global profile-map to local profile map
 	POSITION pos = CProfileMap::GetInstance()->GetStartPosition();
@@ -160,6 +162,8 @@ BOOL CProfileDialog::ApplyChanges()
 			throw 2;
 		if (!m_wndPageViewer.ApplyChanges())
 			throw 3;
+		if (!m_wndPagePreview.ApplyChanges())
+			throw 4;
 	}
 	catch (int nPage)
 	{
@@ -197,6 +201,7 @@ void CProfileDialog::OnSelectionChanged()
 	m_wndPagePreprocessor.OnUpdateDataSet(pProfile);
 	m_wndPagePostprocessor.OnUpdateDataSet(pProfile);
 	m_wndPageViewer.OnUpdateDataSet(pProfile);
+	m_wndPagePreview.OnUpdateDataSet(pProfile);
 
 	m_pCurrentProfile = pProfile;
 	m_profiles.SetActiveProfile(strProfile);

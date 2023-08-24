@@ -438,7 +438,7 @@ BOOL CProfileMap::SaveXml(LPCTSTR lpszPath) const
 
 		MsXml::CXMLDOMElement xmlRoot(xmlDoc.CreateElement(_T("txcop:outputProfiles")));
 		xmlRoot.SetAttribute(_T("xmlns:txcop"), _T("http://schemas.ToolsCenter.org/TeXnicCenter/OutputProfiles.xsd"));
-		xmlRoot.SetAttribute(_T("version"), 2.0);
+		xmlRoot.SetAttribute(_T("version"), 3.0);
 		xmlDoc.AppendChild(xmlRoot);
 
 		MsXml::CXMLDOMElement xmlProfileCollection(xmlDoc.CreateElement(_T("outputProfileList")));
@@ -521,6 +521,8 @@ CProfile &CProfile::operator=(const CProfile &p)
 	m_aPreProcessors.Append(p.m_aPreProcessors);
 	m_aPostProcessors.RemoveAll();
 	m_aPostProcessors.Append(p.m_aPostProcessors);
+	m_aPreviewProcessors.RemoveAll();
+	m_aPreviewProcessors.Append(p.m_aPreviewProcessors);
 
 	m_bCloseBeforeCompilation = p.m_bCloseBeforeCompilation;
 	m_bRunLatex = p.m_bRunLatex;
@@ -537,6 +539,7 @@ CProfile &CProfile::operator=(const CProfile &p)
 	m_strMakeIndexPath = p.m_strMakeIndexPath;
 	m_strMakeIndexArguments = p.m_strMakeIndexArguments;
 	m_strViewerPath = p.m_strViewerPath;
+	m_strPreviewImagePath = p.m_strPreviewImagePath;
 
 	return *this;
 }
@@ -564,6 +567,11 @@ void CProfile::SetMakeIndexPath(LPCTSTR lpszPath, LPCTSTR lpszArguments,
 	m_strMakeIndexPath = lpszPath;
 	m_strMakeIndexArguments = lpszArguments;
 	m_bRunMakeIndex = bUseMakeIndex;
+}
+
+void CProfile::SetPreviewImagePath(LPCTSTR lpszPreviewPath)
+{
+	m_strPreviewImagePath = lpszPreviewPath;
 }
 
 void CProfile::SetViewerPath(LPCTSTR lpszViewerPath)
@@ -599,7 +607,9 @@ void CProfile::RemoveDirectorySpecifications()
 
 	m_aPreProcessors.RemoveDirectorySpecifications();
 	m_aPostProcessors.RemoveDirectorySpecifications();
+	m_aPreviewProcessors.RemoveDirectorySpecifications();
 
+	m_strPreviewImagePath = CPathTool::GetFile(m_strPreviewImagePath);
 	m_strViewerPath = CPathTool::GetFile(m_strViewerPath);
 	m_cmdViewProject.RemoveDirectorySpecifications();
 	m_cmdViewCurrent.RemoveDirectorySpecifications();
@@ -621,6 +631,8 @@ BOOL CProfile::SerializeToRegistry(RegistryStack &reg) const
 	reg.Write(_T("MakeIndexPath"), m_strMakeIndexPath);
 	reg.Write(_T("MakeIndexArgs"), m_strMakeIndexArguments);
 
+	reg.Write(_T("PreviewImagePath"), m_strPreviewImagePath);
+
 	reg.Write(_T("ViewerPath"), m_strViewerPath);
 	reg.Write(_T("CloseViewBeforeCompilation"), m_bCloseBeforeCompilation);
 
@@ -631,6 +643,10 @@ BOOL CProfile::SerializeToRegistry(RegistryStack &reg) const
 	reg.TopKey();
 	reg.CreateKey(_T("PostProcessors"));
 	m_aPostProcessors.SerializeToRegistry(reg, _T("PostProcessor"));
+
+	reg.TopKey();
+	reg.CreateKey(_T("PreviewProcessors"));
+	m_aPreviewProcessors.SerializeToRegistry(reg, _T("PreviewProcessor"));
 
 	reg.TopKey();
 	reg.CreateKey(_T("ViewProjectCmd"));
@@ -664,6 +680,8 @@ BOOL CProfile::SerializeFromRegistry(RegistryStack &reg)
 	reg.Read(_T("MakeIndexPath"), m_strMakeIndexPath);
 	reg.Read(_T("MakeIndexArgs"), m_strMakeIndexArguments);
 
+	reg.Read(_T("PreviewImagePath"), m_strPreviewImagePath);
+
 	reg.Read(_T("ViewerPath"), m_strViewerPath);
 	reg.Read(_T("CloseViewBeforeCompilation"), m_bCloseBeforeCompilation);
 
@@ -674,6 +692,10 @@ BOOL CProfile::SerializeFromRegistry(RegistryStack &reg)
 	reg.TopKey();
 	reg.Open(_T("PostProcessors"));
 	m_aPostProcessors.SerializeFromRegistry(reg, _T("PostProcessor"));
+
+	reg.TopKey();
+	reg.Open(_T("PreviewProcessors"));
+	m_aPreviewProcessors.SerializeFromRegistry(reg, _T("PreviewProcessor"));
 
 	reg.TopKey();
 	reg.Open(_T("ViewProjectCmd"));
@@ -727,6 +749,12 @@ void CProfile::SaveXml(MsXml::CXMLDOMElement &xmlProfile) const
 	MsXml::CXMLDOMElement xmlPostProcessors(xmlProfile.GetOwnerDocument().CreateElement(_T("postProcessors")));
 	m_aPostProcessors.SaveXml(xmlPostProcessors);
 	xmlProfile.AppendChild(xmlPostProcessors);
+
+	// serialize preview settings and processors
+	MsXml::CXMLDOMElement xmlPreviewProcessors(xmlProfile.GetOwnerDocument().CreateElement(_T("previewProcessors")));
+	xmlPreviewProcessors.SetAttribute(_T("imagepath"), (LPCTSTR)m_strPreviewImagePath);
+	m_aPreviewProcessors.SaveXml(xmlPreviewProcessors);
+	xmlProfile.AppendChild(xmlPreviewProcessors);
 
 
 	//
@@ -789,6 +817,13 @@ void CProfile::LoadXml(MsXml::CXMLDOMElement &xmlProfile, const int Version)
 	MsXml::CXMLDOMElement xmlPostProcessors(xmlProfile.SelectSingleNode(_T("postProcessors")).QueryInterface(IID_IXMLDOMElement));
 	m_aPostProcessors.LoadXml(xmlPostProcessors);
 
+	// serialize preview processors
+	if (Version >= 3)
+	{
+		MsXml::CXMLDOMElement xmlPreview(xmlProfile.SelectSingleNode(_T("previewProcessors")).QueryInterface(IID_IXMLDOMElement));
+		m_strPreviewImagePath = (LPCTSTR)(_bstr_t)xmlPreview.GetAttribute(_T("imagepath"));
+		m_aPreviewProcessors.LoadXml(xmlPreview);
+	}
 
 	//
 	// serialize viewer stuff

@@ -188,6 +188,18 @@ public:
 	CPProcessorArray &GetPostProcessorArray();
 
 	/**
+	Gets a reference to the array of the preview processors, which can be
+	used to read from and write to the array.
+	 */
+	CPProcessorArray& GetPreviewProcessorArray();
+
+	///Sets the path of the preview image file.
+	void SetPreviewImagePath(LPCTSTR lpszPreviewPath);
+
+	///Returns the path of the preview image file.
+	CString GetPreviewImagePath() const;
+
+	/**
 	Sets the path of the viewer-executable to use to view output,
 	generated using this profile.
 	 */
@@ -355,6 +367,12 @@ protected:
 	/** The postprocessors to run after the (La)TeX-compiler. */
 	CPProcessorArray m_aPostProcessors;
 
+	/** The processors to run for generating a preview. */
+	CPProcessorArray m_aPreviewProcessors;
+
+	/** Full path of the preview image */
+	CString m_strPreviewImagePath;
+
 	/** Full path of the viewer */
 	CString m_strViewerPath;
 
@@ -387,6 +405,12 @@ inline
 CPProcessorArray& CProfile::GetPostProcessorArray()
 {
 	return m_aPostProcessors;
+}
+
+inline
+CPProcessorArray& CProfile::GetPreviewProcessorArray()
+{
+	return m_aPreviewProcessors;
 }
 
 inline
@@ -453,6 +477,12 @@ inline
 CString CProfile::GetMakeIndexArguments() const
 {
 	return m_strMakeIndexArguments;
+}
+
+inline
+CString CProfile::GetPreviewImagePath() const
+{
+	return m_strPreviewImagePath;
 }
 
 inline

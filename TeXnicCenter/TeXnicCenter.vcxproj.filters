@@ -491,6 +491,9 @@
     <ClCompile Include="ProfilePagePprocessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProfilePagePreview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aboutbox.h">
@@ -1001,6 +1004,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="ProfilePagePprocessor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProfilePagePreview.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

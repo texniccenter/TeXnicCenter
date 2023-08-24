@@ -50,8 +50,8 @@ BEGIN_MESSAGE_MAP(CProfilePagePprocessor, CProfilePage)
 END_MESSAGE_MAP()
 
 
-CProfilePagePprocessor::CProfilePagePprocessor(UINT unIDCaption, CPProcessorArray& (CProfile::*GetPProcessorArray)())
-		: CProfilePage(IDD, unIDCaption),
+CProfilePagePprocessor::CProfilePagePprocessor(UINT unIDTemplate, UINT unIDCaption, CPProcessorArray& (CProfile::*GetPProcessorArray)())
+		: CProfilePage(unIDTemplate, unIDCaption),
 		m_wndBrowsePprocessor(IDC_EDIT_PPEXE, TRUE, NULL, OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, CString((LPCTSTR)STE_COMPILER_FILTER)),
 		m_wndArgumentsPh(IDR_POPUP_PLACEHOLDER_MAIN_OPT),
 		m_wndInputPh(IDR_POPUP_PLACEHOLDER_MAIN_OPT),
