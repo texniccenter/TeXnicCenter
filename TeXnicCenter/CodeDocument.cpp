@@ -142,17 +142,24 @@ TextDocument::TextDocument(CodeDocument::Encoding e, UINT codepage)
 TextDocument::TextDocument()
 : encoding_(CodeDocument::ANSI)
 , code_page_(::GetACP())
+, use_bom_(false)
 {
 }
 
-TextDocument::TextDocument( CodeDocument* document )
+TextDocument::TextDocument(CodeDocument* document)
 {
-	if (!document)
-		throw std::invalid_argument("document cannot be NULL");
-
-	SetEncoding(document->GetEncoding());
-	SetUseBOM(document->GetUseBOM());
-	SetCodePage(document->GetCodePage());
+	if (document)
+	{
+		SetEncoding(document->GetEncoding());
+		SetUseBOM(document->GetUseBOM());
+		SetCodePage(document->GetCodePage());
+	}
+	else
+	{
+		SetEncoding(CodeDocument::ANSI);
+		SetUseBOM(false);
+		SetCodePage(::GetACP());
+	}
 }
 
 CodeDocument::Encoding TextDocument::GetEncoding() const
