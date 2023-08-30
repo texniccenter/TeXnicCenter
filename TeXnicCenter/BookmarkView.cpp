@@ -137,6 +137,7 @@ void BookmarkView::InsertBookmark(int index, const CString& filename, const Code
 	text.Format(_T("%i"),b.GetLine() + 1);
 
 	list_view_.SetItemText(pos,2,text);
+	//TODO: Do not create a thing here. Just store 1 for actual name, and 0 for made-up name. Construct BMark later.
 	list_view_.SetItemData(pos,reinterpret_cast<DWORD_PTR>(new CodeBookmark(b)));
 }
 
@@ -174,6 +175,7 @@ void BookmarkView::OnBookmarkRemoved(CLaTeXProject* /*sender*/, const BookmarkEv
 		list_view_.DeleteItem(index);
 }
 
+//TODO: Add filename here. Just find the index, nothing else necessary, I think.
 int BookmarkView::FindBookmark(const CodeBookmark b, CodeBookmark** p)
 {
 	const int count = list_view_.GetItemCount();
@@ -279,8 +281,17 @@ void BookmarkView::OnLvnKeyDown(NMHDR* hdr, LRESULT*)
 			else {
 				int index = -1;
 
-				while ((index = list_view_.GetNextItem(-1,LVNI_SELECTED|LVNI_ALL)) != -1)
-					list_view_.DeleteItem(index);
+				while ((index = list_view_.GetNextItem(-1, LVNI_SELECTED | LVNI_ALL)) != -1)
+				{
+					//list_view_.DeleteItem(index);
+					CLaTeXProject* p = static_cast<CLaTeXProject*>(GetProject());
+					if (p)
+					{
+						CodeBookmark* data = reinterpret_cast<CodeBookmark*>(list_view_.GetItemData(index));
+						CString FName = list_view_.GetItemText(index, 1);
+						p->RemoveBookmark(FName, *data);
+					}
+				}
 			}
 
 			list_view_.SetRedraw(TRUE);

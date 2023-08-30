@@ -1298,9 +1298,31 @@ void CLaTeXProject::RemoveBookmark( const CString& filename, const CodeBookmark&
 	}
 }
 
-const CLaTeXProject::FileBookmarksContainerType CLaTeXProject::GetAllBookmarks() const
+const CLaTeXProject::FileBookmarksContainerType& CLaTeXProject::GetAllBookmarks() const
 {
 	return bookmarks_;
+}
+
+int CLaTeXProject::FindBookmarksByName(const CString& SearchPattern, FileBookmarksContainerType& FoundBookmarks) const
+{
+	int nFound(0);
+
+	FoundBookmarks.clear();
+
+	for each (const auto& FileBMarks in bookmarks_)
+	{
+		for each (const CodeBookmark& BMark in FileBMarks.second)
+		{
+			if (BMark.HasName() && BMark.GetName().Find(SearchPattern) >= 0)
+			{
+				//Found one
+				FoundBookmarks[FileBMarks.first].push_back(BMark);
+				nFound++;
+			}
+		}
+	}
+
+	return nFound;
 }
 
 CodeBookmark* CLaTeXProject::GetBookmark(const CString& filename, int lineNumber)
@@ -1317,7 +1339,6 @@ CodeBookmark* CLaTeXProject::GetBookmark(const CString& filename, int lineNumber
 
 		if (it1 != it->second.end())
 			result = &*it1;
-		//result = true;
 	}
 
 	return result;

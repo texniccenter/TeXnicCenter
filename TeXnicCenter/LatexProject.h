@@ -347,7 +347,8 @@ public:
 	static const CString FormatRef(const StructureItem& item);
 	static const CString FormatPageRef(const StructureItem& item);
 	void SetFoldingPoints(const CString& filename, const FoldingPointContainerType& points);
-	const CLaTeXProject::FileBookmarksContainerType GetAllBookmarks() const;
+	const FileBookmarksContainerType& GetAllBookmarks() const;
+	int FindBookmarksByName(const CString& SearchPattern, FileBookmarksContainerType& FoundBookmarks) const;
 
 	template<class F>
 	void AddBookmarkAddedHandler(F func)
