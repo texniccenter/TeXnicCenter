@@ -3015,6 +3015,8 @@ BEGIN
         MENUITEM "Ausgabe erstellen &und betrachten", ID_LATEX_RUNANDVIEW
         MENUITEM "Projekt auf&räumen",          ID_LATEX_CLEAN
         MENUITEM SEPARATOR
+        MENUITEM "Vors&chaubild erstellen",     ID_BUILD_BUILDPREVIEW
+        MENUITEM SEPARATOR
         MENUITEM "Nächster &Fehler",            ID_NEXT_ERROR
         MENUITEM "&Vorheriger Fehler",          ID_PREV_ERROR
         MENUITEM "Nächste &Warnung",            ID_NEXT_WARNING
@@ -5084,6 +5086,7 @@ END
 STRINGTABLE
 BEGIN
     ID_BIBTEX_KEY           "Nach BibTeX Key / Label suchen."
+    ID_BUILD_BUILDPREVIEW   "Erstellt ein Vorschaubild vom markierten Text.\nVorschaubild erstellen"
 END
 
 #endif    // German (Germany) resources
@@ -7237,6 +7240,8 @@ BEGIN
         MENUITEM "Build &and View Output",      ID_LATEX_RUNANDVIEW
         MENUITEM "&Clean Project",              ID_LATEX_CLEAN
         MENUITEM SEPARATOR
+        MENUITEM "Build Preview &Image",        ID_BUILD_BUILDPREVIEW
+        MENUITEM SEPARATOR
         MENUITEM "Next &Error",                 ID_NEXT_ERROR
         MENUITEM "&Previous Error",             ID_PREV_ERROR
         MENUITEM "Next &Warning",               ID_NEXT_WARNING
@@ -8403,7 +8408,7 @@ BEGIN
     ID_LATEX_NEW            "Creates a new LaTeX document\nNew LaTeX document"
     ID_LATEX_PROFILE        "Activates an output profile\nSelect Output Profile"
     ID_LATEX_PROFILE_SEL    "Activates an output profile\nOutput Profile"
-    ID_LATEX_RUN            "Builds a printable document out of your project\nBuild Output"
+    ID_LATEX_RUN            "Builds a printable document of your project\nBuild Output"
     ID_LATEX_RUNANDVIEW     "Builds a printable document out of your project and shows it\nBuild and View Output"
     ID_LATEX_STOP_BUILD     "Stop the build process\nStop Build"
     ID_LATEX_VIEW           "Shows the build output in an external viewer\nView Output"
@@ -9297,6 +9302,7 @@ END
 STRINGTABLE
 BEGIN
     ID_BIBTEX_KEY           "Search for bibTeX key / label."
+    ID_BUILD_BUILDPREVIEW   "Creates a preview image from the selected text\nBuild Preview Image"
 END
 
 #endif    // English (United States) resources

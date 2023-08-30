@@ -560,7 +560,6 @@
 #define IDC_INSERTPH_PPINPUT            2108
 #define IDC_INSERTPH_PPOUTPUT           2110
 #define IDC_BROWSELATEX                 2111
-#define IDC_INSERTPH_PPOUTPUT2          2111
 #define IDC_INSERTPH_PREVIEW            2111
 #define IDC_TITLE_LATEXARGUMENTS        2112
 #define IDC_LATEXPH                     2114
@@ -1486,6 +1485,7 @@
 #define ID_VIEW_APP_LOOK_WIN7           40682
 #define ID_VIEW_HIGHLIGHTACTIVELINE     40686
 #define ID_BIBTEX_KEY                   40689
+#define ID_BUILD_BUILDPREVIEW           40690
 #define IDR_BOOKMARK_VIEW               57672
 #define IDR_ERROR_VIEW                  57673
 #define IDR_MAINFRAMEOLD                57675
@@ -1499,7 +1499,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        57686
-#define _APS_NEXT_COMMAND_VALUE         40690
+#define _APS_NEXT_COMMAND_VALUE         40691
 #define _APS_NEXT_CONTROL_VALUE         8688
 #define _APS_NEXT_SYMED_VALUE           57773
 #endif

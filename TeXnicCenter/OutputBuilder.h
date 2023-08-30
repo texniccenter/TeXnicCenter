@@ -45,7 +45,6 @@ class COutputView;
  */
 class COutputBuilder : public CWorkerThread
 {
-	CString current_process_name_;
 // construction/destruction
 public:
 	COutputBuilder();
@@ -99,6 +98,19 @@ public:
 	    LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath,
 	    int nPriority = THREAD_PRIORITY_BELOW_NORMAL);
 
+	/** Executes the processors to build a preview.
+
+		@note
+		The preview is typically built in its own working directory
+		and has its own main LaTeX file.
+
+		@see #BuildAll for further details on the parameters.
+	 */
+	BOOL BuildPreview(
+	    COutputDoc* pDoc, COutputView* pView,
+	    LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath,
+	    int nPriority = THREAD_PRIORITY_BELOW_NORMAL);
+
 	/**
 	Tries to cancel the build by sending a CTRL_BREAK_EVENT to the
 	currently running process.
@@ -122,7 +134,8 @@ protected:
 	{
 		modeBuildAll,
 		modeRunBibTexOnly,
-		modeRunMakeIndexOnly
+		modeRunMakeIndexOnly,
+		modeBuildPreview
 	};
 
 // implementation helpers
@@ -173,6 +186,13 @@ protected:
 	 */
 	BOOL RunPostProcessors();
 
+	/** Executes all the preview processors of the current profile
+		and returns, when they all have been executed.
+
+		m_pProfile has to be valid.
+	 */
+	BOOL RunPreviewProcessors();
+
 // attributes
 protected:
 	/** document to report errors and warnings to */
@@ -212,6 +232,8 @@ private:
 	CString m_strLatexResult;
 	
 	CString bibtex_result_;
+
+	CString current_process_name_;
 
 	CString transcriptFileName_;
 

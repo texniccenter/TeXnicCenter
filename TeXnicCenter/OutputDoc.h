@@ -155,6 +155,10 @@ protected:
 	 */
 	void DoMakeIndexRun();
 
+	/** Builds the preview.
+	 */
+	void DoPreviewRun();
+
 	/**
 	Returns the active document or NULL if there is none.
 	 */
@@ -214,6 +218,7 @@ protected:
 	afx_msg void OnUpdateLatexClean(CCmdUI* pCmdUI);
 	afx_msg void OnLatexRunAndView();
 	afx_msg void OnLatexFileCompileAndView();
+	afx_msg void OnBuildPreview();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -240,6 +245,18 @@ public:
 	        working directory is set.
 	 */
 	CString GetWorkingDir() const;
+
+	/**	Gets the preview directory for this project.
+		
+		@return
+		The preview directory for this project.
+		Latex and other processors will generate their
+		output in this directory.
+
+		@todo
+		Decide on whether we can run previews on single files.
+	*/
+	CString GetPreviewDir() const;
 
 	/**
 	Returns TRUE if BibTeX should be run on compilation and FALSE

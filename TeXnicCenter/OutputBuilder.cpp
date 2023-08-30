@@ -122,6 +122,12 @@ BOOL COutputBuilder::RunMakeIndex(COutputDoc* pDoc,COutputView* pView,
 	return Create(modeRunMakeIndexOnly,pDoc,pView,lpszWorkingDir,lpszMainPath,FALSE,TRUE,nPriority);
 }
 
+BOOL COutputBuilder::BuildPreview(COutputDoc* pDoc, COutputView* pView, LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath, int nPriority)
+{
+	return Create(modeBuildPreview, pDoc, pView, lpszWorkingDir, lpszMainPath, FALSE, FALSE,
+				  nPriority);
+}
+
 BOOL COutputBuilder::CancelExecution()
 {
 	m_bCancel = true;
@@ -171,6 +177,13 @@ UINT COutputBuilder::Run()
 	if (m_nMode == modeBuildAll)
 	{
 		if (!RunPostProcessors() || m_bCancel)
+			return ~0U;
+	}
+
+	// build preview
+	if (m_nMode == modeBuildPreview)
+	{
+		if (!RunPreviewProcessors() || m_bCancel)
 			return ~0U;
 	}
 
@@ -440,6 +453,35 @@ BOOL COutputBuilder::RunPostProcessors()
 	::CloseHandle(hOutput);
 	filter.WaitForThread();
 	filter.CloseHandle();
+
+	return bResult;
+}
+
+BOOL COutputBuilder::RunPreviewProcessors()
+{
+	//COutputFilter filter;
+	//HANDLE hOutput;
+	//if (!filter.Create(&hOutput,m_pDoc,m_pView,FALSE))
+	//	return FALSE;
+
+	CPProcessorArray &a = m_pProfile->GetPreviewProcessorArray();
+	BOOL bResult = TRUE;
+
+	for (int i = 0; ((i < a.GetSize()) && (!m_bCancel)); i++)
+	{
+		current_process_name_ = a[i].GetTitle();
+		a[i].Execute(m_strMainPath, m_strWorkingDir, NULL/*hOutput*/, &m_hCurrentProcess);
+
+		if (m_bCancel) //only cancel on user request
+		{
+			bResult = FALSE;
+			break;
+		}
+	}
+
+	//::CloseHandle(hOutput);
+	//filter.WaitForThread();
+	//filter.CloseHandle();
 
 	return bResult;
 }

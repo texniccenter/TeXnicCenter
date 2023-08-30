@@ -153,8 +153,10 @@ BEGIN_MESSAGE_MAP(COutputDoc,CCmdTarget)
 	ON_UPDATE_COMMAND_UI(ID_LATEX_RUNANDVIEW,OnUpdateLatexRun)
 	ON_UPDATE_COMMAND_UI(ID_LATEX_FILECOMPILEANDVIEW,OnUpdateFileCompile)
 	ON_UPDATE_COMMAND_UI(ID_LATEX_VIEW,OnUpdateLatexView)
+	ON_COMMAND(ID_BUILD_BUILDPREVIEW, &COutputDoc::OnBuildPreview)
+	ON_UPDATE_COMMAND_UI(ID_BUILD_BUILDPREVIEW, &COutputDoc::OnUpdateLatexRun)
 	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
+	END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // Diagnose COutputDoc
@@ -566,6 +568,12 @@ CString COutputDoc::GetWorkingDir() const
 		return CPathTool::GetDirectory(GetActiveDocument()->GetPathName());
 
 	return CString(_T(""));
+}
+
+CString COutputDoc::GetPreviewDir() const
+{
+	//TODO: Add UI in Profile Dialog to set preview (sub)dir
+	return CString(_T("D:\\Temp\\TXCLenseTest\\txcpreview"));
 }
 
 BOOL COutputDoc::GetRunBibTex() const
@@ -1223,6 +1231,141 @@ void COutputDoc::DoMakeIndexRun()
 	m_builder.RunMakeIndex(this,m_pBuildView,GetWorkingDir(),GetMainPath());
 }
 
+void COutputDoc::DoPreviewRun()
+{
+	if (m_builder.IsStillRunning())
+		return;
+
+	//Save all modified files
+	//NOTE: This saves only files, that have been saved before
+	//if (CConfiguration::GetInstance()->m_bSaveBeforeCompilation)
+	//	theApp.SaveAllModifiedWithoutPrompt();
+
+	//Save main file, even if not saved before
+	//if (!AssureExistingMainFile()) return;
+
+	//For previews, we do not scan the errors, warnings, etc.
+	//We also do not activate the output.
+
+	//Shorthands
+	// - current project
+	CLaTeXProject* pProject = theApp.GetProject();
+	if (!pProject) return;
+	// - current editor view and document
+	CodeView* pView = theApp.GetActiveCodeView();
+	if (!pView) return;
+	CScintillaCtrl& SCtrl = pView->GetCtrl();
+	CodeDocument* pDoc = pView->GetDocument();
+	if (!pDoc) return;
+
+	//Range of the LaTeX text to be used for compiling the preview
+	std::pair<long, long> PreviewRange(-1, -1);
+	CodeView* pPreviewView = NULL;
+
+	//Start and end of selection, if any.
+	std::pair<long, long> SelectionRange(SCtrl.GetSelectionStart(), SCtrl.GetSelectionEnd());
+
+	//Did the user select something?
+	if (SelectionRange.first == SelectionRange.second)
+	{
+		//Nothing has been selected.
+
+		//Do we have Preview-Bookmarks from before?
+		CLaTeXProject::FileBookmarksContainerType BMarkFiles;
+		const int nBookmarksFound = pProject->FindBookmarksByName(_T("TXCPreview"), BMarkFiles);
+		//We are only interested if we found exactly 2 bookmarks in 1 file
+		if (nBookmarksFound == 2 && BMarkFiles.size() == 1)
+		{
+			//Make sure the corresponding doc is open (possibly open it in background)
+			const auto& BMarks = *(BMarkFiles.begin());
+			CodeDocument* pPreviewDoc = static_cast<CodeDocument*>(theApp.OpenLatexDocument(BMarks.first, FALSE, -1, FALSE, FALSE, TRUE));
+			if (!pPreviewDoc) return;
+
+			//Get the positions for these bookmarks
+			CodeView* pBackgroundView = dynamic_cast<CodeView*>(pPreviewDoc->GetView());
+			if (!pBackgroundView) return;
+			// - text area for preview
+			PreviewRange.first = pBackgroundView->GetCtrl().PositionFromLine(BMarks.second[0].GetLine());
+			PreviewRange.second = pBackgroundView->GetCtrl().GetLineEndPosition(BMarks.second[1].GetLine());
+			pPreviewView = pBackgroundView;
+
+			//Re-activate this view, if we opened another one
+			if (pView != pBackgroundView)
+			{
+				CFrameWnd* pFrame = pView->GetParentFrame();
+				if (pFrame) pFrame->ActivateFrame();
+			}
+		}
+		else
+		{
+			//Nothing selected and no previous bookmarks.
+			//Inform the user to select something and return doing nothing else.
+			// TODO: AfxMessageBox here
+			// Note: The menu entry must be active independent of a selection, because of the bookmarks.
+			return;
+		}
+	}
+	else
+	{
+		//Something has been selected by the user.
+		//The selected text is used for preview.
+		pPreviewView = pView;
+
+		//We distinguish between selecting several lines, or some text within a line.
+		const int StartLine = SCtrl.LineFromPosition(SelectionRange.first);
+		const int EndLine = SCtrl.LineFromPosition(SelectionRange.second);
+		if (EndLine - StartLine > 0)
+		{
+			//Multiple lines have been selected: (Re-)Define Preview-Bookmarks
+			//Do we have Preview-Bookmarks from before?
+			CLaTeXProject::FileBookmarksContainerType BMarkFiles;
+			pProject->FindBookmarksByName(_T("TXCPreview"), BMarkFiles);
+			//Delete found bookmarks; everything matching our search term will be deleted.
+			// We will establish new bookmarks below.
+			for each (const auto& FileBMarks in BMarkFiles)
+			{
+				for each (const CodeBookmark& BMark in FileBMarks.second)
+				{
+					pProject->RemoveBookmark(FileBMarks.first, BMark);
+				}
+			}
+
+			//Create new bookmarks
+			CodeBookmark NewPreviewBMarkStart(StartLine);
+			NewPreviewBMarkStart.SetName(_T("TXCPreviewStart"));
+			CodeBookmark NewPreviewBMarkEnd(EndLine);
+			NewPreviewBMarkEnd.SetName(_T("TXCPreviewEnd"));
+			pProject->AddBookmark(pDoc->GetFilePath(), NewPreviewBMarkStart);
+			pProject->AddBookmark(pDoc->GetFilePath(), NewPreviewBMarkEnd);
+
+			//Text area for preview
+			PreviewRange.first = SCtrl.PositionFromLine(StartLine);
+			PreviewRange.second = SCtrl.GetLineEndPosition(EndLine);
+		}
+		else
+		{
+			PreviewRange = SelectionRange;
+		}
+	}
+
+	//If we have a valid preview range, then extract the text, and create the preview
+	if (pPreviewView && (PreviewRange.second - PreviewRange.first > 0))
+	{
+		CString PreviewText = pPreviewView->GetText(PreviewRange.first, PreviewRange.second, false, false);
+
+		//Write preview text to 'content.tex' in the preview folder; same encoding as original file
+		CString PreviewContentPath = CPathTool::Cat(GetPreviewDir(), _T("content.tex"), true);
+		TextDocument td(pPreviewView->GetDocument());
+		td.Write(PreviewContentPath, PreviewText);
+
+		//TODO: We will have a menu with more than 1 template. The user can choose one, the choice will be written to the tps file
+		CString strPreviewMainPath = CPathTool::Cat(GetPreviewDir(), _T("template.tex"), true);
+
+		// build the preview
+		m_builder.BuildPreview(NULL, NULL, /*this, m_pBuildView*/ GetPreviewDir(), strPreviewMainPath);
+	}
+}
+
 void COutputDoc::OnUpdateLatexStopBuild(CCmdUI *pCmdUI)
 {
 	pCmdUI->Enable(m_builder.IsStillRunning());
@@ -1489,4 +1632,14 @@ bool COutputDoc::IsBuildViewActive() const
 const CString COutputDoc::GetTranscriptFilePath() const
 {
 	return CPathTool::Cat(GetWorkingDir(), m_builder.GetTranscriptFileName());
+}
+
+void COutputDoc::OnBuildPreview()
+{
+	//m_bActiveFileOperation = FALSE;
+
+	//TODO: Decide on whether this can be run for single active files.
+	// Then see also the UI Update for this menu entry
+
+	DoPreviewRun();
 }
