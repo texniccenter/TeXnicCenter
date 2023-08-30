@@ -2311,24 +2311,24 @@ int CTeXnicCenterApp::DoMessageBox(LPCTSTR prompt, UINT nType, UINT nIDPrompt)
 			// The caller should specify the icon.
 			break;
 		}
+	}
 
 #ifdef _DEBUG
 		if ((nType & MB_ICONMASK) == 0)
 			TRACE(traceAppMsg, 0, "Warning: no icon specified for message box.\n");
 #endif
 
-		VERIFY(DoTaskDialog(hWnd,prompt,nType,result));
+	VERIFY(DoTaskDialog(hWnd,prompt,nType,result));
 
-		// restore prompt context if possible
-		if (pdwContext != NULL)
-			*pdwContext = dwOldPromptContext;
+	// restore prompt context if possible
+	if (pdwContext != NULL)
+		*pdwContext = dwOldPromptContext;
 
-		// re-enable windows
-		if (hWndTop != NULL)
-			::EnableWindow(hWndTop, TRUE);
+	// re-enable windows
+	if (hWndTop != NULL)
+		::EnableWindow(hWndTop, TRUE);
 
-		DoEnableModeless(TRUE);
-	}
+	DoEnableModeless(TRUE);
 
 	return result;
 }
