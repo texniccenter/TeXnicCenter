@@ -265,6 +265,11 @@ public:
 	*/
 	CString GetCurrentWordOrSelection(const bool bDefaultWordChars, const bool bIncludingEscapeChar, const bool bStripEol);
 
+	///Retrieves the text between the start and end position, possibly with stripped-off EOL characters.
+	///The text can be either encoded into the encoding of the program (UTF16 or ANSI),
+	/// or it can be kept as it has been given by Scintilla.
+	CString GetText(const long startPos, const long endPos, const bool bStripEol, const bool bConvertEncoding);
+
 protected:
 	///A derived class shall announce its extra word characters using this function.
 	virtual void AddExtendedWordChars(CString& WordChars){UNREFERENCED_PARAMETER(WordChars);}
@@ -276,11 +281,6 @@ protected:
 	CString GetWordAroundRange(const long startPos, const long endPos, const bool bToLeft, const bool bToRight,
 								const bool bDefaultWordChars, const bool bIncludingEscapeChar, const bool bStripEol,
 								const bool bConvertEncoding, const bool bSelect);
-
-	///Retrieves the text between the start and end position, possibly with stripped-off EOL characters.
-	///The text can be either encoded into the encoding of the program (UTF16 or ANSI),
-	/// or it can be kept as it has been given by Scintilla.
-	CString GetText(const long startPos, const long endPos, const bool bStripEol, const bool bConvertEncoding);
 
 private:
 	afx_msg LRESULT OnGetLineText(WPARAM wParam, LPARAM lParam);
