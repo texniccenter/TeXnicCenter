@@ -354,9 +354,9 @@ private:
 	std::unique_ptr<CBuildView> build_view_;
 
 	///Pane showing the results of the preview process.
-	std::unique_ptr<WorkspacePane> preview_view_pane_;
+	std::unique_ptr<WorkspacePane> preview_output_view_pane_;
 	/** View containing the results of the preview process. */
-	std::unique_ptr<CBuildView> preview_view_;
+	std::unique_ptr<CBuildView> preview_output_view_;
 
 	///View listing the errors of a compilation
 	std::unique_ptr<ErrorListPane> error_list_view_;
