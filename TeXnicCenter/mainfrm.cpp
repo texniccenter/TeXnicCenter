@@ -584,6 +584,10 @@ void CMainFrame::GetAllPanes(std::vector< CBasePane* >& pAllPanes, bool bNavigat
 {
 	pAllPanes.clear();
 
+	//Note that the order of the panes is important.
+	// See enum tagOutputTabs and ActivateOutputTab().
+	// The last pane will also be the active one after ToggleDockingBars().
+
 	if (bNavigatorPanes)
 	{
 		pAllPanes.push_back(bookmark_view_pane_.get());
@@ -595,12 +599,12 @@ void CMainFrame::GetAllPanes(std::vector< CBasePane* >& pAllPanes, bool bNavigat
 
 	if (bOutputPanes)
 	{
-		pAllPanes.push_back(build_view_pane_.get());
-		pAllPanes.push_back(error_list_view_.get());
-		pAllPanes.push_back(grep_view_1_pane_.get());
-		pAllPanes.push_back(grep_view_2_pane_.get());
-		pAllPanes.push_back(parse_view_pane_.get());
 		pAllPanes.push_back(preview_view_pane_.get());
+		pAllPanes.push_back(parse_view_pane_.get());
+		pAllPanes.push_back(grep_view_2_pane_.get());
+		pAllPanes.push_back(grep_view_1_pane_.get());
+		pAllPanes.push_back(error_list_view_.get());
+		pAllPanes.push_back(build_view_pane_.get());
 	}
 }
 

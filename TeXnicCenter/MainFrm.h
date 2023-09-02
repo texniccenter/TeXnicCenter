@@ -88,11 +88,12 @@ public:
 	///Enumeration of output panes. Make sure, this matches the code in GetAllPanes()
 	enum tagOutputTabs
 	{
-		outputTabErrors = 0,
-		outputTabGrep1 = 1,
-		outputTabGrep2 = 2,
-		outputTabParse = 3,
-		outputTabBuildResult = 4
+		outputTabPreviewBuildResult = 0
+		, outputTabParse
+		, outputTabGrep2
+		, outputTabGrep1
+		, outputTabErrors
+		, outputTabBuildResult
 	};
 
 	///Enumeration of navigator panes. Make sure, this matches the code in GetAllPanes()
