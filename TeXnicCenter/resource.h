@@ -34,6 +34,7 @@
 #define STE_TEX_FILES                   155
 #define STE_TCP_INVALID                 171
 #define STE_XML_PARSE_ERROR             172
+#define STE_PREVIEW_TEMPLATE_COPY_ERRORS 173
 #define IDS_NEWTEXTMODULE               174
 #define STE_XML_INSTALLNEEDED           175
 #define ID_START_SEARCH                 190
@@ -43,6 +44,7 @@
 #define IDR_LATEX                       194
 #define IDS_POSTPROCESSOR               194
 #define IDS_PREPROCESSOR                195
+#define STE_PREVIEW_FOLDER_CREATE_ERROR 196
 #define IDR_FIND                        199
 #define IDR_IMAGES                      201
 #define IDR_HIDDEN_CMDS                 206
@@ -67,6 +69,7 @@
 #define IDS_NO_ACTION                   255
 #define IDR_FORMAT                      269
 #define IDS_TEXTMODULES_NONEDEFINED     271
+#define STE_PREVIEW_GENERATEDTEMPLATE   272
 #define IDR_STRUCTURE                   280
 #define STE_TB_MATH                     309
 #define IDR_MATH                        310
@@ -275,6 +278,7 @@
 #define STE_FILE_INUSE                  1207
 #define STE_FILE_INUSE_OPEN             1208
 #define STE_FILE_LATEXFILTER            1209
+#define STE_PREVIEW_NOSELECTION         1209
 #define STE_FILE_MRU_FILE_NONE          1210
 #define STE_FILE_MRU_PROJECT_NONE       1211
 #define STE_FILE_XMLFILTER              1212
@@ -1486,6 +1490,7 @@
 #define ID_VIEW_HIGHLIGHTACTIVELINE     40686
 #define ID_BIBTEX_KEY                   40689
 #define ID_BUILD_BUILDPREVIEW           40690
+#define ID_VIEW_PREVIEW_OUTPUT_PANE     40691
 #define IDR_BOOKMARK_VIEW               57672
 #define IDR_ERROR_VIEW                  57673
 #define IDR_MAINFRAMEOLD                57675
@@ -1499,7 +1504,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        57686
-#define _APS_NEXT_COMMAND_VALUE         40691
+#define _APS_NEXT_COMMAND_VALUE         40692
 #define _APS_NEXT_CONTROL_VALUE         8688
 #define _APS_NEXT_SYMED_VALUE           57773
 #endif

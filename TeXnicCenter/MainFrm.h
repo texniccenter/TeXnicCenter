@@ -352,7 +352,12 @@ private:
 	/** View containing the results of the build process. */
 	std::unique_ptr<CBuildView> build_view_;
 
-	///Pane listing the errors of a compilation
+	///Pane showing the results of the preview process.
+	std::unique_ptr<WorkspacePane> preview_view_pane_;
+	/** View containing the results of the preview process. */
+	std::unique_ptr<CBuildView> preview_view_;
+
+	///View listing the errors of a compilation
 	std::unique_ptr<ErrorListPane> error_list_view_;
 
 	///Pane containing the results of file grep 1.

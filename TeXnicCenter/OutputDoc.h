@@ -42,6 +42,7 @@
 #include "Nullable.h"
 
 class ErrorListPane;
+class CodeDocument;
 
 
 class COutputDoc :
@@ -88,13 +89,19 @@ public:
 	void SetActiveView(OutputViewBase *pView);
 
 	void SetAllViews(COutputView* pBuildView, COutputView* pGrepView1,
-	                 COutputView* pGrepView2, COutputView* pParseView);
+	                 COutputView* pGrepView2, COutputView* pParseView,
+					 COutputView* pPreviewView);
 
 	/**
 	Empties the build view and clears the error, warning and badbox
 	arrays.
 	 */
 	void ClearBuildMessages();
+
+	/**
+	Empties the view with the messages from the preview building process.
+	 */
+	void ClearPreviewMessages();
 
 	/**
 	Adds an error to the error list.
@@ -154,10 +161,6 @@ protected:
 	the m_bActiveFileOperation-attribute
 	 */
 	void DoMakeIndexRun();
-
-	/** Builds the preview.
-	 */
-	void DoPreviewRun();
 
 	/**
 	Returns the active document or NULL if there is none.
@@ -246,6 +249,24 @@ public:
 	 */
 	CString GetWorkingDir() const;
 
+	/**
+	Returns TRUE if BibTeX should be run on compilation and FALSE
+	otherwise.
+	 */
+	BOOL GetRunBibTex() const;
+
+	/**
+	Returns TRUE if MakeIndex should be run on compilation and FALSE
+	otherwise.
+	 */
+	BOOL GetRunMakeIndex() const;
+
+	/**
+	 * \defgroup Preview Functions related to Preview
+	 * @{
+	 */
+
+public:
 	/**	Gets the preview directory for this project.
 		
 		@return
@@ -258,17 +279,81 @@ public:
 	*/
 	CString GetPreviewDir() const;
 
-	/**
-	Returns TRUE if BibTeX should be run on compilation and FALSE
-	otherwise.
-	 */
-	BOOL GetRunBibTex() const;
+	/**	Gets the path to the preview image.
+		
+		@return
+		The preview image for this project.
 
-	/**
-	Returns TRUE if MakeIndex should be run on compilation and FALSE
-	otherwise.
+		@todo
+		Decide on whether we can run previews on single files.
+	*/
+	CString GetPreviewImagePath() const;
+
+	/** Generates the file name of the preview template
+		that should have been generated from the main file.
+		The file is not guaranteed to exist.
+		Concatenate this with the result of GetPreviewDir()
+		to get the full path.
+	*/
+	CString GetPreviewGeneratedTemplateFileName() const;
+
+	/// TODO: Finish this.
+	bool GetAllPreviewTemplates(std::vector<CString>& AllTemplates, int& idPreferred) const;
+
+protected:
+	/**	Gets the text/code to be previewed.
+		
+		@param PreviewText
+		Contains the preview text.
+
+		@param pPreviewDoc
+		Pointer to the document where the text has been found. Useful to deal with encoding.
+
+		@returns 1, if a proper preview text has been found.
+
+		@returns 0, if no preview text has been found, since nothing had been selected.
+		In that case, a new preview should not be compiled, but an error should be displayed.
+
+		@returns -1, if another error occured.
+	*/
+	int GetPreviewText(CString& PreviewText, CodeDocument* pPreviewDoc);
+
+	/**	Creates the preview directory for this project.
+		
+		The directory will be created and template files
+		will be copied into it.
+		
+		@param PreviewDir
+		An absolute path to the directory that has to be created.
+		This directory can already exist.
+
+		@param bOverwrite
+		Whether to overwrite existing files in the preview directory.
+
+		@return
+		True, if the preview directory exists
+		and at least one template file could be copied.
+	*/
+	bool CreatePreviewDir(const CString& PreviewDir, const bool bOverwrite);
+
+	/** Creates a preview template from the current main file.
+
+		@param PreviewDir
+		An absolute path to the directory into which the file shall be written.
+		The directory has to exist.
+
+		@param bOverwrite
+		Whether to overwrite an existing file with the same name.
+
+		@returns true, if the template was successfully created, or at least, a file with that name exists.
+	*/
+	bool CreatePreviewTemplateFromMainFile(const CString& PreviewDir, const bool bOverwrite);
+
+	/** Builds the preview.
 	 */
-	BOOL GetRunMakeIndex() const;
+	void DoPreviewRun();
+
+	/**@}*/
 
 // CTextSourceManager virtuals
 public:
@@ -377,6 +462,9 @@ protected:
 
 	/** Pointer to the attached build-view. */
 	COutputView *m_pBuildView;
+
+	/** Pointer to the attached preview-view. */
+	COutputView *m_pPreviewView;
 
 	/** Pointer to the attached grep-views. */
 	COutputView *m_apGrepView[2];

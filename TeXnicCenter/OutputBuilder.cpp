@@ -84,9 +84,20 @@ BOOL COutputBuilder::Create(int nMode,
 	if (!m_pProfile)
 		return FALSE;
 
-	// initialize output view
+	//Clear previous errors, warnings, bad boxes, etc.
 	if (m_pDoc)
-		m_pDoc->ClearBuildMessages();
+	{
+		if (m_nMode == modeBuildPreview)
+		{
+			m_pDoc->ClearPreviewMessages();
+		}
+		else
+		{
+			m_pDoc->ClearBuildMessages();
+		}
+	}
+
+	// initialize output view
 	if (m_pView)
 	{
 		CString strMsg;
@@ -459,10 +470,13 @@ BOOL COutputBuilder::RunPostProcessors()
 
 BOOL COutputBuilder::RunPreviewProcessors()
 {
-	//COutputFilter filter;
-	//HANDLE hOutput;
-	//if (!filter.Create(&hOutput,m_pDoc,m_pView,FALSE))
-	//	return FALSE;
+	COutputFilter filter;
+	HANDLE hOutput;
+	//The filter does not get the doc, since this would add errors
+	// from the preview build process to the global error list.
+	// An alternative is to write a new output filter that does not do that.
+	// And then the COutputDoc would need extra arrays for errors from the preview.
+	if (!filter.Create(&hOutput, NULL/*m_pDoc*/, m_pView, FALSE)) return FALSE;
 
 	CPProcessorArray &a = m_pProfile->GetPreviewProcessorArray();
 	BOOL bResult = TRUE;
@@ -470,7 +484,7 @@ BOOL COutputBuilder::RunPreviewProcessors()
 	for (int i = 0; ((i < a.GetSize()) && (!m_bCancel)); i++)
 	{
 		current_process_name_ = a[i].GetTitle();
-		a[i].Execute(m_strMainPath, m_strWorkingDir, NULL/*hOutput*/, &m_hCurrentProcess);
+		a[i].Execute(m_strMainPath, m_strWorkingDir, hOutput, &m_hCurrentProcess);
 
 		if (m_bCancel) //only cancel on user request
 		{
@@ -479,9 +493,9 @@ BOOL COutputBuilder::RunPreviewProcessors()
 		}
 	}
 
-	//::CloseHandle(hOutput);
-	//filter.WaitForThread();
-	//filter.CloseHandle();
+	::CloseHandle(hOutput);
+	filter.WaitForThread();
+	filter.CloseHandle();
 
 	return bResult;
 }

@@ -266,6 +266,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_COMMAND_EX(ID_VIEW_ERROR_LIST_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_BOOKMARKS_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_BUILD_PANE, &CMainFrame::OnToggleDockingBar)
+	ON_COMMAND_EX(ID_VIEW_PREVIEW_OUTPUT_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_GREP_1_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_GREP_2_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_PARSE_PANE, &CMainFrame::OnToggleDockingBar)
@@ -304,6 +305,8 @@ CMainFrame::CMainFrame()
 	, bookmark_view_pane_(new BookmarkView)
 	, build_view_pane_(new WorkspacePane)
 	, build_view_(new CBuildView)
+	, preview_view_pane_(new WorkspacePane)
+	, preview_view_(new CBuildView)
 	, error_list_view_(new ErrorListPane)
 	, grep_view_1_pane_(new WorkspacePane)
 	, grep_view_1_(new CGrepView)
@@ -592,11 +595,12 @@ void CMainFrame::GetAllPanes(std::vector< CBasePane* >& pAllPanes, bool bNavigat
 
 	if (bOutputPanes)
 	{
+		pAllPanes.push_back(build_view_pane_.get());
 		pAllPanes.push_back(error_list_view_.get());
 		pAllPanes.push_back(grep_view_1_pane_.get());
 		pAllPanes.push_back(grep_view_2_pane_.get());
 		pAllPanes.push_back(parse_view_pane_.get());
-		pAllPanes.push_back(build_view_pane_.get());
+		pAllPanes.push_back(preview_view_pane_.get());
 	}
 }
 
@@ -780,6 +784,10 @@ BOOL CMainFrame::OnToggleDockingBar(UINT nIDEvent)
 
 		case ID_VIEW_BUILD_PANE:
 			pCtrlBar = build_view_pane_.get();
+			break;
+
+		case ID_VIEW_PREVIEW_OUTPUT_PANE:
+			pCtrlBar = preview_view_pane_.get();
 			break;
 
 		case ID_VIEW_GREP_1_PANE:
@@ -1774,6 +1782,8 @@ bool CMainFrame::CreateToolWindows()
 		CRect(CPoint(0, 0), bottom_pane_size), TRUE, ID_VIEW_ERROR_LIST_PANE, pane_style | CBRS_BOTTOM);
 	build_view_pane_->Create(GetCaption(ID_VIEW_BUILD_PANE), this,
 		CRect(CPoint(0, 0), bottom_pane_size), TRUE, ID_VIEW_BUILD_PANE, pane_style | CBRS_BOTTOM);
+	preview_view_pane_->Create(GetCaption(ID_VIEW_PREVIEW_OUTPUT_PANE), this,
+		CRect(CPoint(0, 0), bottom_pane_size), TRUE, ID_VIEW_PREVIEW_OUTPUT_PANE, pane_style | CBRS_BOTTOM);
 	grep_view_1_pane_->Create(GetCaption(ID_VIEW_GREP_1_PANE), this,
 		CRect(CPoint(0, 0), bottom_pane_size), TRUE, ID_VIEW_GREP_1_PANE, pane_style | CBRS_BOTTOM);
 	grep_view_2_pane_->Create(GetCaption(ID_VIEW_GREP_2_PANE), this,
@@ -1797,6 +1807,12 @@ bool CMainFrame::CreateToolWindows()
 	if (!build_view_->Create(rectDummy, this))
 	{
 		TRACE0("Failed to create build output view\n");
+		return false;
+	}
+
+	if (!preview_view_->Create(rectDummy, this))
+	{
+		TRACE0("Failed to create preview output view\n");
 		return false;
 	}
 
@@ -1824,8 +1840,9 @@ bool CMainFrame::CreateToolWindows()
 	// - and set them
 	env_view_pane_->SetClient(env_view_.get());
 	output_doc_->SetAllViews(build_view_.get(), grep_view_1_.get(), 
-		grep_view_2_.get(), parse_view_.get());
+		grep_view_2_.get(), parse_view_.get(), preview_view_.get());
 	build_view_->AttachDoc(output_doc_.get());
+	preview_view_->AttachDoc(output_doc_.get());
 	grep_view_1_->AttachDoc(output_doc_.get());
 	grep_view_2_->AttachDoc(output_doc_.get());
 	parse_view_->AttachDoc(output_doc_.get());
@@ -1834,6 +1851,7 @@ bool CMainFrame::CreateToolWindows()
 
 	//Set clients
 	build_view_pane_->SetClient(build_view_.get());
+	preview_view_pane_->SetClient(preview_view_.get());
 	grep_view_1_pane_->SetClient(grep_view_1_.get());
 	grep_view_2_pane_->SetClient(grep_view_2_.get());
 	parse_view_pane_->SetClient(parse_view_.get());
@@ -1846,6 +1864,7 @@ bool CMainFrame::CreateToolWindows()
 	bookmark_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	error_list_view_->EnableDocking(CBRS_ALIGN_ANY);
 	build_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
+	preview_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	grep_view_1_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	grep_view_2_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	parse_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
@@ -1895,11 +1914,13 @@ bool CMainFrame::CreateToolWindows()
 	grep_view_1_pane_->AttachToTabWnd(build_view_pane_.get(), DM_STANDARD, FALSE);
 	grep_view_2_pane_->AttachToTabWnd(build_view_pane_.get(), DM_STANDARD, FALSE);
 	parse_view_pane_->AttachToTabWnd(build_view_pane_.get(), DM_STANDARD, FALSE);
+	preview_view_pane_->AttachToTabWnd(build_view_pane_.get(), DM_STANDARD, FALSE);
 
 	//Set images
 	himl = ::ImageList_LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(
 		IDB_OUTPUT_BAR), 16, 1, RGB(192, 192, 192), IMAGE_BITMAP, LR_CREATEDIBSECTION);
 	build_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 0), FALSE);
+	preview_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 0), FALSE);
 	grep_view_1_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 1), FALSE);
 	grep_view_2_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 2), FALSE);
 	parse_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 3), FALSE);
@@ -1925,6 +1946,7 @@ bool CMainFrame::CreateToolWindows()
 	//Do not show all of them at first startup
 	ShowPaneEnsureVisibility(bookmark_view_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(build_view_pane_.get(), false, false, false);
+	ShowPaneEnsureVisibility(preview_view_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(error_list_view_.get(), false, false, false);
 	ShowPaneEnsureVisibility(grep_view_1_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(grep_view_2_pane_.get(), false, false, false);

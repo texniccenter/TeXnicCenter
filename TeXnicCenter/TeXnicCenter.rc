@@ -255,6 +255,7 @@ BEGIN
     BUTTON      ID_VIEW_GREP_2_PANE
     BUTTON      ID_VIEW_PARSE_PANE
     BUTTON      ID_VIEW_ERROR_LIST_PANE
+    BUTTON      ID_VIEW_PREVIEW_OUTPUT_PANE
 END
 
 IDR_FIND TOOLBAR 16, 16
@@ -1716,7 +1717,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_PPOUTPUT,5,185,209,13,ES_AUTOHSCROLL
     PUSHBUTTON      "",IDC_INSERTPH_PPOUTPUT,219,185,16,13
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,5,210,230,1
-    LTEXT           "Pfad des &Vorschaubildes:",IDC_TITLE_PREVIEW,5,220,209,8
+    LTEXT           "Pfad des &Vorschaubildes (definiert das Arbeitsverzeichnis):",IDC_TITLE_PREVIEW,5,220,209,8
     EDITTEXT        IDC_EDIT_PREVIEW,5,230,209,13,ES_AUTOHSCROLL
     PUSHBUTTON      "",IDC_INSERTPH_PREVIEW,219,230,16,13
 END
@@ -2403,6 +2404,7 @@ BEGIN
             MENUITEM "Suchen 1",                    ID_VIEW_GREP_1_PANE
             MENUITEM "Suchen 2",                    ID_VIEW_GREP_2_PANE
             MENUITEM "Analyse",                     ID_VIEW_PARSE_PANE
+            MENUITEM "Vorschauerstellung",          ID_VIEW_PREVIEW_OUTPUT_PANE
             MENUITEM SEPARATOR
             MENUITEM "&Linke Hilfsfenster ein-/ausblenden", ID_VIEW_TOGGLELEFTDOCKINGBARS
             MENUITEM "&Rechte Hilfsfenster ein-/ausblenden", ID_VIEW_TOGGLERIGHTDOCKINGBARS
@@ -3600,6 +3602,7 @@ BEGIN
                             "Die Datei\n\n%s\n\nwurde außerhalb von TeXnicCenter geändert. Soll Sie neu geladen werden?\n\n(Wichtig: Sie haben Änderungen an dem Dokument vorgenommen. Wenn es neu geladen wird, gehen diese Änderungen verloren!)"
     STE_FILE_INUSE          "Es trat ein Fehler beim %s der Datei\n\n%s\n\nauf.\n\n%s"
     STE_FILE_INUSE_OPEN     "Die Datei\n\n%s\n\nkann nicht neu geladen werden. Das bereits offene Dokument wird mit einem Schreibschutz versehen."
+    STE_PREVIEW_NOSELECTION "Markieren Sie bitte einen Textbereich, um die Vorschau dafür zu erstellen."
     STE_FILE_MRU_FILE_NONE  "&Leer"
     STE_FILE_MRU_PROJECT_NONE "&Leer"
     STE_FILE_XMLFILTER      "XML-Dateien (*.xml)|*.xml|Alle Dateien (*.*)|*.*||"
@@ -3957,6 +3960,8 @@ STRINGTABLE
 BEGIN
     STE_TCP_INVALID         "Dies ist keine gültige Projektdatei."
     STE_XML_PARSE_ERROR     "Beim Lesen einer XML-Datei ist ein Fehler aufgetreten.\n\nFehler 0x%08x: %s\n\nDatei:\t%s\nZeile:\t%d\nZeichen:\t%d\n\n%s"
+    STE_PREVIEW_TEMPLATE_COPY_ERRORS 
+                            "Beim Kopieren der Vorlagen sind Fehler aufgetreten.\n\nSie sollten von diesem Verzeichnis\n\n%s\n\nin dieses Verzeichnis kopiert werden:\n\n%s\n\nDie Fehlermeldungen lauten:\n\n%s"
     IDS_NEWTEXTMODULE       "Neuer Textbaustein"
     STE_XML_INSTALLNEEDED   "Zur Nutzung dieser Funktion muss folgende Software auf Ihrem System korrekt installiert sein\n\n\tMicrosoft XML Parser (MSXML)\n\nEinen Verweis auf die aktuelle Version finden Sie im Download-Bereich von\n\n\thttp://www.TeXnicCenter.org/"
 END
@@ -5045,6 +5050,8 @@ BEGIN
     ID_BIBTEX_NEW           "Erstellt ein neues BibTeX-Dokument\nNeues BibTeX-Dokument"
     IDS_POSTPROCESSOR       "Nachbearbeitung"
     IDS_PREPROCESSOR        "Vorbearbeitung"
+    STE_PREVIEW_FOLDER_CREATE_ERROR 
+                            "Es ist ein Fehler beim Erstellen des Vorschau-Arbeitsverzeichnisses aufgetreten.\n\n%s\n\n%s"
 END
 
 STRINGTABLE
@@ -5087,6 +5094,13 @@ STRINGTABLE
 BEGIN
     ID_BIBTEX_KEY           "Nach BibTeX Key / Label suchen."
     ID_BUILD_BUILDPREVIEW   "Erstellt ein Vorschaubild vom markierten Text.\nVorschaubild erstellen"
+    ID_VIEW_PREVIEW_OUTPUT_PANE 
+                            "Blendet das Fenster mit der Ausgabe der Vorschauerstellung ein oder aus.\nVorschauerstellung"
+END
+
+STRINGTABLE
+BEGIN
+    STE_PREVIEW_GENERATEDTEMPLATE "Von Hauptdatei generiert"
 END
 
 #endif    // German (Germany) resources
@@ -6017,7 +6031,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_PPOUTPUT,5,185,209,13,ES_AUTOHSCROLL
     PUSHBUTTON      "",IDC_INSERTPH_PPOUTPUT,219,185,16,13
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,5,210,230,1
-    LTEXT           "&Path to the preview image:",IDC_TITLE_PREVIEW,5,220,209,8
+    LTEXT           "&Path to the preview image (defines preview working directory):",IDC_TITLE_PREVIEW,5,220,209,8
     EDITTEXT        IDC_EDIT_PREVIEW,5,230,209,13,ES_AUTOHSCROLL
     PUSHBUTTON      "",IDC_INSERTPH_PREVIEW,219,230,16,13
 END
@@ -6628,6 +6642,7 @@ BEGIN
             MENUITEM "Find 1",                      ID_VIEW_GREP_1_PANE
             MENUITEM "Find 2",                      ID_VIEW_GREP_2_PANE
             MENUITEM "Parse",                       ID_VIEW_PARSE_PANE
+            MENUITEM "Preview Build Output",        ID_VIEW_PREVIEW_OUTPUT_PANE
             MENUITEM SEPARATOR
             MENUITEM "Toggle &Left Tool Windows",   ID_VIEW_TOGGLELEFTDOCKINGBARS
             MENUITEM "Toggle &Right Tool Windows",  ID_VIEW_TOGGLERIGHTDOCKINGBARS
@@ -8068,6 +8083,8 @@ STRINGTABLE
 BEGIN
     STE_TCP_INVALID         "This is not a valid project file."
     STE_XML_PARSE_ERROR     "An error occured while reading an XML file.\n\nError 0x%08x: %s\n\nFile:\t%s\nLine:\t%d\nCharacter:\t%d\n\n%s"
+    STE_PREVIEW_TEMPLATE_COPY_ERRORS 
+                            "There were errors while copying the templates.\n\nThey should have been copied from this folder\n\n%s\n\nto this folder:\n\n%s\n\nThe error messages are:\n\n%s"
     IDS_NEWTEXTMODULE       "New Text Module"
     STE_XML_INSTALLNEEDED   "In order to use this function, the following software must be properly installed on your system\n\n\tMicrosoft XML Parser (MSXML)\n\nA link to the newest version can be found in the download area of\n\n\thttp://www.TeXnicCenter.org/"
 END
@@ -8154,6 +8171,7 @@ BEGIN
                             "The file\n\n%s\n\nhas been modified outside TeXnicCenter. Should TeXnicCenter reload the document?\n\n(Important: You have made changes to the document. If you decide to reload it, your changes will be lost!)"
     STE_FILE_INUSE          "Cannot %s the file\n\n%s\n\n%s"
     STE_FILE_INUSE_OPEN     "Cannot re-open the file\n\n%s\n\nConverting existing file to read-only"
+    STE_PREVIEW_NOSELECTION "Please select some text to be previewed."
     STE_FILE_MRU_FILE_NONE  "&None"
     STE_FILE_MRU_PROJECT_NONE "&None"
     STE_FILE_XMLFILTER      "XML Files (*.xml)|*.xml|All Files (*.*)|*.*||"
@@ -9244,6 +9262,8 @@ BEGIN
     ID_BIBTEX_NEW           "Creates a new BibTeX document\nNew BibTeX document"
     IDS_POSTPROCESSOR       "Postprocessor"
     IDS_PREPROCESSOR        "Preprocessor"
+    STE_PREVIEW_FOLDER_CREATE_ERROR 
+                            "There was an error when attempting to create the preview folder.\n\n%s\n\n%s"
 END
 
 STRINGTABLE
@@ -9303,6 +9323,13 @@ STRINGTABLE
 BEGIN
     ID_BIBTEX_KEY           "Search for bibTeX key / label."
     ID_BUILD_BUILDPREVIEW   "Creates a preview image from the selected text\nBuild Preview Image"
+    ID_VIEW_PREVIEW_OUTPUT_PANE 
+                            "Shows or hides the Output from the Preview Build Process\nPreview Build Output"
+END
+
+STRINGTABLE
+BEGIN
+    STE_PREVIEW_GENERATEDTEMPLATE "Generated from Main File"
 END
 
 #endif    // English (United States) resources

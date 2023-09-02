@@ -382,6 +382,7 @@
     <ClCompile Include="OptionPageTextFormat.cpp" />
     <ClCompile Include="OutputBuilder.cpp" />
     <ClCompile Include="OutputDoc.cpp" />
+    <ClCompile Include="OutputDocPreview.cpp" />
     <ClCompile Include="OutputFilter.cpp" />
     <ClCompile Include="OutputInfo.cpp" />
     <ClCompile Include="outputview.cpp" />
