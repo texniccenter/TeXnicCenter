@@ -35,8 +35,6 @@ private:
 	int errors_, warnings_, bad_boxes_;
 	bool show_errors_, show_warnings_, show_bad_boxes_;
 
-	static const int UpdateToolBarButtonMessageID = WM_USER + 1;
-
 public:
 	ErrorListPane();
 	~ErrorListPane();

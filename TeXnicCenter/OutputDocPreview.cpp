@@ -49,22 +49,13 @@
 #include "LaTeXView.h"
 #include "TeXnicCenter.h"
 #include "PlaceHolder.h"
+#include "PreviewImageView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-void COutputDoc::OnBuildPreview()
-{
-	//m_bActiveFileOperation = FALSE;
-
-	//TODO: Decide on whether this can be run for single active files.
-	// Then see also the UI Update for this menu entry
-
-	DoPreviewRun();
-}
 
 
 CString COutputDoc::GetPreviewImagePath() const
@@ -380,32 +371,35 @@ bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwri
 }
 
 
+void COutputDoc::OnBuildPreview()
+{
+	//TODO: Decide on whether this can be run for single active files.
+	// Then see also the UI Update for this menu entry
+	//m_pPreviewView
+	CWnd* pMainWnd = AfxGetMainWnd();
+	if (pMainWnd && m_pPreviewImageView)
+	{
+		PostMessage(pMainWnd->m_hWnd, AfxUserMessages::ShowDockingBarID, ID_VIEW_PREVIEW_IMAGE_PANE, 0);
+		PostMessage(m_pPreviewImageView->m_hWnd, AfxUserMessages::PreviewImageViewStartProgressAnimation, 0, 0);
+
+		//After building the preview, the PreviewView needs to reload the image.
+		//We do this regardless of success.
+		//TODO: Consider displaying the success of the preview generation in the preview window.
+		//The builder could send the termination code.
+		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImageView->m_hWnd, AfxUserMessages::PreviewImageViewUpdate, 0, 0, false, 0);
+		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImageView->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, false, 0);
+	}
+
+	DoPreviewRun();
+}
+
+
 void COutputDoc::DoPreviewRun()
 {
-	if (m_builder.IsStillRunning())
-		return;
-
-	//Save all modified files
-	//NOTE: This saves only files, that have been saved before
-	//if (CConfiguration::GetInstance()->m_bSaveBeforeCompilation)
-	//	theApp.SaveAllModifiedWithoutPrompt();
-
-	//Save main file, even if not saved before
-	//if (!AssureExistingMainFile()) return;
+	if (m_builder.IsStillRunning()) return;
 
 	//For previews, we do not scan the errors, warnings, etc.
 	//We also do not activate the output.
-
-	////Shorthands
-	//// - current project
-	//CLaTeXProject* pProject = theApp.GetProject();
-	//if (!pProject) return;
-	//// - current editor view and document
-	//CodeView* pView = theApp.GetActiveCodeView();
-	//if (!pView) return;
-	//CScintillaCtrl& SCtrl = pView->GetCtrl();
-	//CodeDocument* pDoc = pView->GetDocument();
-	//if (!pDoc) return;
 
 	//Get the preview text. Check validity.
 	CString PreviewText;

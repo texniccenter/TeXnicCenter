@@ -750,6 +750,7 @@ BEGIN
     BUTTON      ID_VIEW_FILES_PANE
     BUTTON      ID_VIEW_BIB_ENTRIES_PANE
     BUTTON      ID_VIEW_BOOKMARKS_PANE
+    BUTTON      ID_VIEW_PREVIEW_IMAGE_PANE
 END
 
 IDR_ERROR_LIST TOOLBAR 16, 16
@@ -2399,6 +2400,7 @@ BEGIN
             MENUITEM "Umgebungen",                  ID_VIEW_ENV_PANE
             MENUITEM "Dateien",                     ID_VIEW_FILES_PANE
             MENUITEM "Lesezeichen",                 ID_VIEW_BOOKMARKS_PANE
+            MENUITEM "Vorschaubild",                ID_VIEW_PREVIEW_IMAGE_PANE
             MENUITEM "Erstellung Ausgabe",          ID_VIEW_BUILD_PANE
             MENUITEM "Erstellung Ergebnis",         ID_VIEW_ERROR_LIST_PANE
             MENUITEM "Suchen 1",                    ID_VIEW_GREP_1_PANE
@@ -5096,6 +5098,8 @@ BEGIN
     ID_BUILD_BUILDPREVIEW   "Erstellt ein Vorschaubild vom markierten Text.\nVorschaubild erstellen"
     ID_VIEW_PREVIEW_OUTPUT_PANE 
                             "Blendet das Fenster mit der Ausgabe der Vorschauerstellung ein oder aus.\nVorschauerstellung"
+    ID_VIEW_PREVIEW_IMAGE_PANE 
+                            "Blendet das Fenster mit dem Vorschaubild ein oder aus.\nVorschaubild"
 END
 
 STRINGTABLE
@@ -6637,6 +6641,7 @@ BEGIN
             MENUITEM "Environments",                ID_VIEW_ENV_PANE
             MENUITEM "Files",                       ID_VIEW_FILES_PANE
             MENUITEM "Bookmarks",                   ID_VIEW_BOOKMARKS_PANE
+            MENUITEM "Preview Image",               ID_VIEW_PREVIEW_IMAGE_PANE
             MENUITEM "Build Output",                ID_VIEW_BUILD_PANE
             MENUITEM "Compilation Results",         ID_VIEW_ERROR_LIST_PANE
             MENUITEM "Find 1",                      ID_VIEW_GREP_1_PANE
@@ -9325,6 +9330,8 @@ BEGIN
     ID_BUILD_BUILDPREVIEW   "Creates a preview image from the selected text\nBuild Preview Image"
     ID_VIEW_PREVIEW_OUTPUT_PANE 
                             "Shows or hides the Output from the Preview Build Process\nPreview Build Output"
+    ID_VIEW_PREVIEW_IMAGE_PANE 
+                            "Shows or hides the Preview Image\nPreview Image"
 END
 
 STRINGTABLE

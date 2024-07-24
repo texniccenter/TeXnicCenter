@@ -41,26 +41,18 @@
 #include "configuration.h"
 #include "EncodingConverter.h"
 #include "SpellerSource.h"
-
-
-enum {
-	ID_BG_UPDATE_BUFFER = WM_USER,
-	ID_BG_UPDATE_LINE,
-	ID_BG_RESET_SPELLER,
-	ID_BG_ENABLE_SPELLER,
-	ID_BG_INVALIDATE_VIEW
-};
+#include "global.h"
 
 const int ShortWordLength = 10;
 
 IMPLEMENT_DYNCREATE(SpellerBackgroundThread, CWinThread)
 
 BEGIN_MESSAGE_MAP(SpellerBackgroundThread, CWinThread)
-	ON_THREAD_MESSAGE(ID_BG_UPDATE_BUFFER, &SpellerBackgroundThread::OnUpdateBuffer)
-	ON_THREAD_MESSAGE(ID_BG_UPDATE_LINE, &SpellerBackgroundThread::OnUpdateLine)
-	ON_THREAD_MESSAGE(ID_BG_RESET_SPELLER, &SpellerBackgroundThread::OnGetSpeller)
-	ON_THREAD_MESSAGE(ID_BG_ENABLE_SPELLER, &SpellerBackgroundThread::OnEnableSpeller)
-	//ON_THREAD_MESSAGE(ID_BG_INVALIDATE_VIEW, &SpellerBackgroundThread::OnInvalidateView)
+	ON_THREAD_MESSAGE(AfxUserMessages::ID_BG_UPDATE_BUFFER, &SpellerBackgroundThread::OnUpdateBuffer)
+	ON_THREAD_MESSAGE(AfxUserMessages::ID_BG_UPDATE_LINE, &SpellerBackgroundThread::OnUpdateLine)
+	ON_THREAD_MESSAGE(AfxUserMessages::ID_BG_RESET_SPELLER, &SpellerBackgroundThread::OnGetSpeller)
+	ON_THREAD_MESSAGE(AfxUserMessages::ID_BG_ENABLE_SPELLER, &SpellerBackgroundThread::OnEnableSpeller)
+	//ON_THREAD_MESSAGE(AfxUserMessages::ID_BG_INVALIDATE_VIEW, &SpellerBackgroundThread::OnInvalidateView)
 END_MESSAGE_MAP()
 
 
@@ -79,12 +71,12 @@ void SpellerBackgroundThread::OnUpdateBuffer(WPARAM /*wParam*/, LPARAM lParam)
 	// doing background processing.
 	MSG msg;
 
-	while (::PeekMessage(&msg, NULL, ID_BG_UPDATE_BUFFER, ID_BG_UPDATE_BUFFER, PM_NOREMOVE) != 0)
+	while (::PeekMessage(&msg, NULL, AfxUserMessages::ID_BG_UPDATE_BUFFER, AfxUserMessages::ID_BG_UPDATE_BUFFER, PM_NOREMOVE) != 0)
 	{
 		if (msg.lParam == lParam)
 		{
 			// Remove and discard the duplicate
-			::PeekMessage(&msg, NULL, ID_BG_UPDATE_BUFFER, ID_BG_UPDATE_BUFFER, PM_REMOVE);
+			::PeekMessage(&msg, NULL, AfxUserMessages::ID_BG_UPDATE_BUFFER, AfxUserMessages::ID_BG_UPDATE_BUFFER, PM_REMOVE);
 			continue;
 		}
 		break;
@@ -123,21 +115,21 @@ void SpellerBackgroundThread::OnUpdateLine( CodeView * pTextView, int nLine )
 	// doing background processing.
 	MSG msg;
 
-	while (::PeekMessage(&msg, NULL, ID_BG_UPDATE_BUFFER, ID_BG_UPDATE_LINE, PM_NOREMOVE) != 0)
+	while (::PeekMessage(&msg, NULL, AfxUserMessages::ID_BG_UPDATE_BUFFER, AfxUserMessages::ID_BG_UPDATE_LINE, PM_NOREMOVE) != 0)
 	{
 		if (msg.lParam == reinterpret_cast<LPARAM>(pTextView))
 		{
 			// This buffer has a message. What could it be?
-			if (msg.message == ID_BG_UPDATE_BUFFER)
+			if (msg.message == AfxUserMessages::ID_BG_UPDATE_BUFFER)
 			{
 				// A message to check the whole buffer is in the queue.
 				// There is no point checking a single line -- we're done.
 				return;
 			}
-			else if (msg.message == ID_BG_UPDATE_LINE && msg.wParam == static_cast<WPARAM>(nLine))
+			else if (msg.message == AfxUserMessages::ID_BG_UPDATE_LINE && msg.wParam == static_cast<WPARAM>(nLine))
 			{
 				// A duplicate message. Remove and discard.
-				::PeekMessage(&msg, NULL, ID_BG_UPDATE_LINE, ID_BG_UPDATE_LINE, PM_REMOVE);
+				::PeekMessage(&msg, NULL, AfxUserMessages::ID_BG_UPDATE_LINE, AfxUserMessages::ID_BG_UPDATE_LINE, PM_REMOVE);
 				continue;
 			}
 			// else  We need to handle this message
@@ -332,22 +324,22 @@ void SpellerBackgroundThread::DoCheckLine(CodeView* view, int line)
 
 void SpellerBackgroundThread::RecheckSpelling( CodeView* view )
 {
-	PostThreadMessage(ID_BG_UPDATE_BUFFER,0,reinterpret_cast<LPARAM>(view));
+	PostThreadMessage(AfxUserMessages::ID_BG_UPDATE_BUFFER,0,reinterpret_cast<LPARAM>(view));
 }
 
 void SpellerBackgroundThread::RecheckSingleLineSpelling( int line, CodeView* view )
 {
-	PostThreadMessage(ID_BG_UPDATE_LINE,static_cast<WPARAM>(line),reinterpret_cast<LPARAM>(view));
+	PostThreadMessage(AfxUserMessages::ID_BG_UPDATE_LINE,static_cast<WPARAM>(line),reinterpret_cast<LPARAM>(view));
 }
 
 void SpellerBackgroundThread::EnableSpeller( bool enable /*= true*/ )
 {
-	PostThreadMessage(ID_BG_ENABLE_SPELLER,enable,0);
+	PostThreadMessage(AfxUserMessages::ID_BG_ENABLE_SPELLER,enable,0);
 }
 
 void SpellerBackgroundThread::ResetSpeller( SpellerSource* s )
 {
-	PostThreadMessage(ID_BG_RESET_SPELLER,0,reinterpret_cast<LPARAM>(s));
+	PostThreadMessage(AfxUserMessages::ID_BG_RESET_SPELLER,0,reinterpret_cast<LPARAM>(s));
 }
 
 void SpellerBackgroundThread::InvalidateView( CodeView* view )

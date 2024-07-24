@@ -43,6 +43,7 @@
 
 class ErrorListPane;
 class CodeDocument;
+class CPreviewImageView;
 
 
 class COutputDoc :
@@ -90,7 +91,7 @@ public:
 
 	void SetAllViews(COutputView* pBuildView, COutputView* pGrepView1,
 	                 COutputView* pGrepView2, COutputView* pParseView,
-					 COutputView* pPreviewView);
+					 COutputView* pPreviewView, CPreviewImageView* pPreviewImageView);
 
 	/**
 	Empties the build view and clears the error, warning and badbox
@@ -143,6 +144,18 @@ protected:
 
 	/** For updating the views attached to this "document" */
 	void UpdateAllViews(COutputView* pSender, LPARAM lHint, CObject* pHint);
+
+	/** Prepares a run of LaTeX, BibTex, MakeIndex
+		by saving files, starting progress animations, and so on.
+
+		@param bRemoveErrorMarks
+		Whether to remove the error marks from the open documents.
+
+		@param bCloseViewer
+		Whether to close the (PDF) viewer before the run.
+	*/
+	bool PrepareProductionRun(const bool bRemoveErrorMarks = false,
+							  const bool bCloseViewer = false);
 
 	/**
 	Builds the project or the current file, depending on the
@@ -465,6 +478,9 @@ protected:
 
 	/** Pointer to the attached preview-view. */
 	COutputView *m_pPreviewView;
+
+	/** Pointer to the attached preview-image-view. */
+	CPreviewImageView* m_pPreviewImageView;
 
 	/** Pointer to the attached grep-views. */
 	COutputView *m_apGrepView[2];

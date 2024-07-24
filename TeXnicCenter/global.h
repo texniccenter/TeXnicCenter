@@ -71,3 +71,38 @@ typedef CArray<CString, const CString&> StringArray;
  */
 void AfxFindDictionaries(StringArray &aLanguage,
                          StringArray &aDialect);
+
+
+/** The following messages can be sent to different parts of TeXnicCenter.
+
+    Some of these messages are rather local to a window,
+    but we collect them here to keep the IDs unique
+    throughout the application.
+*/
+enum AfxUserMessages
+{
+	 StartPaneAnimationMessageID = WM_USER
+	,StopPaneAnimationMessageID
+	,CheckForFileChangesMessageID
+    ,CStringLineTextMessageID
+    /** Show, not toggle, a docking bar. The wParam is the ID of the docking bar to show. */
+	,ShowDockingBarID
+    ,UpdateToolBarButtonMessageID
+    ,ShellUpdateMessageID
+	,ID_BG_UPDATE_BUFFER
+	,ID_BG_UPDATE_LINE
+	,ID_BG_RESET_SPELLER
+	,ID_BG_ENABLE_SPELLER
+	,ID_BG_INVALIDATE_VIEW
+    ,GotoBibliographyLine
+    ,OPW_ADD_LINE
+    ,OPW_RESET
+    ,OPW_ADD_INFOLINE
+
+    /** Triggers a reload of the preview image from disk. */
+    ,PreviewImageViewUpdate
+    /** Starts the animation of the progress bar for the preview creation. */
+    ,PreviewImageViewStartProgressAnimation
+    /** Stops the animation of the progress bar for the preview creation. */
+    ,PreviewImageViewStopProgressAnimation
+};

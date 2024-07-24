@@ -17,14 +17,10 @@
 #include "EncodingConverter.h"
 #include "LaTeXTokenizer.h"
 #include "SpellerBackgroundThread.h"
+#include "global.h"
 
 #pragma push_macro("max")
 #undef max
-
-enum {
-	CheckForFileChangesMessageID = WM_USER + 1,
-	CStringLineTextMessageID
-};
 
 #pragma region Helper functions
 
@@ -115,10 +111,10 @@ BEGIN_MESSAGE_MAP(CodeView, CScintillaView)
 	ON_COMMAND(ID_EDIT_SELECTPARAGRAPH, &CodeView::OnEditSelParagraph)
 	ON_COMMAND(ID_EDIT_DELETE_LINE, &CodeView::OnEditDeleteLine)
 	ON_COMMAND(ID_ADVANCED_DUPLICATE, &CodeView::OnEditDuplicateLine)
-	ON_MESSAGE_VOID(CheckForFileChangesMessageID, OnCheckForFileChanges)
+	ON_MESSAGE_VOID(AfxUserMessages::CheckForFileChangesMessageID, OnCheckForFileChanges)
 	ON_COMMAND(ID_VIEW_HIGHLIGHTACTIVELINE, &CodeView::OnViewHighlightActiveLine)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_HIGHLIGHTACTIVELINE, &CodeView::OnUpdateViewHighlightActiveLine)
-	ON_MESSAGE(CStringLineTextMessageID, &CodeView::OnGetLineText)
+	ON_MESSAGE(AfxUserMessages::CStringLineTextMessageID, &CodeView::OnGetLineText)
 	ON_MESSAGE(WM_COMMANDHELP, &CodeView::OnCommandHelp)
 END_MESSAGE_MAP()
 
@@ -1408,7 +1404,7 @@ void CodeView::OnSetFocus(CWnd* pOldWnd)
 
 void CodeView::CheckForFileChangesAsync()
 {
-	PostMessage(CheckForFileChangesMessageID);
+	PostMessage(AfxUserMessages::CheckForFileChangesMessageID);
 }
 
 void CodeView::OnCheckForFileChanges()

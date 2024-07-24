@@ -123,6 +123,38 @@ public:
 		}
 	};
 
+	///Container for CallbackMessage
+	class CallbackMessages : protected CArray<CallbackMessage>
+	{
+	public:
+		CallbackMessages() {}
+		virtual ~CallbackMessages() {}
+
+	public:
+		void AddMessage(bool bPost, HWND arghWnd, UINT argmessage, WPARAM argwParam = 0, LPARAM arglParam = 0,
+						bool argbCheckCode = false, int argnCheckCode = 0)
+		{
+			CallbackMessage Msg;
+			Msg.Set(bPost, arghWnd, argmessage, argwParam, arglParam, true, argbCheckCode, argnCheckCode);
+			Add(Msg);
+		}
+
+		void ClearAllMessages()
+		{
+			RemoveAll();
+		}
+
+		void SendCallbacks(int argCode)
+		{
+			for(int i=0;i<=GetUpperBound();i++)
+			{
+				GetAt(i).SendCallback(argCode);
+			}
+
+			ClearAllMessages();
+		}
+	};
+
 // construction/destruction
 public:
 	/**
@@ -314,8 +346,8 @@ public:
 	/** Thread ID */
 	DWORD m_dwThreadId;
 
-	///Definition of Callback after Termination
-	CallbackMessage MsgAfterTermination;
+	///Definition of Callbacks after Termination
+	CallbackMessages MsgsAfterTermination;
 
 private:
 	BOOL m_bAutoDelete;

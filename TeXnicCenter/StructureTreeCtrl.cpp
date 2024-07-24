@@ -44,14 +44,13 @@
 #include "FontOccManager.h"
 #include "OutputDoc.h"
 #include "TeXnicCenter.h"
-
-const UINT GotoBibliographyLine = WM_USER + 1;
+#include "global.h"
 
 
 IMPLEMENT_DYNCREATE(StructureTreeCtrl, NavigatorTreeCtrl)
 
 BEGIN_MESSAGE_MAP(StructureTreeCtrl, NavigatorTreeCtrl)
-	ON_MESSAGE(GotoBibliographyLine, &StructureTreeCtrl::OnGotoBibliographyLine)
+	ON_MESSAGE(AfxUserMessages::GotoBibliographyLine, &StructureTreeCtrl::OnGotoBibliographyLine)
 END_MESSAGE_MAP()
 
 void StructureTreeCtrl::OnUpdate(CProjectView* /*pSender*/, LPARAM lHint, LPVOID /*pHint*/)
@@ -196,7 +195,7 @@ void StructureTreeCtrl::GotoItem( HTREEITEM item )
 			__super::GotoItem(item);
 		else
 		{
-			PostMessage(GotoBibliographyLine, index);
+			PostMessage(AfxUserMessages::GotoBibliographyLine, index);
 		}
 	}
 	catch (std::out_of_range&) 

@@ -497,6 +497,9 @@
     <ClCompile Include="OutputDocPreview.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PreviewImageView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aboutbox.h">
@@ -1010,6 +1013,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="ProfilePagePreview.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PreviewImageView.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

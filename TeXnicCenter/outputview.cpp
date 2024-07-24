@@ -36,14 +36,14 @@
 #include "OutputView.h"
 #include "OutputDoc.h"
 #include "configuration.h"
-
+#include "global.h"
 
 IMPLEMENT_DYNAMIC(COutputView,CListCtrl)
 
 BEGIN_MESSAGE_MAP(COutputView,CListCtrl)
-	ON_MESSAGE(OPW_ADD_LINE,OnAddLine)
-	ON_MESSAGE(OPW_RESET,OnReset)
-	ON_MESSAGE(OPW_ADD_INFOLINE,OnAddInfoLine)
+	ON_MESSAGE(AfxUserMessages::OPW_ADD_LINE, &COutputView::OnAddLine)
+	ON_MESSAGE(AfxUserMessages::OPW_RESET, &COutputView::OnReset)
+	ON_MESSAGE(AfxUserMessages::OPW_ADD_INFOLINE, &COutputView::OnAddInfoLine)
 	ON_WM_CREATE()
 	ON_WM_SHOWWINDOW()
 	ON_WM_SETFOCUS()

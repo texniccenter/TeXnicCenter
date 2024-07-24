@@ -52,6 +52,7 @@ class StructurePane;
 class WorkspacePane;
 class LaTeXView;
 class COutputBuilder;
+class CPreviewImageView;
 
 void CreateColorButtonPalette(CPalette& palette, int& colors, int& columns);
 
@@ -99,11 +100,12 @@ public:
 	///Enumeration of navigator panes. Make sure, this matches the code in GetAllPanes()
 	enum tagNavigatorTabs
 	{
-		navigatorTabBookmarks = 0,
-		navigatorTabEnvironments = 1,
-		navigatorTabFiles = 2,
-		navigatorTabReferences = 3,
-		navigatorTabStructure = 4
+		navigatorTabBookmarks = 0
+		, navigatorTabPreviewImage
+		, navigatorTabEnvironments
+		, navigatorTabFiles
+		, navigatorTabReferences
+		, navigatorTabStructure
 	};
 
 // operations
@@ -319,6 +321,7 @@ private:
 	CMFCToolBar m_wndMathBar;
 	CMFCToolBar m_wndFindBar;
 	CMFCToolBar m_awndMathBar[MATHBAR_COUNT];
+	CMFCToolBar m_wndPreviewBar;
 	CMFCMenuBar m_wndMenuBar;
 
 	CImageList m_navigatorImages;
@@ -357,6 +360,11 @@ private:
 	std::unique_ptr<WorkspacePane> preview_output_view_pane_;
 	/** View containing the results of the preview process. */
 	std::unique_ptr<CBuildView> preview_output_view_;
+
+	///Pane for the preview image view.
+	std::unique_ptr<WorkspacePane> preview_image_view_pane_;
+	/** Preview image view. */
+	std::unique_ptr<CPreviewImageView> preview_image_view_;
 
 	///View listing the errors of a compilation
 	std::unique_ptr<ErrorListPane> error_list_view_;
@@ -399,11 +407,18 @@ protected:
 	afx_msg void OnViewTransparency();
 	
 	void OnUpdateApplicationLook(CCmdUI* pCmdUI);
-	void OnLatexRun();
-	void OnLatexStop(bool canceled);
 
+	///Start an animation of the TXC icon in the Windows task bar.
 	void OnStartPaneAnimation();
+	///Start the animation of the TXC icon in the Windows task bar.
 	LRESULT OnStopPaneAnimation(WPARAM, LPARAM);
+
+	/** Shows, not toggles, a docking bar.
+	
+		@param wParam
+		The UINT ID of the docking bar to show.
+	*/
+	LRESULT OnShowDockingBar(WPARAM wParam, LPARAM lParam);
 
 private:
 	bool animating_;

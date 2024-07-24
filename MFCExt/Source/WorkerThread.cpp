@@ -194,7 +194,7 @@ BOOL CWorkerThread::OnPreCreate()
 
 UINT CWorkerThread::OnTerminate(UINT unExitCode)
 {
-	MsgAfterTermination.SendCallback(unExitCode);
+	MsgsAfterTermination.SendCallbacks(unExitCode);
 
 	return unExitCode;
 }

@@ -67,9 +67,6 @@ BOOL COutputBuilder::Create(int nMode,
                             BOOL bRunBibTex,BOOL bRunMakeIndex,
                             int nPriority /*= THREAD_PRIORITY_BELOW_NORMAL*/)
 {
-	// Notify the main frame
-	static_cast<CMainFrame*>(AfxGetMainWnd())->OnLatexRun();
-
 	m_nMode = nMode;
 
 	m_pDoc = pDoc;
@@ -229,11 +226,10 @@ UINT COutputBuilder::OnTerminate(UINT unExitCode)
 		}
 	}
 
-	//Call callback message
-	MsgAfterTermination.SendCallback(unExitCode);
-
-	// Notify the main frame
-	static_cast<CMainFrame*>(AfxGetMainWnd())->OnLatexStop(m_bCancel);
+	//Call callback messages.
+	// This can be stopping the progress animation, opening the PDF-viewer,
+	// opening the preview tool window, and such.
+	MsgsAfterTermination.SendCallbacks(unExitCode);
 
 	return retval;
 }

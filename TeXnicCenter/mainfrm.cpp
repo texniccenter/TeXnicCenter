@@ -62,6 +62,7 @@
 #include "TransparencyDlg.h"
 #include "UserTool.h"
 #include "WorkspacePane.h"
+#include "PreviewImageView.h"
 
 // To hold the colours and their names
 struct ColourTableEntry
@@ -189,11 +190,6 @@ std::auto_ptr<CMFCColorMenuButton> CreateColorMenuButton(UINT id, UINT tear_off_
 	return pColorButton;
 }
 
-enum
-{
-	StartPaneAnimationMessageID = WM_USER, StopPaneAnimationMessageID, CheckForFileChangesMessageID
-};
-
 IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
@@ -249,12 +245,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_COMMAND_RANGE(ID_VIEW_APP_LOOK_WIN7, ID_VIEW_APP_LOOK_WIN7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APP_LOOK_WIN_2000, ID_VIEW_APP_LOOK_OFFICE_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_APP_LOOK_WIN7, &CMainFrame::OnUpdateApplicationLook)
-	ON_MESSAGE_VOID(StartPaneAnimationMessageID, OnStartPaneAnimation)
-	ON_MESSAGE(StopPaneAnimationMessageID, OnStopPaneAnimation)
+	ON_MESSAGE_VOID(AfxUserMessages::StartPaneAnimationMessageID, OnStartPaneAnimation)
+	ON_MESSAGE(AfxUserMessages::StopPaneAnimationMessageID, &CMainFrame::OnStopPaneAnimation)
 	ON_REGISTERED_MESSAGE(AFX_WM_ON_GET_TAB_TOOLTIP, &CMainFrame::OnGetTabToolTip)
 	ON_COMMAND(ID_VIEW_TRANSPARENCY, &CMainFrame::OnViewTransparency)
 	ON_WM_DESTROY()
-	ON_MESSAGE_VOID(CheckForFileChangesMessageID, CheckForFileChanges)
+	ON_MESSAGE_VOID(AfxUserMessages::CheckForFileChangesMessageID, CheckForFileChanges)
 	ON_COMMAND(ID_VIEW_TOGGLEBOTTOMDOCKINGBARS, &CMainFrame::OnViewToggleBottomDockingBars)
 	ON_COMMAND(ID_VIEW_TOGGLELEFTDOCKINGBARS, &CMainFrame::OnViewToggleLeftDockingBars)
 	ON_COMMAND(ID_VIEW_TOGGLERIGHTDOCKINGBARS, &CMainFrame::OnViewToggleRightDockingBars)
@@ -267,9 +263,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_COMMAND_EX(ID_VIEW_BOOKMARKS_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_BUILD_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_PREVIEW_OUTPUT_PANE, &CMainFrame::OnToggleDockingBar)
+	ON_COMMAND_EX(ID_VIEW_PREVIEW_IMAGE_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_GREP_1_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_GREP_2_PANE, &CMainFrame::OnToggleDockingBar)
 	ON_COMMAND_EX(ID_VIEW_PARSE_PANE, &CMainFrame::OnToggleDockingBar)
+	ON_MESSAGE(AfxUserMessages::ShowDockingBarID, &CMainFrame::OnShowDockingBar)
 	ON_MESSAGE(WM_COMMANDHELP, &CMainFrame::OnCommandHelp)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_CASCADE, &CMainFrame::OnUpdateWindowMDICommands)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_HORZ, &CMainFrame::OnUpdateWindowMDICommands)
@@ -307,6 +305,8 @@ CMainFrame::CMainFrame()
 	, build_view_(new CBuildView)
 	, preview_output_view_pane_(new WorkspacePane)
 	, preview_output_view_(new CBuildView)
+	, preview_image_view_pane_(new WorkspacePane)
+	, preview_image_view_(new CPreviewImageView)
 	, error_list_view_(new ErrorListPane)
 	, grep_view_1_pane_(new WorkspacePane)
 	, grep_view_1_(new CGrepView)
@@ -403,6 +403,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		if (!CreateToolBar(&m_awndMathBar[i], IDR_MATHBAR1 + i, IDR_MATH + i, false)) return -1;
 	}
+
+	// create preview tool bar
+	if (!CreateToolBar(&m_wndPreviewBar, IDR_LATEX, STE_TB_LATEX)) return -1;
 
 	// load user defined toolbars
 	InitUserToolbars(NULL, IDR_USER_TOOLBAR_FIRST, IDR_USER_TOOLBAR_LAST);
@@ -591,6 +594,7 @@ void CMainFrame::GetAllPanes(std::vector< CBasePane* >& pAllPanes, bool bNavigat
 	if (bNavigatorPanes)
 	{
 		pAllPanes.push_back(bookmark_view_pane_.get());
+		pAllPanes.push_back(preview_image_view_pane_.get());
 		pAllPanes.push_back(env_view_pane_.get());
 		pAllPanes.push_back(file_view_pane_.get());
 		pAllPanes.push_back(bib_view_pane_.get());
@@ -794,6 +798,10 @@ BOOL CMainFrame::OnToggleDockingBar(UINT nIDEvent)
 			pCtrlBar = preview_output_view_pane_.get();
 			break;
 
+		case ID_VIEW_PREVIEW_IMAGE_PANE:
+			pCtrlBar = preview_image_view_pane_.get();
+			break;
+
 		case ID_VIEW_GREP_1_PANE:
 			pCtrlBar = grep_view_1_pane_.get();
 			break;
@@ -814,6 +822,21 @@ BOOL CMainFrame::OnToggleDockingBar(UINT nIDEvent)
 	}
 
 	return false;
+}
+
+
+LRESULT CMainFrame::OnShowDockingBar(WPARAM wParam, LPARAM /*lParam*/)
+{
+	CBasePane* pCtrlBar = GetControlBarByCmd(wParam);
+	ASSERT(pCtrlBar);
+	if (pCtrlBar)
+	{
+		ASSERT(IsWindow(pCtrlBar->m_hWnd));
+		ShowPane(pCtrlBar, TRUE, FALSE, TRUE);
+		return true;
+	}
+
+	return 0L;
 }
 
 
@@ -1781,6 +1804,8 @@ bool CMainFrame::CreateToolWindows()
 	//Right windows
 	bookmark_view_pane_->Create(GetCaption(ID_VIEW_BOOKMARKS_PANE), this,
 		CRect(CPoint(0, 0), size), TRUE, ID_VIEW_BOOKMARKS_PANE, pane_style | CBRS_RIGHT);
+	preview_image_view_pane_->Create(GetCaption(ID_VIEW_PREVIEW_IMAGE_PANE), this,
+		CRect(CPoint(0, 0), size), TRUE, ID_VIEW_PREVIEW_IMAGE_PANE, pane_style | CBRS_RIGHT);
 	//Bottom windows
 	error_list_view_->Create(GetCaption(ID_VIEW_ERROR_LIST_PANE), this,
 		CRect(CPoint(0, 0), bottom_pane_size), TRUE, ID_VIEW_ERROR_LIST_PANE, pane_style | CBRS_BOTTOM);
@@ -1820,6 +1845,12 @@ bool CMainFrame::CreateToolWindows()
 		return false;
 	}
 
+	if (!preview_image_view_->Create(rectDummy, this))
+	{
+		TRACE0("Failed to create preview image view\n");
+		return false;
+	}
+
 	if (!grep_view_1_->Create(rectDummy, this))
 	{
 		TRACE0("Failed to create find 1 output view\n");
@@ -1844,7 +1875,8 @@ bool CMainFrame::CreateToolWindows()
 	// - and set them
 	env_view_pane_->SetClient(env_view_.get());
 	output_doc_->SetAllViews(build_view_.get(), grep_view_1_.get(), 
-		grep_view_2_.get(), parse_view_.get(), preview_output_view_.get());
+							 grep_view_2_.get(), parse_view_.get(),
+							 preview_output_view_.get(), preview_image_view_.get());
 	build_view_->AttachDoc(output_doc_.get());
 	preview_output_view_->AttachDoc(output_doc_.get());
 	grep_view_1_->AttachDoc(output_doc_.get());
@@ -1856,9 +1888,15 @@ bool CMainFrame::CreateToolWindows()
 	//Set clients
 	build_view_pane_->SetClient(build_view_.get());
 	preview_output_view_pane_->SetClient(preview_output_view_.get());
+	preview_image_view_pane_->SetClient(preview_image_view_.get());
 	grep_view_1_pane_->SetClient(grep_view_1_.get());
 	grep_view_2_pane_->SetClient(grep_view_2_.get());
 	parse_view_pane_->SetClient(parse_view_.get());
+
+	//Set toolbars
+	//preview_image_view_pane_->SetToolBar(&m_wndFindBar);
+	//PrivateToolBar* pPTool = new PrivateToolBar();
+	//preview_image_view_pane_->CreateToolBar(pPTool->GetRuntimeClass(), IDR_FIND);
 
 	//Enable Docking
 	structure_view_->EnableDocking(CBRS_ALIGN_ANY);
@@ -1869,6 +1907,7 @@ bool CMainFrame::CreateToolWindows()
 	error_list_view_->EnableDocking(CBRS_ALIGN_ANY);
 	build_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	preview_output_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
+	preview_image_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	grep_view_1_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	grep_view_2_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	parse_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
@@ -1897,6 +1936,10 @@ bool CMainFrame::CreateToolWindows()
 	env_view_pane_->AttachToTabWnd(structure_view_.get(), DM_STANDARD, TRUE, &pDockablePane);
 	file_view_pane_->AttachToTabWnd(structure_view_.get(), DM_STANDARD, FALSE);
 
+	//Bookmark view and its other windows
+	pDockablePane = NULL;
+	preview_image_view_pane_->AttachToTabWnd(bookmark_view_pane_.get(), DM_STANDARD, TRUE, &pDockablePane);
+
 	//Set Images
 	HIMAGELIST himl = ::ImageList_LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(
 		IDB_NAVIGATION_BAR), 16, 1, RGB(192, 192, 192), IMAGE_BITMAP, LR_CREATEDIBSECTION);
@@ -1905,6 +1948,7 @@ bool CMainFrame::CreateToolWindows()
 	file_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 2), FALSE);
 	bib_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 3), FALSE);
 	bookmark_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 4), FALSE);
+	preview_image_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 5), FALSE);
 	::ImageList_Destroy(himl);
 	
 	if (CBaseTabbedPane* pane = dynamic_cast<CBaseTabbedPane*>(pDockablePane))
@@ -1951,6 +1995,7 @@ bool CMainFrame::CreateToolWindows()
 	ShowPaneEnsureVisibility(bookmark_view_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(build_view_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(preview_output_view_pane_.get(), false, false, false);
+	ShowPaneEnsureVisibility(preview_image_view_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(error_list_view_.get(), false, false, false);
 	ShowPaneEnsureVisibility(grep_view_1_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(grep_view_2_pane_.get(), false, false, false);
@@ -2062,16 +2107,6 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 		pCmdUI->Enable();
 
 	pCmdUI->SetRadio(theApp.GetApplicationLook() == pCmdUI->m_nID);
-}
-
-void CMainFrame::OnLatexRun()
-{
-	PostMessage( StartPaneAnimationMessageID);
-}
-
-void CMainFrame::OnLatexStop(bool canceled)
-{
-	PostMessage(StopPaneAnimationMessageID, canceled);
 }
 
 void CMainFrame::OnStartPaneAnimation()
@@ -2198,7 +2233,7 @@ void CMainFrame::OnDestroy()
 
 void CMainFrame::CheckForFileChangesAsync()
 {
-	PostMessage( CheckForFileChangesMessageID);
+	PostMessage(AfxUserMessages::CheckForFileChangesMessageID);
 }
 
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)

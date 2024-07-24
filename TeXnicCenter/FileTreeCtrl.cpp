@@ -41,6 +41,7 @@
 #include "LatexProject.h"
 #include "OleDrop.h"
 #include "OutputDoc.h"
+#include "global.h"
 
 CString FormatInput(const StructureItem& item)
 {
@@ -240,11 +241,6 @@ bool FileTreeCtrl::FolderItemIDListLessPredicate::operator()
 		(HRESULT_CODE(shellFolder->CompareIDs(0, lhs, rhs))) < 0;
 }
 
-
-enum {
-	ShellUpdateMessageID = WM_USER + 1
-};
-
 IMPLEMENT_DYNAMIC(FileTreeCtrl, NavigatorTreeCtrl)
 
 BEGIN_MESSAGE_MAP(FileTreeCtrl, NavigatorTreeCtrl)
@@ -252,7 +248,7 @@ BEGIN_MESSAGE_MAP(FileTreeCtrl, NavigatorTreeCtrl)
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY_REFLECT(TVN_DELETEITEM, &FileTreeCtrl::OnTvnDeleteitem)
 	ON_NOTIFY_REFLECT(TVN_GETINFOTIP, &FileTreeCtrl::OnTvnGetInfoTip)
-	ON_MESSAGE(ShellUpdateMessageID, &FileTreeCtrl::OnShellChange)
+	ON_MESSAGE(AfxUserMessages::ShellUpdateMessageID, &FileTreeCtrl::OnShellChange)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &FileTreeCtrl::OnNMCustomdraw)
 END_MESSAGE_MAP()
 
@@ -550,7 +546,7 @@ void FileTreeCtrl::Register(const CString& path, bool recursive /*= true*/)
 		SHCNE_RENAMEITEM | SHCNE_DELETE | SHCNE_UPDATEIMAGE;
 
 	shellNotifyId_ = SHChangeNotifyRegister(m_hWnd, SHCNRF_ShellLevel |
-		SHCNRF_InterruptLevel, notifications, ShellUpdateMessageID, 1, &e);
+		SHCNRF_InterruptLevel, notifications, AfxUserMessages::ShellUpdateMessageID, 1, &e);
 }
 
 void FileTreeCtrl::Unregister()

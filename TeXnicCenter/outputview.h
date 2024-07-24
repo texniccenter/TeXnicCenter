@@ -39,13 +39,6 @@
 
 class COutputDoc;
 
-enum
-{
-	OPW_ADD_LINE		= WM_USER + 5,
-	OPW_RESET			= WM_USER + 6,
-	OPW_ADD_INFOLINE	= WM_USER + 7
-};
-
 class COutputView : public CListCtrl, public OutputViewBase
 {
 	DECLARE_DYNAMIC(COutputView)

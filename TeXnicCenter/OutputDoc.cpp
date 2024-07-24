@@ -81,6 +81,7 @@ COutputDoc::COutputDoc()
 		,m_nActiveFileGrep(0)
 		,m_pActiveOutputView(NULL)
 		,m_pParseView(NULL)
+		,m_pPreviewImageView(NULL)
 		,m_bActiveFileOperation(FALSE)
 		, errorListView_(0)
 {
@@ -98,18 +99,20 @@ COutputDoc::~COutputDoc()
 
 void COutputDoc::SetAllViews(COutputView* pBuildView, COutputView* pGrepView1,
 							 COutputView* pGrepView2, COutputView* pParseView,
-							 COutputView* pPreviewView)
+							 COutputView* pPreviewView, CPreviewImageView* pPreviewImageView)
 {
 	ASSERT(pBuildView);
 	ASSERT(pGrepView1);
 	ASSERT(pGrepView2);
 	ASSERT(pParseView);
 	ASSERT(pPreviewView);
+	ASSERT(pPreviewImageView);
 	m_pBuildView = pBuildView;
 	m_apGrepView[0] = pGrepView1;
 	m_apGrepView[1] = pGrepView2;
 	m_pParseView = pParseView;
 	m_pPreviewView = pPreviewView;
+	m_pPreviewImageView = pPreviewImageView;
 
 	SetActiveView(m_pBuildView);
 }
@@ -735,8 +738,8 @@ void COutputDoc::OnEditFindInFiles()
 	strStart.Format(STE_GREP_START, (LPCTSTR)dlg.m_strSearchFor);
 	ASSERT(m_nWorkingFileGrep == 0 || m_nWorkingFileGrep == 1);
 	ASSERT(m_apGrepView[m_nWorkingFileGrep]);
-	m_apGrepView[m_nWorkingFileGrep]->SendMessage(OPW_RESET);
-	m_apGrepView[m_nWorkingFileGrep]->SendMessage(OPW_ADD_LINE,
+	m_apGrepView[m_nWorkingFileGrep]->SendMessage(AfxUserMessages::OPW_RESET);
+	m_apGrepView[m_nWorkingFileGrep]->SendMessage(AfxUserMessages::OPW_ADD_LINE,
 	        (WPARAM)(LPCTSTR)strStart);
 
 	// initialize attributes
@@ -752,7 +755,7 @@ void COutputDoc::OnEditFindInFiles()
 	if (m_bCanGrep)
 	{
 		// failed
-		m_apGrepView[m_nWorkingFileGrep]->SendMessage(OPW_ADD_LINE,
+		m_apGrepView[m_nWorkingFileGrep]->SendMessage(AfxUserMessages::OPW_ADD_LINE,
 		        (WPARAM)(LPCTSTR)CString((LPCTSTR)STE_GREP_FAILED));
 	}
 }
@@ -798,26 +801,26 @@ void COutputDoc::OnParseLineInfo(COutputInfo &line,int nLevel,int nSeverity)
 	{
 		case CParseOutputHandler::none :
 			m_aParseInfo.Add(line);
-			PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,
+			PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,
 			            MAKEWPARAM((WORD)nLevel,(WORD)CParseOutputView::imageNone),(LPARAM)buffer);
 			m_nOutputLines++;
 			break;
 		case CParseOutputHandler::information :
 			m_aParseInfo.Add(line);
-			PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,
+			PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,
 			            MAKEWPARAM((WORD)nLevel,(WORD)CParseOutputView::imageInfo),(LPARAM)buffer);
 			m_nOutputLines++;
 			break;
 
 		case CParseOutputHandler::warning :
 			m_aParseWarning.Add(line);
-			PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,
+			PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,
 			            MAKEWPARAM((WORD)nLevel,(WORD)CParseOutputView::imageWarning),(LPARAM)buffer);
 			m_nOutputLines++;
 			break;
 		case CParseOutputHandler::error :
 			m_aParseWarning.Add(line);
-			PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,
+			PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,
 			            MAKEWPARAM((WORD)nLevel,(WORD)CParseOutputView::imageError),(LPARAM)buffer);
 			m_nOutputLines++;
 			break;
@@ -845,7 +848,7 @@ void COutputDoc::OnParseBegin(bool bCancelState)
 
 	//Add here things, that should NOT be done if parser shall be cancelled
 
-	PostMessage(m_pParseView->m_hWnd,OPW_RESET,0,0L);
+	PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_RESET,0,0L);
 	m_nOutputLines = 0;
 
 	CString timeStr = AfxLoadString(STE_PARSE_BEGIN);
@@ -864,11 +867,11 @@ void COutputDoc::OnParseBegin(bool bCancelState)
 	TCHAR* buffer = new TCHAR[timeStr.GetLength() + 1];
 	_tcscpy(buffer,timeStr);
 
-	PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,
+	PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,
 	            MAKEWPARAM((WORD)0,(WORD)CParseOutputView::imageNone),(LPARAM)buffer);
 	m_nOutputLines++;
 
-	PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,0,0L); //Empty line
+	PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,0,0L); //Empty line
 	m_nOutputLines++;
 
 	//end of: Add here things, that should NOT be done if parser shall be cancelled
@@ -905,9 +908,9 @@ void COutputDoc::OnParseEnd(bool bResult,int nFiles,int nLines)
 	// NOTE: The Message handler is responsible for freeing the memory!!!
 	TCHAR* buffer = new TCHAR[timeStr.GetLength() + 1];
 	_tcscpy(buffer,(LPCTSTR)timeStr);
-	PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,0,0L); //Empty line
+	PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,0,0L); //Empty line
 	m_nOutputLines++;
-	PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,
+	PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,
 	            MAKEWPARAM((WORD)0,(WORD)CParseOutputView::imageNone),(LPARAM)buffer);
 	m_nOutputLines++;
 
@@ -919,7 +922,7 @@ void COutputDoc::OnParseEnd(bool bResult,int nFiles,int nLines)
 	TCHAR* buffer2 = new TCHAR[results.GetLength() + 1];
 	_tcscpy(buffer2,results);
 
-	PostMessage(m_pParseView->m_hWnd,OPW_ADD_INFOLINE,
+	PostMessage(m_pParseView->m_hWnd,AfxUserMessages::OPW_ADD_INFOLINE,
 	            MAKEWPARAM((WORD)0,(WORD)CParseOutputView::imageNone),(LPARAM)buffer2);
 	m_nOutputLines++;
 
@@ -941,7 +944,7 @@ void COutputDoc::OnFileGrepHit(CFileGrep *pFileGrep,LPCTSTR lpszPath,
 	CString strHit;
 	strHit.Format(STE_GREP_HIT,lpszPath,nLine,lpszLine);
 
-	SendMessage(m_apGrepView[m_nWorkingFileGrep]->m_hWnd,OPW_ADD_LINE,
+	SendMessage(m_apGrepView[m_nWorkingFileGrep]->m_hWnd, AfxUserMessages::OPW_ADD_LINE,
 	            (WPARAM)(LPCTSTR)strHit,0L);
 
 	// add hit
@@ -962,7 +965,7 @@ void COutputDoc::OnFileGrepError(CFileGrep *pFileGrep,LPCTSTR lpszPath)
 	// Add error to grep view
 	CString strError;
 	strError.Format(STE_GREP_ERROR,lpszPath);
-	SendMessage(m_apGrepView[m_nWorkingFileGrep]->m_hWnd,OPW_ADD_LINE,
+	SendMessage(m_apGrepView[m_nWorkingFileGrep]->m_hWnd,AfxUserMessages::OPW_ADD_LINE,
 	            (WPARAM)(LPCTSTR)strError,0L);
 	m_nWorkingGrepOutputLine++;
 }
@@ -981,7 +984,7 @@ void COutputDoc::OnFileGrepFinished(CFileGrep *pFileGrep,int nHints)
 	else
 		strFinished.LoadString(STE_GREP_FINISHEDNOHIT);
 
-	SendMessage(m_apGrepView[m_nWorkingFileGrep]->m_hWnd,OPW_ADD_LINE,
+	SendMessage(m_apGrepView[m_nWorkingFileGrep]->m_hWnd,AfxUserMessages::OPW_ADD_LINE,
 	            (WPARAM)(LPCTSTR)strFinished,0L);
 	m_nWorkingGrepOutputLine++;
 
@@ -1095,9 +1098,9 @@ void COutputDoc::OnUpdateFileMakeIndex(CCmdUI* pCmdUI)
 	    !CProfileMap::GetInstance()->GetActiveProfileKey().IsEmpty() && CProfileMap::GetInstance()->GetActiveProfile()->GetRunMakeIndex());
 }
 
-void COutputDoc::DoLaTeXRun()
+bool COutputDoc::PrepareProductionRun(const bool bRemoveErrorMarks, const bool bCloseViewer)
 {
-	if (m_builder.IsStillRunning()) return;
+	if (m_builder.IsStillRunning()) return false;
 
 	//Save all modified files
 	//NOTE: This saves only files, that have been saved before
@@ -1105,51 +1108,57 @@ void COutputDoc::DoLaTeXRun()
 		theApp.SaveAllModifiedWithoutPrompt();
 
 	//Save main file, even if not saved before
-	if (!AssureExistingMainFile()) return;
+	if (!AssureExistingMainFile()) return false;
 
-	// remove all error marks
-	CMultiDocTemplate* pDocTemplate = theApp.GetLatexDocTemplate();
-
-	if (pDocTemplate)
+	//Remove all error marks
+	if (bRemoveErrorMarks)
 	{
-		POSITION pos = pDocTemplate->GetFirstDocPosition();
+		CMultiDocTemplate* pDocTemplate = theApp.GetLatexDocTemplate();
 
-		while (pos)
+		if (pDocTemplate)
 		{
-			LaTeXDocument *pDoc = dynamic_cast<LaTeXDocument*>(pDocTemplate->GetNextDoc(pos));
-			if (pDoc) pDoc->SetErrorMark(-1);
+			POSITION pos = pDocTemplate->GetFirstDocPosition();
+
+			while (pos)
+			{
+				LaTeXDocument* pDoc = dynamic_cast<LaTeXDocument*>(pDocTemplate->GetNextDoc(pos));
+				if (pDoc) pDoc->SetErrorMark(-1);
+			}
 		}
 	}
 
-	// close viewer if necessary
-	CProfile* pProfile = CProfileMap::GetInstance()->GetActiveProfile();
-
-	if (pProfile && pProfile->GetCloseView())
+	//Close viewer if necessary
+	if (bCloseViewer)
 	{
-		// remember windows that has the input focus
-		CWnd* pwnd = CWnd::GetFocus();
+		CProfile* pProfile = CProfileMap::GetInstance()->GetActiveProfile();
 
-		CProfile::CCommand &cmd = pProfile->GetViewCloseCmd();
-
-		if (cmd.GetActiveCommand() == CProfile::CCommand::typeProcess)
+		if (pProfile && pProfile->GetCloseView())
 		{
-			CProcess* p = cmd.GetProcessCommand().Execute(GetWorkingDir(),GetMainPath());
-			if (p) delete p;
-		}
-		else
-		{
-			// prevent executable from being started, if not already running
-			CDdeCommand dde = cmd.GetDdeCommand();
-			dde.SetExecutable(_T(""));
-			dde.SendCommand(GetMainPath());
-		}
+			//Remember window that has the input focus
+			CWnd* pwnd = CWnd::GetFocus();
 
-		// set focus back to window that had the focus before
-		if (pwnd && IsWindow(pwnd->m_hWnd))
-			pwnd->SetFocus();
+			CProfile::CCommand& cmd = pProfile->GetViewCloseCmd();
+
+			if (cmd.GetActiveCommand() == CProfile::CCommand::typeProcess)
+			{
+				CProcess* p = cmd.GetProcessCommand().Execute(GetWorkingDir(), GetMainPath());
+				if (p) delete p;
+			}
+			else
+			{
+				//Prevent executable from being started, if not already running
+				CDdeCommand dde = cmd.GetDdeCommand();
+				dde.SetExecutable(_T(""));
+				dde.SendCommand(GetMainPath());
+			}
+
+			// set focus back to window that had the focus before
+			if (pwnd && IsWindow(pwnd->m_hWnd))
+				pwnd->SetFocus();
+		}
 	}
 
-	// initialize members
+	//Initialize members
 	m_aErrors.RemoveAll();
 	m_aWarnings.RemoveAll();
 	m_aBadBoxes.RemoveAll();
@@ -1157,13 +1166,28 @@ void COutputDoc::DoLaTeXRun()
 	m_nActualWarningIndex = -1;
 	m_nActualBadBoxIndex = -1;
 
-	// activate output bar / tab
+	//Activate output bar / tab
 	CMainFrame* pwndMainFrame = static_cast<CMainFrame*>(AfxGetMainWnd());
-
 	if (pwndMainFrame)
-		pwndMainFrame->ActivateOutputTab(CMainFrame::outputTabBuildResult,false);
+	{
+		pwndMainFrame->ActivateOutputTab(CMainFrame::outputTabBuildResult, false);
 
-	// run latex
+		//Start animation in the Windows taskbar
+		PostMessage(pwndMainFrame->m_hWnd, AfxUserMessages::StartPaneAnimationMessageID, 0, 0);
+
+		//Tell the output builder to stop the animation after being done.
+		m_builder.MsgsAfterTermination.AddMessage(true, pwndMainFrame->m_hWnd, AfxUserMessages::StopPaneAnimationMessageID, 0, 0, false, 0);
+	}
+
+   return true;
+}
+
+
+void COutputDoc::DoLaTeXRun()
+{
+	if (!PrepareProductionRun(true, true)) return;
+
+	//Run latex
 	m_builder.BuildAll(
 	    this,m_pBuildView,
 	    GetWorkingDir(),GetMainPath(),
@@ -1172,62 +1196,17 @@ void COutputDoc::DoLaTeXRun()
 
 void COutputDoc::DoBibTexRun()
 {
-	if (m_builder.IsStillRunning())
-		return;
+	if (!PrepareProductionRun()) return;
 
-	//Save all modified files
-	//NOTE: This saves only files, that have been saved before
-	if (CConfiguration::GetInstance()->m_bSaveBeforeCompilation)
-		theApp.SaveAllModifiedWithoutPrompt();
-
-	//Save main file, even if not saved before
-	if (!AssureExistingMainFile()) return;
-
-	// initialize members
-	m_aErrors.RemoveAll();
-	m_aWarnings.RemoveAll();
-	m_aBadBoxes.RemoveAll();
-	m_nActualErrorIndex = -1;
-	m_nActualWarningIndex = -1;
-	m_nActualBadBoxIndex = -1;
-
-	// activate output bar / tab
-	CMainFrame* pwndMainFrame = (CMainFrame*)AfxGetMainWnd();
-	if (pwndMainFrame)
-		pwndMainFrame->ActivateOutputTab(CMainFrame::outputTabBuildResult,false);
-
-	// run latex
+	//Run bibtex
 	m_builder.RunBibTex(this,m_pBuildView,GetWorkingDir(),GetMainPath());
 }
 
 void COutputDoc::DoMakeIndexRun()
 {
-	if (m_builder.IsStillRunning())
-		return;
+	if (!PrepareProductionRun()) return;
 
-	//Save all modified files
-	//NOTE: This saves only files, that have been saved before
-	if (CConfiguration::GetInstance()->m_bSaveBeforeCompilation)
-		theApp.SaveAllModifiedWithoutPrompt();
-
-	//Save main file, even if not saved before
-	if (!AssureExistingMainFile()) return;
-
-	// initialize members
-	m_aErrors.RemoveAll();
-	m_aWarnings.RemoveAll();
-	m_aBadBoxes.RemoveAll();
-	m_nActualErrorIndex = -1;
-	m_nActualWarningIndex = -1;
-	m_nActualBadBoxIndex = -1;
-
-	// activate output bar / tab
-	CMainFrame* pwndMainFrame = (CMainFrame*)AfxGetMainWnd();
-
-	if (pwndMainFrame)
-		pwndMainFrame->ActivateOutputTab(CMainFrame::outputTabBuildResult,false);
-
-	// run makeindex
+	//Run makeindex
 	m_builder.RunMakeIndex(this,m_pBuildView,GetWorkingDir(),GetMainPath());
 }
 
@@ -1355,13 +1334,13 @@ void COutputDoc::OnUpdateLatexClean(CCmdUI* pCmdUI)
 
 void COutputDoc::OnLatexRunAndView()
 {
-	m_builder.MsgAfterTermination.Set(false,AfxGetMainWnd()->m_hWnd,WM_COMMAND,ID_LATEX_VIEW,0,true,true,0);
+	m_builder.MsgsAfterTermination.AddMessage(false, AfxGetMainWnd()->m_hWnd, WM_COMMAND, ID_LATEX_VIEW, 0, true, 0);
 	OnLatexRun();
 }
 
 void COutputDoc::OnLatexFileCompileAndView()
 {
-	m_builder.MsgAfterTermination.Set(false,AfxGetMainWnd()->m_hWnd,WM_COMMAND,ID_LATEX_VIEW,0,true,true,0);
+	m_builder.MsgsAfterTermination.AddMessage(false, AfxGetMainWnd()->m_hWnd, WM_COMMAND, ID_LATEX_VIEW, 0, true, 0);
 	OnFileCompile();
 }
 

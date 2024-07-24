@@ -399,6 +399,7 @@
     <ClCompile Include="PlaceHolder.cpp" />
     <ClCompile Include="PlaceholderSetsOptDlg.cpp" />
     <ClCompile Include="PlaceholderSingleOptDlg.cpp" />
+    <ClCompile Include="PreviewImageView.cpp" />
     <ClCompile Include="process.cpp" />
     <ClCompile Include="ProcessCommand.cpp" />
     <ClCompile Include="PProcessor.cpp" />
@@ -570,6 +571,7 @@
     <ClInclude Include="PlaceHolder.h" />
     <ClInclude Include="PlaceholderSetsOptDlg.h" />
     <ClInclude Include="PlaceholderSingleOptDlg.h" />
+    <ClInclude Include="PreviewImageView.h" />
     <ClInclude Include="PrivateToolBar.h" />
     <ClInclude Include="process.h" />
     <ClInclude Include="ProcessCommand.h" />

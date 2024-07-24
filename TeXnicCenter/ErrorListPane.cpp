@@ -7,6 +7,7 @@
 #include "OutputDoc.h"
 #include "OutputInfo.h"
 #include "TeXnicCenter.h"
+#include "global.h"
 
 // ErrorListView
 
@@ -241,21 +242,21 @@ void ErrorListPane::UpdateToolBarButton(CBuildView::tagImage t)
 {
 	// AddMessage and consequently UpdateToolBarButton can be
 	// called from a different thread causing an assertion
-	::PostMessage(m_hWnd,UpdateToolBarButtonMessageID,t,0);
+	::PostMessage(m_hWnd, AfxUserMessages::UpdateToolBarButtonMessageID, t, 0);
 }
 
 void ErrorListPane::UpdateToolBarButtons()
 {
 	// AddMessage and consequently UpdateToolBarButton can be
 	// called from a different thread causing an assertion
-	::PostMessage(m_hWnd, UpdateToolBarButtonMessageID, 0, 1);
+	::PostMessage(m_hWnd, AfxUserMessages::UpdateToolBarButtonMessageID, 0, 1);
 }
 
 BOOL ErrorListPane::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 {
 	BOOL result;
 
-	if (message == UpdateToolBarButtonMessageID)
+	if (message == AfxUserMessages::UpdateToolBarButtonMessageID)
 	{
 		CString fmt;
 
