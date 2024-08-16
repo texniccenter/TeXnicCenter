@@ -250,7 +250,7 @@ void BibView::OnSetFocus(CWnd* pOldWnd)
 {
 	WorkspacePaneBase::OnSetFocus(pOldWnd);
 
-	if (search_button_)
+	if (search_button_ && search_button_->GetEditBox())
 		search_button_->GetEditBox()->SetFocus();
 	else
 		list_view_.SetFocus();
@@ -394,7 +394,8 @@ void BibView::OnEnChangeSearch()
 
 void BibView::OnClearSearch()
 {
-	search_button_->GetEditBox()->SetWindowText(0);
+	if (search_button_ && search_button_->GetEditBox())
+		search_button_->GetEditBox()->SetWindowText(0);
 }
 
 bool BibView::EveryItem( const BibItem& /*item*/ )
@@ -697,12 +698,18 @@ BOOL BibView::PreTranslateMessage(MSG* pMsg)
 {
 	BOOL handled = FALSE;
 
-	if (search_button_ && search_button_->GetEditBox()->GetSafeHwnd() == pMsg->hwnd) {
-		if (pMsg->message == WM_KEYDOWN && GetControlSyncState() == 0) { // No modifiers
-			switch (pMsg->wParam) {
-				case VK_UP: case VK_DOWN:
+	if (search_button_ && search_button_->GetEditBox()
+		&& search_button_->GetEditBox()->GetSafeHwnd() == pMsg->hwnd)
+	{
+		if (pMsg->message == WM_KEYDOWN && GetControlSyncState() == 0)
+		{
+			// No modifiers
+			switch (pMsg->wParam)
+			{
+				case VK_UP:
+				case VK_DOWN:
 				//case VK_HOME: case VK_END:
-					list_view_.SendMessage(pMsg->message,pMsg->wParam,pMsg->lParam);
+					list_view_.SendMessage(pMsg->message, pMsg->wParam, pMsg->lParam);
 					handled = TRUE;
 					break;
 			}
