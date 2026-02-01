@@ -1,0 +1,82 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% $Id$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This file and the files in this directory and its subdirectories
+% are intended to test several parts of the TeXnicCenter-system.
+%
+% Copyright (C) 2002-$CurrentYear$ ToolsCenter
+
+% Their main purpose is to reproduce several bugs or behaviours coming
+% up from missing features. They are neither a good starting point for
+% working with TeX nor with the TeXnicCenter-system. If you use them,
+% you do this on your own risk. They come WITHOUT ANY WARRANTY;
+% without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE.
+%
+% Anything below the "end of prolog"-line is for testing purposes only
+% and does not reflect the opinions of the author(s) and is not meant
+% to be a statement at all; it is even not said to be true or reliable.
+%
+% If you have further questions or if you want to support
+% further TeXnicCenter development, visit the TeXnicCenter-homepage
+%
+%     http://www.ToolsCenter.org
+%
+% end of prolog %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% HEADER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,twoside,10pt]{report}
+
+\begin{document}
+
+
+A good place to start testing regular expressions
+is the website \verb|https://regex101.com|.
+Use ECMAScript-syntax for testing,
+since the structure parser uses this version.
+
+
+%%A user command for an input of a tex-file
+% TXCUserCommand: InputFileTeXParse
+% Name: myinput
+% Description: augmenting the input command with some extras
+% \\myinput\s*\{\s*\"?([^\}]*)\"?\s*\}
+% Filename: 1
+% 
+\NewDocumentCommand{\myinput}{m}{\input{#1}}
+
+
+
+%This should then be detected by the structure parser
+\myinput{section}%comment after command
+
+%This should NOT be detected by the structure parser
+\MyInput{nosection}%comment after command
+
+
+%%A user command for a heading
+% TXCUserCommand: Heading           			   												
+% Name: mysection
+% Description: augmenting the section command with some extras
+% \\mysection\*?\s*\{\s*(.*)\s*\}
+% Title: 1
+% Level: section
+%
+\NewDocumentCommand{\mysection}{m}{\section{#1}}
+
+%This should then be detected by the structure parser
+\mysection{A visible section}%comment after command
+
+%This should NOT be detected by the structure parser
+\MySection{A LaTeX error and the structure parser should not see it}%comment after command
+
+
+
+
+
+
+\end{document}
+

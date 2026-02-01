@@ -441,6 +441,7 @@
     </ClCompile>
     <ClCompile Include="StructureItem.cpp" />
     <ClCompile Include="structureparser.cpp" />
+    <ClCompile Include="StructureParserCommand.cpp" />
     <ClCompile Include="StructureTreeCtrl.cpp" />
     <ClCompile Include="structureview.cpp" />
     <ClCompile Include="StyleFile.cpp" />
@@ -611,6 +612,7 @@
     <ClInclude Include="StructureItem.h" />
     <ClInclude Include="StructureItemInfo.h" />
     <ClInclude Include="structureparser.h" />
+    <ClInclude Include="StructureParserCommand.h" />
     <ClInclude Include="StructureTreeCtrl.h" />
     <ClInclude Include="structureview.h" />
     <ClInclude Include="StyleFile.h" />

@@ -500,6 +500,9 @@
     <ClCompile Include="PreviewImageView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StructureParserCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aboutbox.h">
@@ -1016,6 +1019,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PreviewImageView.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StructureParserCommand.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

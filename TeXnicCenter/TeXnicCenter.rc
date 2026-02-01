@@ -3736,6 +3736,12 @@ BEGIN
     IDS_RECURSIVE_INCLUSION "Rekursive Inklusion ist nicht erlaubt"
     IDS_CODE_VIEW_INDICATOR "Zeile %d Spalte %d Zeichen %d"
     IDS_CODE_VIEW_INDICATOR_SELECTION "%d Markierungen"
+    STE_PARSE_USERCOMMAND_NUM "Das Nutzerkommando ""%s"" benötigt %d Argumente, jedoch wurden nur %d angegeben."
+    STE_PARSE_USERCOMMAND_REGEXP "Der reguläre Ausdruck für das Nutzerkommando ""%s"" ist nicht korrekt: %s."
+    STE_PARSE_USERCOMMAND_INTEGER "Die Definition des Nutzerkommandos ""%s"" benötigt eine positive ganze Zahl."
+    STE_PARSE_USERCOMMAND_MATCHGROUP "Die Definition des Nutzerkommandos ""%s"" bezieht sich auf Gruppierung %d, jedoch hat der reguläre Ausdruck nur %d Gruppierungen."
+    STE_PARSE_USERCOMMAND_SUCCESS "Das Nutzerkommando ""%s"" wurde erfolgreich erstellt."
+    STE_PARSE_USERCOMMAND_UNKNOWN """%s"" ist keine bekannte Art von Nutzerkommandos."
 END
 
 STRINGTABLE
@@ -3905,7 +3911,7 @@ BEGIN
     STE_PARSE_FOUND         "Gefunden: %s."
     STE_PARSE_FOUND_UNMATCHED "Offenes Element gefunden: %s."
     STE_PARSE_PARSING       "Analysiere %s ..."
-    STE_PARSE_RESULTS       "Analyse-Ergebnis: %d Datei(en), %d Zeil(en)"
+    STE_PARSE_RESULTS       "Analyse-Ergebnis: %d Datei(en), %d Zeile(n)"
     STE_PARSE_TERMINATE     "Die Analyse wurde fehlerhaft beendet."
     STE_PDICT_OPEN_ERROR    "Persönliches Wörterbuch %s kann nicht geöffnet werden.\n\nEs wird ein neues leeres Wörterbuch unter diesem Namen erzeugt."
     STE_PHSDLG_NOEXAMPLE    "Es konnte kein Beispiel konstruiert werden.\r\n\r\nDies ist nur möglich, wenn\r\nein Projekt und/oder Dateien geöffnet sind.\r\nDes Weiteren muss der ausgewählte Platzhalter\r\nmindestens eine Datei spezifizieren\r\n(in Abhängigkeit vom aktuellen Projekt)."
@@ -7879,6 +7885,12 @@ BEGIN
     IDS_RECURSIVE_INCLUSION "Recursive inclusion is not allowed"
     IDS_CODE_VIEW_INDICATOR "Line %d Column %d Character %d"
     IDS_CODE_VIEW_INDICATOR_SELECTION "%d Selections"
+    STE_PARSE_USERCOMMAND_NUM "The user-defined parser command ""%s"" requires %d arguments, but only %d were given."
+    STE_PARSE_USERCOMMAND_REGEXP "The regular expression for the user-defined parser command ""%s"" is invalid: %s."
+    STE_PARSE_USERCOMMAND_INTEGER "The definition of the user-defined parser command ""%s"" expects a positive integer."
+    STE_PARSE_USERCOMMAND_MATCHGROUP "The definition of the user-defined parser command ""%s"" refers to match group %d, but the regular expression only contains %d groups."
+    STE_PARSE_USERCOMMAND_SUCCESS "User-defined parser command ""%s"" successfully established."
+    STE_PARSE_USERCOMMAND_UNKNOWN """%s"" is not recognized as a type for a user-defined parser command."
 END
 
 STRINGTABLE

@@ -4,6 +4,10 @@
 class StructureItemInfo;
 class StructureItem;
 
+/**	An Array of StructureItem-objects.
+
+@author Sven Wiegand
+*/
 typedef std::vector<StructureItem> StructureItemContainer;
 
 /**

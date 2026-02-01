@@ -106,6 +106,8 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 , m_evtParsingDone(TRUE, TRUE, NULL, NULL)
 , m_regexHeader(CreateHeaderRegularExpression())
 , m_regexComment(_T("%"))
+, m_regexParserCommandStart(_T("^%\\s*TXCUserCommand:\\s*(\\w+)\\s*$"))
+, m_regexParserCommandDef(_T("^%(.+)"))
 , m_regexVerbStart(_T("\\\\begin\\s*\\{verbatim\\*?\\}"))
 , m_regexVerbEnd(_T("\\\\end\\{verbatim\\*?\\}"))
 , listing_start_(_T("\\\\begin\\s*\\{lstlisting\\*?\\}"))
@@ -135,6 +137,17 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 {
 	// initialize attributes
 	ASSERT(pStructureParserHandler);
+
+	//The classic commands for including files in LaTeX
+	//CmdsInput.push_back(std::make_shared<StructureParserCommandTeXFile>(StructureParserCommandTeXFile(
+	//	_T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}"),
+	//	std::regex_constants::match_default,
+	//	2)));
+	auto cmd = CreateNewStructureParserCommand<StructureParserCommandTeXFile>();
+	auto cmdtyped = static_cast<StructureParserCommandTeXFile*>(cmd.get());
+	cmdtyped->RegularExpression = _T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}");
+	cmdtyped->idxMatchGroup = 2;
+	CmdsInput.push_back(cmd);
 }
 
 CStructureParser::~CStructureParser()
@@ -318,14 +331,142 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 	}*/
 
 	// look for input command
-	if (regex_search(lpText, lpTextEnd, what, m_regexInput, nFlags) && IsCmdAt(lpText, what[0].first - lpText))
+	//if (regex_search(lpText, lpTextEnd, what, m_regexInput, nFlags) && IsCmdAt(lpText, what[0].first - lpText))
+	//{
+	//	// parse string before occurrence
+	//	ParseString(lpText, what[0].first - lpText, cookies,
+	//				strActualFile, nActualLine, nFileDepth, aSI);
+
+	//	// parse input file
+	//	CString strPath(what[2].first, what[2].second - what[2].first);
+	//	strPath.TrimLeft();
+	//	strPath.TrimRight();
+	//	strPath.TrimLeft(_T('"'));
+	//	strPath.TrimRight(_T('"'));
+
+	//	/* Which file does LaTeX include? (tested with MikTeX 2.3)
+
+	//	        You say ==> existing files on disk ==> result / used file
+
+	//	        \input foo ==> foo and foo.tex ==> foo.tex
+	//	        \input foo ==> foo ==> error
+	//	        \input foo ==> foo.tex.tex ==> error
+	//	        \input foo.text ==> foo.text and foo.text.tex ==> foo.text
+	//	        \input foo.text ==> foo.text.tex ==> foo.text.tex
+	//	        \input foo.tex ==> foo.tex and foo.tex.tex ==> foo.tex
+	//	        \input foo.tex ==> foo.tex.tex ==> foo.tex.tex
+
+	//	        TXC shall have the same behaviour. So first we ask for the file extension.
+	//	        If it is empty, then we add ".tex" by default.
+	//	        If it is non-empty, then we scan for this file first and then for the file with added ".tex".
+	//	 */
+
+	//	//Check if the file exists and try some extensions
+	//	if (CPathTool::GetFileExtension(strPath).IsEmpty())
+	//	{
+	//		strPath += _T(".tex");//add ".tex" by default.
+	//	}
+	//	else
+	//	{
+	//		//Extension is non-empty. Scan for this file first.
+	//		if (!::PathFileExists(strPath))
+	//		{
+	//			//File does not exist in its original spelling. We add a ".tex".
+	//			CString strNewPath(strPath);
+	//			strNewPath += _T(".tex");
+
+	//			if (::PathFileExists(strNewPath))
+	//			{
+	//				strPath = strNewPath;
+	//			}
+	//		}
+	//	}
+
+	//	COutputInfo info;
+	//	INITIALIZE_OI(info);
+
+	//	if (::PathFileExists(strPath))
+	//	{
+	//		//Make sure it's not a recursive inclusion
+	//		// - otherwise, it will result in a stack overflow
+
+	//		//Get absolute path of the just specified file
+	//		const CString AbsPathToBeIncluded = CPathTool::IsRelativePath(strPath) ? CPathTool::Cat(m_BasePath, strPath) : strPath;
+
+	//		//Search for this file in the stack of files that are current open for parsing
+	//		// - We explicitly do not care about files, that have finished parsing already.
+	//		// - Because: Including several times is ok.
+	//		bool bFoundRecursion(false);
+	//		for (auto it = m_ParsingFilesStack.begin(); it != m_ParsingFilesStack.end(); it++)
+	//		{
+	//			//Get the absolute path of this one
+	//			const CString AbsPathParsing = CPathTool::IsRelativePath(*it) ? CPathTool::Cat(m_BasePath, *it) : *it;
+
+	//			//Are they the same?
+	//			if (AbsPathToBeIncluded.CompareNoCase(AbsPathParsing) == 0)
+	//			{
+	//				//Yes, they are the same
+	//				bFoundRecursion = true;
+	//				break;
+	//			}
+	//		}
+
+	//		if (bFoundRecursion)
+	//		{
+	//			//Notify the user about the error
+	//			if (m_pParseOutputHandler && !m_bCancel)
+	//			{
+	//				info.SetErrorMessage(CString(MAKEINTRESOURCE(IDS_RECURSIVE_INCLUSION)));
+	//				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			//Continue parsing this new file
+	//			if (m_pParseOutputHandler && !m_bCancel)
+	//			{
+	//				CString message;
+	//				message.Format(STE_PARSE_PARSING, (LPCTSTR)strPath);
+
+	//				info.SetErrorMessage(message);
+
+	//				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::information);
+	//			}
+
+	//			//Here we go!
+	//			Parse(strPath, cookies, nFileDepth + 1, aSI);
+	//		}
+	//	}
+	//	else if (m_pParseOutputHandler && !m_bCancel)
+	//	{
+	//		//File does not exist (or we could just not find it)
+	//		AddFileItem(strPath, StructureItem::missingTexFile, strActualFile, nActualLine, aSI);
+
+	//		CString message;
+	//		message.Format(STE_FILE_EXIST, (LPCTSTR)strPath);
+
+	//		info.SetErrorMessage(message);
+	//		m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::warning);
+	//	}
+
+	//	// parse string behind occurrence
+	//	ParseString(what[0].second, lpTextEnd - what[0].second, cookies,
+	//				strActualFile, nActualLine, nFileDepth, aSI);
+
+	//	return;
+	//}
+
+	if (auto MatchedCmd = CmdsInput.Match(lpText, lpTextEnd, what))
 	{
 		// parse string before occurrence
 		ParseString(lpText, what[0].first - lpText, cookies,
 		            strActualFile, nActualLine, nFileDepth, aSI);
 
+		auto CmdTeXFile = static_cast<StructureParserCommandTeXFile*>(MatchedCmd.get());
+
 		// parse input file
-		CString strPath(what[2].first, what[2].second - what[2].first);
+		auto Grp = what[CmdTeXFile->GetFileNameIndex()];
+		CString strPath(Grp.first, Grp.second - Grp.first);
 		strPath.TrimLeft();
 		strPath.TrimRight();
 		strPath.TrimLeft(_T('"'));
@@ -1338,9 +1479,211 @@ void CStructureParser::Done(bool bParsingResult)
 		m_pParseOutputHandler->OnParseEnd(bParsingResult, m_nFilesParsed, m_nLinesParsed);
 }
 
+
+namespace
+{
+	CString ExtractDefStr(const CString& Str, bool bStripColon = true)
+	{
+		//Remove the first character which is the comment sign %
+		CString NewStr(Str);
+		NewStr.TrimLeft(_T("%"));
+
+		//Find colon, which separates a user-friendly text from the actual definition that we need
+		//optional for the definition
+		if (bStripColon)
+		{
+			const int ColonAt = NewStr.Find(_T(":"));
+			if (ColonAt != -1) NewStr = NewStr.Mid(ColonAt + 1);
+		}
+
+		//Trim and return
+		NewStr.TrimLeft();
+		NewStr.TrimRight();
+		return NewStr;
+	}
+}
+
+
+bool CStructureParser::AddParserCommandBasic(StructureParserCommand* pNewCmd, const int nRequiredInputs,
+											 const std::vector<CString>& Definition,
+											 const CString& strActualFile, const int nActualLine, const int nFileDepth)
+{
+	COutputInfo info;
+	INITIALIZE_OI(info);
+
+	CString strName = ExtractDefStr(Definition[0]);
+	if (Definition.size() < nRequiredInputs)
+	{
+		//Notify the user about the error
+		if (m_pParseOutputHandler && !m_bCancel)
+		{
+			CString Message;
+			Message.Format(STE_PARSE_USERCOMMAND_NUM, (LPCTSTR)strName, nRequiredInputs, Definition.size());
+			info.SetErrorMessage(Message);
+			m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+		}
+
+		return false;
+	}
+
+	//Basic items
+	pNewCmd->Name = strName = ExtractDefStr(Definition[1]);
+	pNewCmd->Description = ExtractDefStr(Definition[2]);
+
+	//The actual regular expression, is it valid?
+	try
+	{
+		pNewCmd->RegularExpression = ExtractDefStr(Definition[3], false);
+	}
+	catch (const std::regex_error& reerr)
+	{
+		// Create a descriptive error message based on the regex error code
+		CString strErrorDesc;
+		switch (reerr.code())
+		{
+		case std::regex_constants::error_collate:
+			strErrorDesc = _T("invalid collating element name");
+			break;
+		case std::regex_constants::error_ctype:
+			strErrorDesc = _T("invalid character class name");
+			break;
+		case std::regex_constants::error_escape:
+			strErrorDesc = _T("invalid or trailing escape sequence");
+			break;
+		case std::regex_constants::error_backref:
+			strErrorDesc = _T("invalid back reference");
+			break;
+		case std::regex_constants::error_brack:
+			strErrorDesc = _T("mismatched brackets '[' and ']'");
+			break;
+		case std::regex_constants::error_paren:
+			strErrorDesc = _T("mismatched parentheses '(' and ')'");
+			break;
+		case std::regex_constants::error_brace:
+			strErrorDesc = _T("mismatched braces '{' and '}'");
+			break;
+		case std::regex_constants::error_badbrace:
+			strErrorDesc = _T("invalid count in a { } expression");
+			break;
+		case std::regex_constants::error_range:
+			strErrorDesc = _T("invalid character range (e.g., [b-a])");
+			break;
+		case std::regex_constants::error_space:
+			strErrorDesc = _T("insufficient memory to compile regular expression");
+			break;
+		case std::regex_constants::error_badrepeat:
+			strErrorDesc = _T("repeat specifier (one of '*', '', '+', '{' in most contexts) not preceded by valid expression");
+			break;
+		case std::regex_constants::error_complexity:
+			strErrorDesc = _T("regular expression is too complex");
+			break;
+		case std::regex_constants::error_stack:
+			strErrorDesc = _T("insufficient memory to match regular expression");
+			break;
+		case std::regex_constants::error_syntax:
+			strErrorDesc = _T("parsing failed due to a syntax error");
+			break;
+		default:
+			strErrorDesc = _T("unknown regular expression error");
+			break;
+		}
+
+		//Notify the user about the error
+		if (m_pParseOutputHandler && !m_bCancel)
+		{
+			CString Message;
+			Message.Format(STE_PARSE_USERCOMMAND_REGEXP, (LPCTSTR)strName, (LPCTSTR)strErrorDesc);
+			info.SetErrorMessage(Message);
+			info.SetSourceLine(nActualLine + 3);
+			m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+		}
+		
+		return false;
+	}
+
+	return true;
+}
+
+void CStructureParser::AddParserCommand(const std::vector<CString>& Definition,
+										const CString& strActualFile, const int nActualLine, const int nFileDepth)
+{
+	//Safety - should never happen
+	ASSERT(!Definition.empty());
+	if (Definition.empty()) return;
+
+	COutputInfo info;
+	INITIALIZE_OI(info);
+	const int nStartDefLine = nActualLine - (int)Definition.size();
+
+	//Parser definitions are not very forgiving by design.
+	//Small deviations from the template lead to errors.
+
+	/************** Input TeX Files ****************/
+	if (Definition[0].Compare(_T("InputFileTeXParse")) == 0)
+	{
+		StructureParserCommandTeXFile NewCmd;
+		if (!AddParserCommandBasic(&NewCmd, 5, Definition, strActualFile, nStartDefLine, nFileDepth)) return;
+
+		//Proper index for the match group?
+		NewCmd.idxMatchGroup = _ttoi(ExtractDefStr(Definition[4]));
+		if (NewCmd.idxMatchGroup <= 0)
+		{
+			//Notify the user about the error
+			if (m_pParseOutputHandler && !m_bCancel)
+			{
+				CString Message;
+				Message.Format(STE_PARSE_USERCOMMAND_INTEGER, (LPCTSTR)NewCmd.Name);
+				info.SetErrorMessage(Message);
+				info.SetSourceLine(nStartDefLine + 4);
+				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+			}
+
+			return;
+		}
+
+		if (NewCmd.idxMatchGroup > (int)NewCmd.RegularExpression.mark_count())
+		{
+			//Notify the user about the error
+			if (m_pParseOutputHandler && !m_bCancel)
+			{
+				CString Message;
+				Message.Format(STE_PARSE_USERCOMMAND_MATCHGROUP, (LPCTSTR)NewCmd.Name, NewCmd.idxMatchGroup, (int)NewCmd.RegularExpression.mark_count());
+				info.SetErrorMessage(Message);
+				info.SetSourceLine(nStartDefLine + 4);
+				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+			}
+
+			return;
+		}
+
+		//Success
+		CString Message;
+		Message.Format(STE_PARSE_USERCOMMAND_SUCCESS, (LPCTSTR)NewCmd.Name);
+		info.SetErrorMessage(Message);
+		info.SetSourceLine(nStartDefLine);
+		m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::information);
+
+		//Add the new command to our list
+		CmdsInput.push_back(std::make_shared<StructureParserCommandTeXFile>(NewCmd));
+	}
+	/************** Section Headings ***************/
+	else
+	{
+		CString Message;
+		Message.Format(STE_PARSE_USERCOMMAND_UNKNOWN, (LPCTSTR)Definition[0]);
+		info.SetErrorMessage(Message);
+		info.SetSourceLine(nStartDefLine);
+		m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+	}
+}
+
+
 BOOL CStructureParser::Parse(LPCTSTR lpszPath, CCookieStack &cookies,
                              int nFileDepth, StructureItemContainer &aSI)
 {
+	//Delete all user-defined parser commands
+	CmdsInput.resize(1); //TODO: this is too hard-coded!
+
 	std::auto_ptr<CTextSourceFile> pTs(new CTextSourceFile);
 
 	if (!pTs->Create(lpszPath))
@@ -1378,6 +1721,8 @@ BOOL CStructureParser::Parse(LPCTSTR lpszPath, CCookieStack &cookies,
 	std::regex_constants::match_flag_type nFlags = std::regex_constants::match_default;
 	std::match_results<LPCTSTR> what;
 	BOOL bVerbatim = FALSE;
+	bool bParserCommand = false;
+	std::vector<CString> ParserCommandDefinition;
 	int nActualLine = 0;
 	const tregex* current_verb_end = 0;
 
@@ -1391,13 +1736,43 @@ BOOL CStructureParser::Parse(LPCTSTR lpszPath, CCookieStack &cookies,
 
 		if (!bVerbatim)
 		{
-			// find comments
-			lpOffset = lpLine;
+			//Check for the begin of a user-defined parser command.
+			if (!bParserCommand && regex_search(lpLine, lpLineEnd, what, m_regexParserCommandStart, nFlags))
+			{
+				ParserCommandDefinition.clear();
+				ParserCommandDefinition.push_back(CString(what[1].first, what[1].second - what[1].first));
+				bParserCommand = true;
+				continue;
+			}
 
+			//Read definition of user-defined parser command.
+			//There needs to be a line after the definition to actually trigger instantiation.
+			//This will be noticable at the end of a file, where a final newline will be necessary.
+			if (bParserCommand)
+			{
+				if (regex_search(lpLine, lpLineEnd, what, m_regexParserCommandDef, nFlags))
+				{
+					ParserCommandDefinition.push_back(CString(what[1].first, what[1].second - what[1].first));
+					continue;
+				}
+				else
+				{
+					//We are done with parsing this command definition.
+					bParserCommand = false;
+
+					//Instantiate the user-defined parser command.
+					AddParserCommand(ParserCommandDefinition, strActualFile, nActualLine, nFileDepth);
+				}
+			}
+
+			//Find comments, make sure to not match the escaped percent sign: \%
+			lpOffset = lpLine;
 			while (lpOffset < lpLineEnd && regex_search(lpOffset, lpLineEnd, what, m_regexComment, nFlags))
 			{
 				if (IsCmdAt(lpLine, what[0].first - lpLine - 1))
+				{
 					lpOffset = what[0].second;
+				}
 				else
 				{
 					lpLineEnd = what[0].first;

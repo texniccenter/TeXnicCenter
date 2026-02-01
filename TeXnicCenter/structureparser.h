@@ -41,6 +41,7 @@
 #include "TextSource.h"
 #include "OutputInfo.h"
 #include "StructureItem.h"
+#include "StructureParserCommand.h"
 
 class CParseOutputHandler
 {
@@ -92,11 +93,6 @@ public:
 };
 
 
-/**
-An Array of StructureItem-objects.
-
-@author Sven Wiegand
- */
 
 const int MAX_DEPTH	= 6;
 
@@ -319,8 +315,8 @@ private:
 	                 int nActualLine,int nFileDepth,StructureItemContainer &aSI);
 
 	const CString Unescape(const CString &tmp );
-	/**
-	Checks, if there is a LaTeX-command at the specified position.
+
+	/**	Checks, if there is a LaTeX-command at the specified position.
 
 	The method simply counts the number of backslashes from the
 	given position to the beginning of the string. If the number
@@ -356,6 +352,16 @@ private:
 	 */
 	CString GetArgument(const CString &strText,TCHAR tcOpeningDelimiter,TCHAR tcClosingDelimiter);
 	static const CString CreateHeaderRegularExpression();
+
+	///Basic checks and preparations for adding a command
+	bool AddParserCommandBasic(StructureParserCommand* pNewCmd, const int nRequiredInputs,
+								const std::vector<CString>& Definition,
+								const CString& strActualFile, const int nActualLine, const int nFileDepth);
+
+	///Adds a user-defined parser command to the structure parser.
+	void AddParserCommand(const std::vector<CString>& Definition,
+						  const CString& strActualFile, const int nActualLine, const int nFileDepth);
+
 // attributes
 private:
 	/** Handler for this structure parser */
@@ -384,6 +390,12 @@ private:
 
 	/** Regular expression describing a comment. */
 	const tregex m_regexComment;
+
+	/** Regular expression describing the beginning of a user-defined parser command. */
+	const tregex m_regexParserCommandStart;
+
+	/** Regular expression describing the continuation of a user-defined parser command. */
+	const tregex m_regexParserCommandDef;
 
 	/** Regular expression describing a inline verbatim. */
 	const tregex m_regexInlineVerb;
@@ -438,6 +450,7 @@ private:
 
 	/** Regular expression describing an input-command. */
 	const tregex m_regexInput;
+	StructureParserCommandList CmdsInput;
 
 	/** Regular expression describing the bibliography command. */
 	const tregex m_regexBib;
