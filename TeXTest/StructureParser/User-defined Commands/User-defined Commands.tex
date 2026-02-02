@@ -39,7 +39,6 @@ Use ECMAScript-syntax for testing,
 since the structure parser uses this version.
 
 
-%%A user command for an input of a tex-file
 % TXCUserCommand: InputFileTeXParse
 % Name: myinput
 % Description: augmenting the input command with some extras
@@ -47,14 +46,67 @@ since the structure parser uses this version.
 % Filename: 1
 % 
 \NewDocumentCommand{\myinput}{m}{\input{#1}}
-
-
+\NewDocumentCommand{\MyInput}{m}{\input{#1}}
 
 %This should then be detected by the structure parser
 \myinput{section}%comment after command
 
-%This should NOT be detected by the structure parser
+%This should NOT YET be detected by the structure parser
 \MyInput{nosection}%comment after command
+
+
+% TXCUserCommand: InputFileTeXParse
+% Name: MyInput
+% Description: augmenting the input command with some extras
+% \\MyInput\s*\{\s*\"?([^\}]*)\"?\s*\}
+% Filename: 1
+
+%Now it should be detected!
+\MyInput{section}
+
+
+%%%%%%%%%%%%%%% Some error cases %%%%%%%%%%%%%%%
+
+%% Unknown Type
+% TXCUserCommand: Unknown
+
+%% Too few arguments
+% TXCUserCommand: InputFileTeXParse
+% Name: myinput
+% Description: augmenting the input command with some extras
+% \\myinput\s*\{\s*\"?([^\}]*)\"?\s*\}
+
+%% Space in first column: will not be recognized
+ % TXCUserCommand: InputFileTeXParse
+% Name: myinput
+% Description: augmenting the input command with some extras
+% \\myinput\s*\{\s*\"?([^\}]*)\"?\s*\}
+% Filename: 1
+
+%% Regular expression has an error
+% TXCUserCommand: InputFileTeXParse
+% Name: myinput
+% Description: augmenting the input command with some extras
+% \\myinput\s*\{\s*\"?([^\}]*)\"?\s*\}[
+% Filename: 1
+
+%% Trying to use a non-existing capture group
+% TXCUserCommand: InputFileTeXParse
+% Name: myinput
+% Description: augmenting the input command with some extras
+% \\myinput\s*\{\s*\"?([^\}]*)\"?\s*\}
+% Filename: -1
+
+%% Trying to use a non-existing capture group
+% TXCUserCommand: InputFileTeXParse
+% Name: myinput
+% Description: augmenting the input command with some extras
+% \\myinput\s*\{\s*\"?([^\}]*)\"?\s*\}
+% Filename: 2
+
+
+
+
 
 
 %%A user command for a heading
