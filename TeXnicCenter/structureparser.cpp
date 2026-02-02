@@ -124,7 +124,6 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 , m_regexUnknownEnvEnd(_T("\\\\end\\s*\\{([^\\}]*)\\}"))
 , m_regexCaption(_T("\\\\caption\\s*([\\[\\{].*\\})"))
 , m_regexLabel(_T("\\\\label\\s*\\{([^\\}]*)\\}"))
-, m_regexInput(_T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}"))
 , m_regexBib(_T("\\\\(no)?bibliography(?!style)([[:alpha:]]+)?\\s*\\{\\s*([^\\}]*)\\s*\\}"))
 , m_regexAppendix(_T("\\\\appendix([^[:graph:]]|$)"))
 , m_regexGraphic(_T("\\\\includegraphics\\s*\\*?(\\s*\\[[^\\]]*\\]){0,2}\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}"))
@@ -139,10 +138,7 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 	ASSERT(pStructureParserHandler);
 
 	//The classic commands for including files in LaTeX
-	//CmdsInput.push_back(std::make_shared<StructureParserCommandTeXFile>(StructureParserCommandTeXFile(
-	//	_T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}"),
-	//	std::regex_constants::match_default,
-	//	2)));
+	//TODO: check if this is the best way of doing this.
 	auto cmd = CreateNewStructureParserCommand<StructureParserCommandTeXFile>();
 	auto cmdtyped = static_cast<StructureParserCommandTeXFile*>(cmd.get());
 	cmdtyped->RegularExpression = _T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}");
@@ -178,6 +174,9 @@ BOOL CStructureParser::StartParsing(LPCTSTR lpszMainPath, LPCTSTR lpszWorkingDir
 	m_nCharsParsed = 0;
 	m_ParsingFilesStack.clear();
 	m_BasePath.ReleaseBuffer(::GetCurrentDirectory(MAX_PATH, m_BasePath.GetBuffer(MAX_PATH)));
+
+	//Delete all user-defined parser commands
+	CmdsInput.resize(1); //TODO: this is too hard-coded!
 
 	// Signal that parsing has started.
 	m_evtParsingDone.ResetEvent();
@@ -330,132 +329,7 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 	        return;
 	}*/
 
-	// look for input command
-	//if (regex_search(lpText, lpTextEnd, what, m_regexInput, nFlags) && IsCmdAt(lpText, what[0].first - lpText))
-	//{
-	//	// parse string before occurrence
-	//	ParseString(lpText, what[0].first - lpText, cookies,
-	//				strActualFile, nActualLine, nFileDepth, aSI);
-
-	//	// parse input file
-	//	CString strPath(what[2].first, what[2].second - what[2].first);
-	//	strPath.TrimLeft();
-	//	strPath.TrimRight();
-	//	strPath.TrimLeft(_T('"'));
-	//	strPath.TrimRight(_T('"'));
-
-	//	/* Which file does LaTeX include? (tested with MikTeX 2.3)
-
-	//	        You say ==> existing files on disk ==> result / used file
-
-	//	        \input foo ==> foo and foo.tex ==> foo.tex
-	//	        \input foo ==> foo ==> error
-	//	        \input foo ==> foo.tex.tex ==> error
-	//	        \input foo.text ==> foo.text and foo.text.tex ==> foo.text
-	//	        \input foo.text ==> foo.text.tex ==> foo.text.tex
-	//	        \input foo.tex ==> foo.tex and foo.tex.tex ==> foo.tex
-	//	        \input foo.tex ==> foo.tex.tex ==> foo.tex.tex
-
-	//	        TXC shall have the same behaviour. So first we ask for the file extension.
-	//	        If it is empty, then we add ".tex" by default.
-	//	        If it is non-empty, then we scan for this file first and then for the file with added ".tex".
-	//	 */
-
-	//	//Check if the file exists and try some extensions
-	//	if (CPathTool::GetFileExtension(strPath).IsEmpty())
-	//	{
-	//		strPath += _T(".tex");//add ".tex" by default.
-	//	}
-	//	else
-	//	{
-	//		//Extension is non-empty. Scan for this file first.
-	//		if (!::PathFileExists(strPath))
-	//		{
-	//			//File does not exist in its original spelling. We add a ".tex".
-	//			CString strNewPath(strPath);
-	//			strNewPath += _T(".tex");
-
-	//			if (::PathFileExists(strNewPath))
-	//			{
-	//				strPath = strNewPath;
-	//			}
-	//		}
-	//	}
-
-	//	COutputInfo info;
-	//	INITIALIZE_OI(info);
-
-	//	if (::PathFileExists(strPath))
-	//	{
-	//		//Make sure it's not a recursive inclusion
-	//		// - otherwise, it will result in a stack overflow
-
-	//		//Get absolute path of the just specified file
-	//		const CString AbsPathToBeIncluded = CPathTool::IsRelativePath(strPath) ? CPathTool::Cat(m_BasePath, strPath) : strPath;
-
-	//		//Search for this file in the stack of files that are current open for parsing
-	//		// - We explicitly do not care about files, that have finished parsing already.
-	//		// - Because: Including several times is ok.
-	//		bool bFoundRecursion(false);
-	//		for (auto it = m_ParsingFilesStack.begin(); it != m_ParsingFilesStack.end(); it++)
-	//		{
-	//			//Get the absolute path of this one
-	//			const CString AbsPathParsing = CPathTool::IsRelativePath(*it) ? CPathTool::Cat(m_BasePath, *it) : *it;
-
-	//			//Are they the same?
-	//			if (AbsPathToBeIncluded.CompareNoCase(AbsPathParsing) == 0)
-	//			{
-	//				//Yes, they are the same
-	//				bFoundRecursion = true;
-	//				break;
-	//			}
-	//		}
-
-	//		if (bFoundRecursion)
-	//		{
-	//			//Notify the user about the error
-	//			if (m_pParseOutputHandler && !m_bCancel)
-	//			{
-	//				info.SetErrorMessage(CString(MAKEINTRESOURCE(IDS_RECURSIVE_INCLUSION)));
-	//				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
-	//			}
-	//		}
-	//		else
-	//		{
-	//			//Continue parsing this new file
-	//			if (m_pParseOutputHandler && !m_bCancel)
-	//			{
-	//				CString message;
-	//				message.Format(STE_PARSE_PARSING, (LPCTSTR)strPath);
-
-	//				info.SetErrorMessage(message);
-
-	//				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::information);
-	//			}
-
-	//			//Here we go!
-	//			Parse(strPath, cookies, nFileDepth + 1, aSI);
-	//		}
-	//	}
-	//	else if (m_pParseOutputHandler && !m_bCancel)
-	//	{
-	//		//File does not exist (or we could just not find it)
-	//		AddFileItem(strPath, StructureItem::missingTexFile, strActualFile, nActualLine, aSI);
-
-	//		CString message;
-	//		message.Format(STE_FILE_EXIST, (LPCTSTR)strPath);
-
-	//		info.SetErrorMessage(message);
-	//		m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::warning);
-	//	}
-
-	//	// parse string behind occurrence
-	//	ParseString(what[0].second, lpTextEnd - what[0].second, cookies,
-	//				strActualFile, nActualLine, nFileDepth, aSI);
-
-	//	return;
-	//}
-
+	//Search for an input-like command
 	if (auto MatchedCmd = CmdsInput.Match(lpText, lpTextEnd, what))
 	{
 		// parse string before occurrence
@@ -1681,9 +1555,6 @@ void CStructureParser::AddParserCommand(const std::vector<CString>& Definition,
 BOOL CStructureParser::Parse(LPCTSTR lpszPath, CCookieStack &cookies,
                              int nFileDepth, StructureItemContainer &aSI)
 {
-	//Delete all user-defined parser commands
-	CmdsInput.resize(1); //TODO: this is too hard-coded!
-
 	std::auto_ptr<CTextSourceFile> pTs(new CTextSourceFile);
 
 	if (!pTs->Create(lpszPath))

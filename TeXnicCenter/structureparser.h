@@ -448,8 +448,7 @@ private:
 	/** Regular expression describing a label. */
 	const tregex m_regexLabel;
 
-	/** Regular expression describing an input-command. */
-	const tregex m_regexInput;
+	/** Regular expressions describing an input-command. */
 	StructureParserCommandList CmdsInput;
 
 	/** Regular expression describing the bibliography command. */
