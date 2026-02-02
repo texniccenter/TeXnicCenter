@@ -1385,9 +1385,9 @@ void CTeXnicCenterApp::OnLatexProfileSel()
 
 	if (!m_pMainWnd || !IsWindow(m_pMainWnd->m_hWnd)) return;
 
-	//Get combo box for selection the profile
+	//Get combo box for selection of the profile
 	int pos = 0;
-	CMFCToolBarComboBoxButton* pButton = (CMFCToolBarComboBoxButton*)(pMainFrame->GetToolBarButton(ID_LATEX_PROFILE_SEL, pos));
+	CMFCToolBarComboBoxButton* pButton = dynamic_cast<CMFCToolBarComboBoxButton*>(pMainFrame->GetToolBarButton(ID_LATEX_PROFILE_SEL, pos));
 	if (!pButton) return;
 	CComboBox* pBox = pButton->GetComboBox();
 	if (!pBox || !IsWindow(pBox->m_hWnd)) return;
@@ -1419,27 +1419,30 @@ void CTeXnicCenterApp::UpdateLaTeXProfileSel()
 
 	// update all instances of this button
 	int pos = 0;
-	CMFCToolBarComboBoxButton *pButton = NULL;
-
-	while ((pButton =
-	            (CMFCToolBarComboBoxButton*)pMainFrame->GetToolBarButton(ID_LATEX_PROFILE_SEL, pos)) != NULL)
+	CMFCToolBarButton* pButton = NULL;
+	while ((pButton = pMainFrame->GetToolBarButton(ID_LATEX_PROFILE_SEL, pos)) != NULL)
 	{
-		// refill Button
-		pButton->RemoveAllItems();
+		//Cast properly
+		CMFCToolBarComboBoxButton* pComboButton = dynamic_cast<CMFCToolBarComboBoxButton*>(pButton);
+		ASSERT(pComboButton); //If this triggers, then another toolbar may have been instantiated with IDR_LATEX, or some other way the toolbars were overwritten.
+		if (!pComboButton) continue;
 
+		//Delete all items and refill
+		pComboButton->RemoveAllItems();
 		for (int i = 0; i < astrProfiles.GetSize(); i++)
-			pButton->AddItem(astrProfiles[i]);
+		{
+			pComboButton->AddItem(astrProfiles[i]);
+		}
 
-		// select item
-		CComboBox *pComboBox = pButton->GetComboBox();
-		if (!pComboBox || !IsWindow(pComboBox->m_hWnd) || pComboBox->GetDroppedState())
-			continue;
+		//Select item
+		CComboBox* pComboBox = pComboButton->GetComboBox();
+		if (!pComboBox || !IsWindow(pComboBox->m_hWnd) || pComboBox->GetDroppedState()) continue;
 
 		// we have to do it manually, because the pButton->SelectItem() does not work correctly
 		int nIndex = pComboBox->FindStringExact(-1, strActiveProfile);
-		pButton->SelectItem(nIndex);
+		pComboButton->SelectItem(nIndex);
 		pComboBox->SetCurSel(nIndex);
-		pButton->NotifyCommand(CBN_SELENDOK);
+		pComboButton->NotifyCommand(CBN_SELENDOK);
 		pComboBox->GetParent()->UpdateWindow();
 	}
 }

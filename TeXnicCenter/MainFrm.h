@@ -321,7 +321,6 @@ private:
 	CMFCToolBar m_wndMathBar;
 	CMFCToolBar m_wndFindBar;
 	CMFCToolBar m_awndMathBar[MATHBAR_COUNT];
-	CMFCToolBar m_wndPreviewBar;
 	CMFCMenuBar m_wndMenuBar;
 
 	CImageList m_navigatorImages;

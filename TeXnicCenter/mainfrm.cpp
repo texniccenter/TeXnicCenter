@@ -404,9 +404,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		if (!CreateToolBar(&m_awndMathBar[i], IDR_MATHBAR1 + i, IDR_MATH + i, false)) return -1;
 	}
 
-	// create preview tool bar
-	if (!CreateToolBar(&m_wndPreviewBar, IDR_LATEX, STE_TB_LATEX)) return -1;
-
 	// load user defined toolbars
 	InitUserToolbars(NULL, IDR_USER_TOOLBAR_FIRST, IDR_USER_TOOLBAR_LAST);
 
