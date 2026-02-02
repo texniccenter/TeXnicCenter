@@ -449,7 +449,7 @@ private:
 	const tregex m_regexLabel;
 
 	/** Regular expressions describing an input-command. */
-	StructureParserCommandList CmdsInput;
+	StructureParserCommandList<StructureParserCommandTeXFile> CmdsInput;
 
 	/** Regular expression describing the bibliography command. */
 	const tregex m_regexBib;

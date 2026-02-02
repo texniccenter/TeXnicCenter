@@ -138,12 +138,12 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 	ASSERT(pStructureParserHandler);
 
 	//The classic commands for including files in LaTeX
-	//TODO: check if this is the best way of doing this.
-	auto cmd = CreateNewStructureParserCommand<StructureParserCommandTeXFile>();
-	auto cmdtyped = static_cast<StructureParserCommandTeXFile*>(cmd.get());
-	cmdtyped->RegularExpression = _T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}");
-	cmdtyped->idxMatchGroup = 2;
-	CmdsInput.push_back(cmd);
+	StructureParserCommandTeXFile InCmd;
+	InCmd.Name = "TXCInternal_InputInclude";
+	InCmd.Description = "Built-in parser command for input and include";
+	InCmd.RegularExpression = _T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}");
+	InCmd.idxMatchGroup = 2;
+	CmdsInput.push_back(InCmd);
 }
 
 CStructureParser::~CStructureParser()
@@ -330,16 +330,17 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 	}*/
 
 	//Search for an input-like command
-	if (auto MatchedCmd = CmdsInput.Match(lpText, lpTextEnd, what))
+	const int idxMatched = CmdsInput.Match(lpText, lpTextEnd, what);
+	if (idxMatched >= 0)
 	{
 		// parse string before occurrence
 		ParseString(lpText, what[0].first - lpText, cookies,
 		            strActualFile, nActualLine, nFileDepth, aSI);
 
-		auto CmdTeXFile = static_cast<StructureParserCommandTeXFile*>(MatchedCmd.get());
+		const StructureParserCommandTeXFile& CmdTeXFile = CmdsInput[idxMatched];
 
 		// parse input file
-		auto Grp = what[CmdTeXFile->GetFileNameIndex()];
+		auto Grp = what[CmdTeXFile.idxMatchGroup];
 		CString strPath(Grp.first, Grp.second - Grp.first);
 		strPath.TrimLeft();
 		strPath.TrimRight();
@@ -1538,7 +1539,7 @@ void CStructureParser::AddParserCommand(const std::vector<CString>& Definition,
 		m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::information);
 
 		//Add the new command to our list
-		CmdsInput.push_back(std::make_shared<StructureParserCommandTeXFile>(NewCmd));
+		CmdsInput.push_back(NewCmd);
 	}
 	/************** Section Headings ***************/
 	else

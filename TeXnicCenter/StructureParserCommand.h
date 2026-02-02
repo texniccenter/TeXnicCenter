@@ -11,13 +11,12 @@ public:
 	~StructureParserCommand()
 	{}
 
-
 	/** Parses the given text.
 	
 		@returns True, if the regular expression found a match
 		and we actually have a LaTeX command here.
 	*/
-	bool Match(LPCTSTR lpText, LPCTSTR lpTextEnd, std::match_results<LPCTSTR>& MatchResult);
+	bool Match(LPCTSTR lpText, LPCTSTR lpTextEnd, std::match_results<LPCTSTR>& MatchResult) const;
 
 	///Name of this command.
 	CString Name;
@@ -49,17 +48,9 @@ protected:
 	@return
 	        TRUE if there is a command at nPos, FALSE otherwise.
 	 */
-	static bool IsCmdAt(LPCTSTR lpText, int nPos);
+	bool IsCmdAt(LPCTSTR lpText, int nPos) const;
 };
 
-///A shared pointer to a structure parser command
-typedef std::shared_ptr<StructureParserCommand> StructureParserCommandPtr;
-
-template<typename T>
-StructureParserCommandPtr CreateNewStructureParserCommand()
-{
-	return std::make_shared<T>();
-}
 
 /** A regular expression parser for input-like commands of tex-files.
 */
@@ -69,18 +60,10 @@ public:
 	StructureParserCommandTeXFile()
 		:StructureParserCommand()
 		,idxMatchGroup(1)
-	{
-	}
+	{}
 
 	~StructureParserCommandTeXFile()
-	{
-	}
-
-	/// Returns index of group capturing the filename in the regular expression.
-	const int GetFileNameIndex() const
-	{
-		return idxMatchGroup;
-	}
+	{}
 
 public:
 	///Which match group holds the filename.
@@ -88,7 +71,12 @@ public:
 };
 
 
-class StructureParserCommandList : public std::vector<StructureParserCommandPtr>
+/** An array of user-defined parser commands of a given type.
+* 
+*	Call Match() to get the index of the first matching command in the array.
+*/
+template <typename T>
+class StructureParserCommandList : public std::vector<T>
 {
 public:
 	StructureParserCommandList()
@@ -98,6 +86,15 @@ public:
 	{}
 
 	///Parses all commands, stops at the first match.
-	///Returns Null, if no command matches, otherwise the pointer to the matching command.
-	StructureParserCommandPtr Match(LPCTSTR lpText, LPCTSTR lpTextEnd, std::match_results<LPCTSTR>& MatchResult);
+	///Returns -1, if no command matches, otherwise the index of the matching command.
+	int Match(LPCTSTR lpText, LPCTSTR lpTextEnd, std::match_results<LPCTSTR>& MatchResult) const
+	{
+		for (int i(0);i<size();i++)
+		{
+			if ((*this)[i].Match(lpText, lpTextEnd, MatchResult)) return i;
+		}
+
+		return -1;
+	}
+
 };
