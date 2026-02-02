@@ -42,9 +42,9 @@
 #define ID_METAPOST_NEW                 192
 #define ID_BIBTEX_NEW                   193
 #define IDR_LATEX                       194
-#define IDS_POSTPROCESSOR               194
-#define IDS_PREPROCESSOR                195
-#define STE_PREVIEW_FOLDER_CREATE_ERROR 196
+#define IDS_POSTPROCESSOR               195
+#define IDS_PREPROCESSOR                196
+#define STE_PREVIEW_FOLDER_CREATE_ERROR 197
 #define IDR_FIND                        199
 #define IDR_IMAGES                      201
 #define IDR_HIDDEN_CMDS                 206
@@ -277,7 +277,6 @@
 #define STE_FILE_EXTERNALCHANGEEX       1206
 #define STE_FILE_INUSE                  1207
 #define STE_FILE_INUSE_OPEN             1208
-#define STE_FILE_LATEXFILTER            1209
 #define STE_PREVIEW_NOSELECTION         1209
 #define STE_FILE_MRU_FILE_NONE          1210
 #define STE_FILE_MRU_PROJECT_NONE       1211
@@ -415,7 +414,6 @@
 #define STE_TB_LATEX                    1343
 #define STE_TB_MAINFRAME                1344
 #define IDS_LINE_NUMBER                 1345
-#define IDS_BIBTEX_FILTER               1345
 #define IDS_EDIT_TEXT_NOT_FOUND         1346
 #define IDS_DO_NOT_SAVE                 1347
 #define IDS_BIBTEX_RESULT               1348
@@ -437,8 +435,6 @@
 #define IDS_SCINTILLA_DEFAULT_PRINT_HEADER 1364
 #define IDS_NO_LABEL_AVAILABLE          1365
 #define IDS_DEFINE_COLOR_NAME_PLACEHOLDER 1366
-#define IDS_MORE_COLORS                 1367
-#define IDS_METAPOST_FILTER             1367
 #define STE_LANGUAGE_RUSSIAN            1367
 #define IDS_AUTOMATIC                   1368
 #define IDS_TEXT_COLORS                 1369
@@ -499,8 +495,8 @@
 #define IDC_EDIT_PPINPUT                1523
 #define IDC_EDIT_PPOUTPUT               1524
 #define IDC_EDIT_PROJECTNAME            1525
-#define IDC_EDIT_PREVIEW                1525
 #define IDC_EDIT_PROJECTPATH            1526
+#define IDC_EDIT_PREVIEW                1527
 #define IDC_EDIT_SCOPE_SELECTION        1530
 #define IDC_EDIT_SCOPE_WHOLE_FILE       1531
 #define IDC_EDIT_VIEWCMD                1535
@@ -570,8 +566,8 @@
 #define IDC_INSERTPH_PPINPUT            2108
 #define IDC_INSERTPH_PPOUTPUT           2110
 #define IDC_BROWSELATEX                 2111
-#define IDC_INSERTPH_PREVIEW            2111
 #define IDC_TITLE_LATEXARGUMENTS        2112
+#define IDC_INSERTPH_PREVIEW            2113
 #define IDC_LATEXPH                     2114
 #define IDC_BROWSEBIBTEX                2116
 #define IDC_TITLE_EXE                   2117
@@ -633,7 +629,6 @@
 #define IDC_OPTIONS_FILECLEAN_RECURSIVE 2186
 #define IDC_OPTIONS_FILECLEAN_PHINSERT  2187
 #define IDC_OPTIONS_FILECLEAN_NEW       2188
-#define IDC_BROWSE_DEFAULT_PATH         2189
 #define IDC_OPTIONS_FILECLEAN_RESTOREDEFAULTS 2189
 #define IDC_PLACEHOLDER_SINGLE_SHORT    2190
 #define IDC_PLACEHOLDER_SINGLE_FORWARD  2191
@@ -641,6 +636,7 @@
 #define IDC_PLACEHOLDER_SINGLE_PHTYPE   2193
 #define IDC_PLACEHOLDER_SINGLE_WHAT     2194
 #define IDC_PLACEHOLDER_SINGLE_RESULT   2195
+#define IDC_BROWSE_DEFAULT_PATH         2196
 #define IDC_GRAPHIC_SCALETEXTWIDTH      2197
 #define IDC_PLACEHOLDER_SET_EXAMPLE     2198
 #define IDC_PLACEHOLDER_SET_RESULT      2199
@@ -711,7 +707,6 @@
 #define IDS_EDITOP_DRAGDROP             8627
 #define IDS_EDITOP_REPLACE              8628
 #define IDS_EDITOP_AUTOINDENT           8629
-#define IDS_EDITOP_FIRSTMODIFY          8630
 #define IDS_INDEX                       8630
 #define STE_OUTPUTWIZARD_PDFVIAXELATEX  8631
 #define IDS_NOMENCLATURE                8632
