@@ -67,15 +67,6 @@ const CString CStructureParser::m_sItemNames[StructureItem::typeCount] =
 //-------------------------------------------------------------------
 // class CStructureParser
 //-------------------------------------------------------------------
-const CString CStructureParser::m_astrHeader[MAX_DEPTH][CStructureParser::HeaderVariationsCount] = {
-	{ _T("appendix") }, 
-	{ _T("part"), _T("addpart") }, 
-	{ _T("chapter"), _T("addchap") },
-	{ _T("section"), _T("addsec") },
-	{ _T("subsection"), _T("addsubsec") }, 
-	{ _T("subsubsection"), _T("addsubsubsec") },
-};
-
 CStructureParser::CStructureParser()
 		: m_bCancel(FALSE)
 {
@@ -83,19 +74,6 @@ CStructureParser::CStructureParser()
 	ASSERT(FALSE);
 }
 
-const CString CStructureParser::CreateHeaderRegularExpression()
-{
-	CString result;
-
-	for (int i = 0; i < MAX_DEPTH; ++i) {
-		for (int j = 0; j < HeaderVariationsCount && !m_astrHeader[i][j].IsEmpty(); ++j)
-			result += m_astrHeader[i][j] + _T('|');
-	}
-
-	result.Delete(result.GetLength() - 1); // Remove the last |
-
-	return _T("\\\\(") + result + _T(")\\s*\\*?\\s*([\\[\\{].*\\})");
-}
 
 CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHandler,
                                    CParseOutputHandler *pParseOutputHandler)
@@ -104,7 +82,6 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 , m_pParseOutputHandler(pParseOutputHandler)
 , m_pStructureParserThread(NULL)
 , m_evtParsingDone(TRUE, TRUE, NULL, NULL)
-, m_regexHeader(CreateHeaderRegularExpression())
 , m_regexComment(_T("%"))
 , m_regexParserCommandStart(_T("^%\\s*TXCUserCommand:\\s*(\\w+)\\s*$"))
 , m_regexParserCommandDef(_T("^%(.+)"))
@@ -144,7 +121,34 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 	InCmd.RegularExpression = _T("\\\\(input|include)\\*?\\s*\\{\\s*\"?([^\\}]*)\"?\\s*\\}");
 	InCmd.idxMatchGroup = 2;
 	CmdsInput.push_back(InCmd);
+
+	//The classic commands for defining sections in LaTeX
+	CmdsHeading.push_back(CreateHeaderParserCommand(_T("appendix"), 0));
+	CmdsHeading.push_back(CreateHeaderParserCommand(_T("part|addpart"), 1));
+	CmdsHeading.push_back(CreateHeaderParserCommand(_T("chapter|addchap"), 2));
+	CmdsHeading.push_back(CreateHeaderParserCommand(_T("section|addsec"), 3));
+	CmdsHeading.push_back(CreateHeaderParserCommand(_T("subsection|addsubsec"), 4));
+	CmdsHeading.push_back(CreateHeaderParserCommand(_T("subsubsection|addsubsubsec"), 5));
 }
+
+StructureParserCommandHeading CStructureParser::CreateHeaderParserCommand(const CString& Name, const int Depth)
+{
+	StructureParserCommandHeading Cmd;
+	Cmd.Name = _T("TXCInternal_Heading_") + Name;
+	Cmd.Description = _T("Built-in parser command for ") + Name;
+	Cmd.RegularExpression = _T("\\\\(?:") + Name + _T(")\\s*\\*?\\s*([\\[\\{].*\\})");
+	Cmd.idxMatchGroup = 1;
+	Cmd.Depth = Depth;
+	/*
+	* \section{name} \section {name} \section*{name} \section * {name}
+	* \section[short]{name} \section * [short] {name} ...
+	*/
+	//Cmd.RegularExpression = _T("\\\\(?:") + Name + _T(")\\s*\\*?\\s*(\\[|\\{)(\\w*)\\1");
+	//Cmd.idxMatchGroup = 2;
+
+	return Cmd;
+}
+
 
 CStructureParser::~CStructureParser()
 {
@@ -177,6 +181,7 @@ BOOL CStructureParser::StartParsing(LPCTSTR lpszMainPath, LPCTSTR lpszWorkingDir
 
 	//Delete all user-defined parser commands
 	CmdsInput.resize(1); //TODO: this is too hard-coded!
+	CmdsHeading.resize(6); //TODO: this is too hard-coded!
 
 	// Signal that parsing has started.
 	m_evtParsingDone.ResetEvent();
@@ -298,7 +303,6 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 	StructureItem si;
 	std::match_results<LPCTSTR> what;
 	std::regex_constants::match_flag_type nFlags = std::regex_constants::match_default;
-	int nTypeStart, nTypeCount, nTitleStart, nTitleCount;
 	CString strHeaderType;
 	COOKIE cookie;
 
@@ -330,7 +334,7 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 	}*/
 
 	//Search for an input-like command
-	const int idxMatched = CmdsInput.Match(lpText, lpTextEnd, what);
+	int idxMatched = CmdsInput.Match(lpText, lpTextEnd, what);
 	if (idxMatched >= 0)
 	{
 		// parse string before occurrence
@@ -430,9 +434,7 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 				{
 					CString message;
 					message.Format(STE_PARSE_PARSING, (LPCTSTR)strPath);
-					
 					info.SetErrorMessage(message);
-
 					m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::information);
 				}
 
@@ -447,7 +449,6 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 
 			CString message;
 			message.Format(STE_FILE_EXIST, (LPCTSTR)strPath);
-
 			info.SetErrorMessage(message);
 			m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::warning);
 		}
@@ -688,8 +689,10 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 
 		return;
 	}
-	// look for headers
-	if (regex_search(lpText, lpTextEnd, what, m_regexHeader, nFlags) && IsCmdAt(lpText, what[0].first - lpText))
+
+	//Look for headers
+	idxMatched = CmdsHeading.Match(lpText, lpTextEnd, what);
+	if (idxMatched >= 0)
 	{
 		// parse string before occurrence
 		ParseString(lpText, what[0].first - lpText, cookies,
@@ -699,39 +702,29 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 		if (!cookies.empty() && cookies.top().nCookieType == StructureItem::header)
 			cookies.pop();
 
-		// initialize structure
+		//Initialize structure item
 		INITIALIZE_SI(si);
+		const StructureParserCommandHeading& CmdHeading = CmdsHeading[idxMatched];
 
-		// get header depth (to get parent item)
-		nTypeStart = what[1].first - lpText;
-		nTypeCount = what[1].second - what[1].first;
-		strHeaderType = lpText;
-		strHeaderType = strHeaderType.Mid(nTypeStart, nTypeCount);
-
-		bool stop = false;
-
-		for (m_nDepth = 0; m_nDepth < MAX_DEPTH && !stop; ) {
-			for (int i = 0; i < HeaderVariationsCount && !m_astrHeader[m_nDepth][i].IsEmpty() && !stop ; ++i)
-				if (m_astrHeader[m_nDepth][i] == strHeaderType)
-					stop = true;
-
-			if (!stop)
-				++m_nDepth;
-		}
-
-		// get parent
+		//Get parent
+		m_nDepth = CmdHeading.Depth;
 		if (m_nDepth < 1 || m_nDepth >= MAX_DEPTH)
-			si.m_nParent = -1;
-		else {
+		{
+			si.m_nParent = -1; //no parent
+		}
+		else
+		{
 			StructureItemContainer::difference_type parent = m_anItem[m_nDepth - 1];
 
-			if (parent == -1 && !aSI.empty()) {
-				using namespace std::placeholders;
+			if (parent == -1 && !aSI.empty())
+			{
 				// Current header doesn't have a parent: Find previously inserted header item
-				// and check whether is its depth
-				StructureItemContainer::reverse_iterator it = std::find_if(aSI.rbegin(), aSI.rend(),
-					std::bind(std::bind(std::equal_to<int>(),std::bind(&StructureItem::GetType,_1),
-						static_cast<int>(StructureItem::header)), _1));
+				// and check whether it is its depth
+				StructureItemContainer::reverse_iterator it = aSI.rbegin();
+				for(;it!=aSI.rend();it++)
+				{
+					if (it->GetType() == StructureItem::header) break;
+				}
 
 				if (it != aSI.rend()) 
 				{
@@ -776,11 +769,16 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 			si.m_nParent = parent;
 		}
 
-		// get title
-		nTitleStart = what[2].first - lpText;
-		nTitleCount = what[2].second - what[2].first;
+		//Get title of the heading
+		auto Grp = what[CmdHeading.idxMatchGroup];
+		//CString strTitle(Grp.first, Grp.second - Grp.first);
+		//strTitle.TrimLeft();
+		//strTitle.TrimRight();
 
-		CString strFullMatch(what[2].first, nTitleCount);
+		const int nTitleStart = Grp.first - lpText;
+		const int nTitleCount = Grp.second - Grp.first;
+
+		CString strFullMatch(Grp.first, nTitleCount);
 
 		if (strFullMatch[0] == _T('['))
 			si.m_strTitle = GetArgument(strFullMatch, _T('['), _T(']'));
@@ -1476,6 +1474,38 @@ bool CStructureParser::AddParserCommandBasic(StructureParserCommand* pNewCmd, co
 		return false;
 	}
 
+	//Proper index for the match group?
+	pNewCmd->idxMatchGroup = _ttoi(ExtractDefStr(Definition[4]));
+	if (pNewCmd->idxMatchGroup <= 0)
+	{
+		//Notify the user about the error
+		if (m_pParseOutputHandler && !m_bCancel)
+		{
+			CString Message;
+			Message.Format(STE_PARSE_USERCOMMAND_INTEGER, (LPCTSTR)pNewCmd->Name);
+			info.SetErrorMessage(Message);
+			info.SetSourceLine(nActualLine + 4);
+			m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+		}
+
+		return false;
+	}
+
+	if (pNewCmd->idxMatchGroup > (int)pNewCmd->RegularExpression.mark_count())
+	{
+		//Notify the user about the error
+		if (m_pParseOutputHandler && !m_bCancel)
+		{
+			CString Message;
+			Message.Format(STE_PARSE_USERCOMMAND_MATCHGROUP, (LPCTSTR)pNewCmd->Name, pNewCmd->idxMatchGroup, (int)pNewCmd->RegularExpression.mark_count());
+			info.SetErrorMessage(Message);
+			info.SetSourceLine(nActualLine + 4);
+			m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
+		}
+
+		return false;
+	}
+
 	return true;
 }
 
@@ -1499,32 +1529,37 @@ void CStructureParser::AddParserCommand(const std::vector<CString>& Definition,
 		StructureParserCommandTeXFile NewCmd;
 		if (!AddParserCommandBasic(&NewCmd, 5, Definition, strActualFile, nStartDefLine, nFileDepth)) return;
 
-		//Proper index for the match group?
-		NewCmd.idxMatchGroup = _ttoi(ExtractDefStr(Definition[4]));
-		if (NewCmd.idxMatchGroup <= 0)
-		{
-			//Notify the user about the error
-			if (m_pParseOutputHandler && !m_bCancel)
-			{
-				CString Message;
-				Message.Format(STE_PARSE_USERCOMMAND_INTEGER, (LPCTSTR)NewCmd.Name);
-				info.SetErrorMessage(Message);
-				info.SetSourceLine(nStartDefLine + 4);
-				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
-			}
+		//Success
+		CString Message;
+		Message.Format(STE_PARSE_USERCOMMAND_SUCCESS, (LPCTSTR)NewCmd.Name);
+		info.SetErrorMessage(Message);
+		info.SetSourceLine(nStartDefLine);
+		m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::information);
 
-			return;
+		//Add the new command to our list
+		CmdsInput.push_back(NewCmd);
+	}
+	/************** Section Headings ***************/
+	else if (Definition[0].Compare(_T("Heading")) == 0)
+	{
+		StructureParserCommandHeading NewCmd;
+		if (!AddParserCommandBasic(&NewCmd, 6, Definition, strActualFile, nStartDefLine, nFileDepth)) return;
+
+		//Proper depth for the heading?
+		const CString strDepth = ExtractDefStr(Definition[5]);
+		try
+		{
+			NewCmd.Depth = StructureParserCommandHeading::HeadingTypeToDepth.at(strDepth);
 		}
-
-		if (NewCmd.idxMatchGroup > (int)NewCmd.RegularExpression.mark_count())
+		catch (const std::out_of_range&)
 		{
 			//Notify the user about the error
 			if (m_pParseOutputHandler && !m_bCancel)
 			{
 				CString Message;
-				Message.Format(STE_PARSE_USERCOMMAND_MATCHGROUP, (LPCTSTR)NewCmd.Name, NewCmd.idxMatchGroup, (int)NewCmd.RegularExpression.mark_count());
+				Message.Format(STE_PARSE_USERCOMMAND_HEADING, (LPCTSTR)strDepth, (LPCTSTR)NewCmd.Name);
 				info.SetErrorMessage(Message);
-				info.SetSourceLine(nStartDefLine + 4);
+				info.SetSourceLine(nStartDefLine + 5);
 				m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::error);
 			}
 
@@ -1539,9 +1574,8 @@ void CStructureParser::AddParserCommand(const std::vector<CString>& Definition,
 		m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::information);
 
 		//Add the new command to our list
-		CmdsInput.push_back(NewCmd);
+		CmdsHeading.push_back(NewCmd);
 	}
-	/************** Section Headings ***************/
 	else
 	{
 		CString Message;

@@ -1,11 +1,11 @@
 #pragma once
-#include "stdafx.h"
 
 class StructureParserCommand
 {
 public:
 	StructureParserCommand()
 		:nFlags(std::regex_constants::match_default)
+		,idxMatchGroup(0)
 	{}
 
 	~StructureParserCommand()
@@ -30,6 +30,9 @@ public:
 	///Flags to use for matching.
 	std::regex_constants::match_flag_type nFlags;
 
+	///Which match group holds the desired content, i.e., a filename, title, caption, etc.
+	int idxMatchGroup;
+
 protected:
 	/**	Checks, if there is a LaTeX-command at the specified position.
 
@@ -52,22 +55,40 @@ protected:
 };
 
 
-/** A regular expression parser for input-like commands of tex-files.
+/** A parser command definition for input-like commands.
 */
 class StructureParserCommandTeXFile : public StructureParserCommand
 {
 public:
 	StructureParserCommandTeXFile()
 		:StructureParserCommand()
-		,idxMatchGroup(1)
 	{}
 
 	~StructureParserCommandTeXFile()
 	{}
 
 public:
-	///Which match group holds the filename.
-	int idxMatchGroup;
+};
+
+
+/** A parser command definition for section-like commands, i.e., headings.
+*/
+class StructureParserCommandHeading : public StructureParserCommand
+{
+public:
+	StructureParserCommandHeading()
+		:StructureParserCommand()
+	{}
+
+	~StructureParserCommandHeading()
+	{}
+
+public:
+	///Depth of the heading
+	int Depth;
+
+public:
+	static const std::map<const CString, const int> HeadingTypeToDepth;
 };
 
 

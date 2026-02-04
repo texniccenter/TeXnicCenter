@@ -14,3 +14,13 @@ bool StructureParserCommand::IsCmdAt(LPCTSTR lpText, int nPos) const
 		;
 	return !(nCount % 2 == 0);
 }
+
+const std::map<const CString, const int> StructureParserCommandHeading::HeadingTypeToDepth =
+{
+	 {_T("appendix"), 0}
+	,{_T("part"), 1}
+	,{_T("chapter"), 2}
+	,{_T("section"), 3}
+	,{_T("subsection"), 4}
+	,{_T("subsubsection"), 5}
+};

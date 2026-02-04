@@ -351,7 +351,7 @@ private:
 	        Character that ends the argument to extract.
 	 */
 	CString GetArgument(const CString &strText,TCHAR tcOpeningDelimiter,TCHAR tcClosingDelimiter);
-	static const CString CreateHeaderRegularExpression();
+	StructureParserCommandHeading CreateHeaderParserCommand(const CString& Name, const int Depth);
 
 	///Basic checks and preparations for adding a command
 	bool AddParserCommandBasic(StructureParserCommand* pNewCmd, const int nRequiredInputs,
@@ -385,8 +385,8 @@ private:
 	/** The working dir of the project that is parsed. */
 	CString m_strWorkingDir;
 
-	/** Regular expression describing a header. */
-	const tregex m_regexHeader;
+	/** Regular expressions describing headings. */
+	StructureParserCommandList<StructureParserCommandHeading> CmdsHeading;
 
 	/** Regular expression describing a comment. */
 	const tregex m_regexComment;
@@ -474,10 +474,6 @@ private:
 
 	/** Regular expression for a glossary. */
 	const tregex m_regexGlossary;
-
-	/** Array containing the different headers. */
-	static const int HeaderVariationsCount = 2;
-	static const CString m_astrHeader[MAX_DEPTH][HeaderVariationsCount];
 
 	/** Array containing the index of the actual item representing the depth. */
 	StructureItemContainer::difference_type m_anItem[MAX_DEPTH];
