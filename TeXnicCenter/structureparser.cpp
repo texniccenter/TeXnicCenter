@@ -123,7 +123,6 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 	CmdsInput.push_back(InCmd);
 
 	//The classic commands for defining sections in LaTeX
-	CmdsHeading.push_back(CreateHeaderParserCommand(_T("appendix"), 0));
 	CmdsHeading.push_back(CreateHeaderParserCommand(_T("part|addpart"), 1));
 	CmdsHeading.push_back(CreateHeaderParserCommand(_T("chapter|addchap"), 2));
 	CmdsHeading.push_back(CreateHeaderParserCommand(_T("section|addsec"), 3));
@@ -136,15 +135,21 @@ StructureParserCommandHeading CStructureParser::CreateHeaderParserCommand(const 
 	StructureParserCommandHeading Cmd;
 	Cmd.Name = _T("TXCInternal_Heading_") + Name;
 	Cmd.Description = _T("Built-in parser command for ") + Name;
-	Cmd.RegularExpression = _T("\\\\(?:") + Name + _T(")\\s*\\*?\\s*([\\[\\{].*\\})");
-	Cmd.idxMatchGroup = 1;
-	Cmd.Depth = Depth;
 	/*
 	* \section{name} \section {name} \section*{name} \section * {name}
-	* \section[short]{name} \section * [short] {name} ...
+	* \section[short]{name} \section * [short] {name}
+	* \section[short]
+	* {name}
+	* After the actual \command, we capture everything from and including the first opening [ or {
+	* to the very last closing ] or } on this line. This will capture too much
+	* and the code makes sure to reduce the captured text and subject it to further parsing.
+	* This is necessary, since matching brackets seems outright impossible with the STL regular expressions.
 	*/
-	//Cmd.RegularExpression = _T("\\\\(?:") + Name + _T(")\\s*\\*?\\s*(\\[|\\{)(\\w*)\\1");
-	//Cmd.idxMatchGroup = 2;
+	Cmd.RegularExpression = _T("\\\\(?:") + Name + _T(")\\s*\\*?\\s*([\\[\\{].*[\\]\\}])");
+	Cmd.idxMatchGroup = 1;
+	Cmd.Depth = Depth;
+	
+	Cmd.idxMatchGroup = 1;
 
 	return Cmd;
 }
@@ -299,11 +304,13 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
                                    const CString &strActualFile,
                                    int nActualLine, int nFileDepth, StructureItemContainer &aSI)
 {
+	//Ignore tiny strings; they won't match anything anyway. Such as "}\r".
+	if (nLength <= 2) return;
+
 	LPCTSTR lpTextEnd = lpText;
 	StructureItem si;
 	std::match_results<LPCTSTR> what;
 	std::regex_constants::match_flag_type nFlags = std::regex_constants::match_default;
-	CString strHeaderType;
 	COOKIE cookie;
 
 	lpTextEnd = lpText + nLength;
@@ -695,8 +702,7 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 	if (idxMatched >= 0)
 	{
 		// parse string before occurrence
-		ParseString(lpText, what[0].first - lpText, cookies,
-		            strActualFile, nActualLine, nFileDepth, aSI);
+		ParseString(lpText, what[0].first - lpText, cookies, strActualFile, nActualLine, nFileDepth, aSI);
 
 		// if the top of the stack is a header, then remove it
 		if (!cookies.empty() && cookies.top().nCookieType == StructureItem::header)
@@ -770,21 +776,34 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 		}
 
 		//Get title of the heading
+		//By design, we capture possibly too much text to support certain scenarios.
+		//We capture everything from the first [ to the very last } and 'title' is the result:
+		//\section[title]{An \emph{empasized} section}\subsection{A subsection}
+		// Here, 'An \emph{empasized} section' is the result, and this is the hard case to cover:
+		//\section{An \emph{empasized} section}\subsection{A subsection}
+		//The rest of the line '\subsection{A subsection}' will be sent to the parser as desired.
 		auto Grp = what[CmdHeading.idxMatchGroup];
-		//CString strTitle(Grp.first, Grp.second - Grp.first);
-		//strTitle.TrimLeft();
-		//strTitle.TrimRight();
 
-		const int nTitleStart = Grp.first - lpText;
-		const int nTitleCount = Grp.second - Grp.first;
-
-		CString strFullMatch(Grp.first, nTitleCount);
-
+		//Get either [...] or {...} while balancing the brackets/braces
+		const CString strFullMatch(Grp.first, Grp.second - Grp.first);
+		const int nStart = Grp.first - lpText;
+		int nEnd = what[0].second - lpText;
 		if (strFullMatch[0] == _T('['))
+		{
 			si.m_strTitle = GetArgument(strFullMatch, _T('['), _T(']'));
-		else
+			nEnd = nStart + si.m_strTitle.GetLength() + 2;
+		}
+		else if (strFullMatch[0] == _T('{'))
+		{
 			si.m_strTitle = GetArgument(strFullMatch, _T('{'), _T('}'));
+			nEnd = nStart + si.m_strTitle.GetLength() + 2;
+		}
+		else
+		{
+			si.m_strTitle = strFullMatch; //Users may define a regexp without capturing braces
+		}
 
+		//Add the structure item
 		si.m_nType = StructureItem::header;
 		si.SetDepth(m_nDepth - 1);
 		aSI.push_back(si);
@@ -800,11 +819,8 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 		// - everything below m_nDepth is reset just like in LaTeX and any other list numbering system
 		for(int i(m_nDepth+1);i<MAX_DEPTH;i++) m_anItem[i] = -1;
 
-		// parse string behind occurrence
-		int nEnd = nTitleStart + nTitleCount;
-		nEnd = nEnd - (strFullMatch.GetLength() - si.m_strTitle.GetLength()) + 2;
-		ParseString(lpText + nEnd, lpTextEnd - (lpText + nEnd),
-		            cookies, strActualFile, nActualLine, nFileDepth, aSI);
+		//Parse string behind occurrence
+		ParseString(lpText + nEnd, lpTextEnd - (lpText + nEnd), cookies, strActualFile, nActualLine, nFileDepth, aSI);
 
 		return;
 	}

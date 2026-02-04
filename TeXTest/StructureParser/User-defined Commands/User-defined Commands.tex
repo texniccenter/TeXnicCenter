@@ -67,28 +67,56 @@ since the structure parser uses this version.
 
 % TXCUserCommand: Heading           			   												
 % Name: mysection
-% Description: augmenting the section command with some extras
+% Description: TXC 2.0-style parsing of headers
 %\\mysection\s*\*?\s*([\[\{].*\})
 % Title: 1
 % Level: section
+\NewDocumentCommand{\mysection}{m}{\section{#1}}
+
+\mysection[TXC 2.0-type parsing does not see this.]
+{An invisible section}
 
 % TXCUserCommand: Heading           			   												
 % Name: mysubsection
-% Description: augmenting the section command with some extras
-%\\mysubsection\s*\*?\s*([\[\{].*\})
+% Description: TXC 3.0-style parsing of headers
+%\\mysubsection\s*\*?\s*([\[\{].*[\]\}])
 % Title: 1
 % Level: subsection
-
-\NewDocumentCommand{\mysection}{m}{\section{#1}}
+\NewDocumentCommand{\mysubsection}{m}{\subsection{#1}}
 
 %This should then be detected by the structure parser
 \mysection{A visible section}
-\mysubsection [    with a subsection  ] {A subsection}
-\mysubsection * [a second one] {Another visible subsection}
-\mysubsection {  a third one  }
+\mysubsection [  and a subsection   ] {This is not taken into account.}
+\mysubsection * [TXC 3.0-type parsing sees this.]
+{This is not even captured by the structure parser.}
+\mysubsection{and two further ones}\mysubsection{right behind each other}
 
 %This should NOT be detected by the structure parser
 \MySection{A LaTeX error and the structure parser should not see it}
+
+
+% TXCUserCommand: Heading           			   												
+% Name: simple greedy chapter
+% Description: Users may capture just the argument without the curly braces
+%\\simplegreedychapter\{(.*)\}
+% Title: 1
+% Level: chapter
+\NewDocumentCommand{\simplegreedychapter}{m}{\chapter{#1}}
+
+\simplegreedychapter{Simple Greedy Chapter}\simplegreedychapter{Simple Greedy Chapter}
+
+% TXCUserCommand: Heading           			   												
+% Name: simple thrifty chapter
+% Description: Users may capture just the argument without the curly braces
+%\\simplethriftychapter\{(.*?)\}
+% Title: 1
+% Level: chapter
+\NewDocumentCommand{\simplethriftychapter}{m}{\chapter{#1}}
+
+\simplethriftychapter{Simple thrifty Chapter}\simplethriftychapter{Simple thrifty Chapter}
+
+%Now all together
+\simplethriftychapter{An}\mysection{entire}\section{table}\subsection{of}\subsubsection{contents}\subsection{in}\mysection{a}\mysubsection{single}\section{line}
 
 
 
