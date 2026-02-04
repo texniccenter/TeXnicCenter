@@ -787,11 +787,18 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 
 		si.m_nType = StructureItem::header;
 		si.SetDepth(m_nDepth - 1);
-		cookie.nItemIndex = m_anItem[m_nDepth] = cookie.nItemIndex = aSI.size();
 		aSI.push_back(si);
+
+		//Update Cookie
+		cookie.nItemIndex = aSI.size() - 1;
 		cookie.nCookieType = StructureItem::header;
 		// TODO: Causes mismatched \begin{document}
 		//cookies.push(cookie);
+
+		//Update array of previous headings
+		m_anItem[m_nDepth] = aSI.size() - 1;
+		// - everything below m_nDepth is reset just like in LaTeX and any other list numbering system
+		for(int i(m_nDepth+1);i<MAX_DEPTH;i++) m_anItem[i] = -1;
 
 		// parse string behind occurrence
 		int nEnd = nTitleStart + nTitleCount;
