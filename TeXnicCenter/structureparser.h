@@ -475,6 +475,9 @@ private:
 	/** Regular expression for a glossary. */
 	const tregex m_regexGlossary;
 
+	/** Regular expression for a parameter in \newcommand or \NewDocumentCommand. */
+	const tregex m_regexParameter;
+
 	/** Array containing the index of the actual item representing the depth. */
 	StructureItemContainer::difference_type m_anItem[MAX_DEPTH];
 

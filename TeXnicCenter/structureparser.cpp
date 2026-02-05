@@ -110,6 +110,7 @@ CStructureParser::CStructureParser(CStructureParserHandler *pStructureParserHand
 , m_regexInlineVerb(_T("\\\\verb\\*(.)[^$1]*\\1|\\\\verb([^\\*])[^$2]*\\2"))
 , m_regexIndex(_T("\\\\printindex"))
 , m_regexGlossary(_T("\\\\print(nomenclature|glossary|glossaries)"))
+, m_regexParameter(_T("#\\d"))
 {
 	// initialize attributes
 	ASSERT(pStructureParserHandler);
@@ -281,8 +282,7 @@ CString CStructureParser::GetArgument(const CString &strText, TCHAR tcOpeningDel
 		return _T("");
 
 	CString strResult = strText.Mid(nStart, nEnd - nStart);
-	strResult.TrimLeft();
-	strResult.TrimRight();
+	strResult.Trim();
 	return strResult;
 }
 
@@ -353,10 +353,8 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 		// parse input file
 		auto Grp = what[CmdTeXFile.idxMatchGroup];
 		CString strPath(Grp.first, Grp.second - Grp.first);
-		strPath.TrimLeft();
-		strPath.TrimRight();
-		strPath.TrimLeft(_T('"'));
-		strPath.TrimRight(_T('"'));
+		strPath.Trim();
+		strPath.Trim(_T('"'));
 
 		/* Which file does LaTeX include? (tested with MikTeX 2.3)
 
@@ -449,15 +447,23 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 				Parse(strPath, cookies, nFileDepth + 1, aSI);
 			}
 		}
-		else if (m_pParseOutputHandler && !m_bCancel)
+		else 
 		{
 			//File does not exist (or we could just not find it)
-			AddFileItem(strPath, StructureItem::missingTexFile, strActualFile, nActualLine, aSI);
+			//But we want to ignore these situations:
+			//\newcommand{\myinput}[1]{\input{something#1.tikz}} shows up as missing file "something#1.tikz" in TXC.
+			if (!regex_search((LPCTSTR)strPath, (LPCTSTR)strPath + strPath.GetLength(), m_regexParameter, nFlags))
+			{
+				AddFileItem(strPath, StructureItem::missingTexFile, strActualFile, nActualLine, aSI);
 
-			CString message;
-			message.Format(STE_FILE_EXIST, (LPCTSTR)strPath);
-			info.SetErrorMessage(message);
-			m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::warning);
+				if (m_pParseOutputHandler && !m_bCancel)
+				{
+					CString message;
+					message.Format(STE_FILE_EXIST, (LPCTSTR)strPath);
+					info.SetErrorMessage(message);
+					m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth, CParseOutputHandler::warning);
+				}
+			}
 		}
 
 		// parse string behind occurrence
@@ -541,8 +547,8 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 			}
 		}
 
-		//File does not exist? Add as missing.
-		if (!GraphicFileFound)
+		//File does not exist? Add as missing, if it does not look like a parameter to \newcommand.
+		if (!GraphicFileFound && !regex_search((LPCTSTR)strPath, (LPCTSTR)strPath + strPath.GetLength(), m_regexParameter, nFlags))
 		{
 			AddFileItem(strPath, StructureItem::missingGraphicFile, strActualFile, nActualLine, aSI);
 		}
@@ -704,13 +710,50 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 		// parse string before occurrence
 		ParseString(lpText, what[0].first - lpText, cookies, strActualFile, nActualLine, nFileDepth, aSI);
 
+		//We found something looking like a heading,
+		//but we want to avoid showing "#1" for \newcommand{\mysection}[1]{\section{#1}}.
+		//So, we first find the title, and then decide on whether to continue.
+
+		//Initialize structure item and get matching command
+		INITIALIZE_SI(si);
+		const StructureParserCommandHeading& CmdHeading = CmdsHeading[idxMatched];
+
+		//Get title of the heading
+		//By design, we capture possibly too much text to support certain scenarios.
+		//We capture everything from the first [ to the very last } and 'title' is the result:
+		//\section[title]{An \emph{empasized} section}\subsection{A subsection}
+		// Here, 'An \emph{empasized} section' is the result, and this is the hard case to cover:
+		//\section{An \emph{empasized} section}\subsection{A subsection}
+		//The rest of the line '\subsection{A subsection}' will be sent to the parser as desired.
+		auto Grp = what[CmdHeading.idxMatchGroup];
+
+		//Get either [...] or {...} while balancing the brackets/braces
+		const CString strFullMatch(Grp.first, Grp.second - Grp.first);
+		const int nStart = Grp.first - lpText;
+		int nEnd = what[0].second - lpText;
+		if (strFullMatch[0] == _T('['))
+		{
+			si.m_strTitle = GetArgument(strFullMatch, _T('['), _T(']'));
+			nEnd = nStart + si.m_strTitle.GetLength() + 2;
+		}
+		else if (strFullMatch[0] == _T('{'))
+		{
+			si.m_strTitle = GetArgument(strFullMatch, _T('{'), _T('}'));
+			nEnd = nStart + si.m_strTitle.GetLength() + 2;
+		}
+		else
+		{
+			si.m_strTitle = strFullMatch; //Users may define a regexp without capturing braces
+		}
+
+		//Is this just part of a \newcommand rather than an actual section?
+		if (regex_search((LPCTSTR)si.m_strTitle, (LPCTSTR)si.m_strTitle + si.m_strTitle.GetLength(), m_regexParameter, nFlags)) return;
+
+		//We consider it to be an actual heading from here on.
+
 		// if the top of the stack is a header, then remove it
 		if (!cookies.empty() && cookies.top().nCookieType == StructureItem::header)
 			cookies.pop();
-
-		//Initialize structure item
-		INITIALIZE_SI(si);
-		const StructureParserCommandHeading& CmdHeading = CmdsHeading[idxMatched];
 
 		//Get parent
 		m_nDepth = CmdHeading.Depth;
@@ -773,34 +816,6 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 			}
 			
 			si.m_nParent = parent;
-		}
-
-		//Get title of the heading
-		//By design, we capture possibly too much text to support certain scenarios.
-		//We capture everything from the first [ to the very last } and 'title' is the result:
-		//\section[title]{An \emph{empasized} section}\subsection{A subsection}
-		// Here, 'An \emph{empasized} section' is the result, and this is the hard case to cover:
-		//\section{An \emph{empasized} section}\subsection{A subsection}
-		//The rest of the line '\subsection{A subsection}' will be sent to the parser as desired.
-		auto Grp = what[CmdHeading.idxMatchGroup];
-
-		//Get either [...] or {...} while balancing the brackets/braces
-		const CString strFullMatch(Grp.first, Grp.second - Grp.first);
-		const int nStart = Grp.first - lpText;
-		int nEnd = what[0].second - lpText;
-		if (strFullMatch[0] == _T('['))
-		{
-			si.m_strTitle = GetArgument(strFullMatch, _T('['), _T(']'));
-			nEnd = nStart + si.m_strTitle.GetLength() + 2;
-		}
-		else if (strFullMatch[0] == _T('{'))
-		{
-			si.m_strTitle = GetArgument(strFullMatch, _T('{'), _T('}'));
-			nEnd = nStart + si.m_strTitle.GetLength() + 2;
-		}
-		else
-		{
-			si.m_strTitle = strFullMatch; //Users may define a regexp without capturing braces
 		}
 
 		//Add the structure item
@@ -1254,18 +1269,18 @@ void CStructureParser::ParseString(LPCTSTR lpText, int nLength, CCookieStack &co
 			}
 			else
 			{
-				if (m_pParseOutputHandler && !m_bCancel)
+				//We could not find the bib-file, but will ignore it if it looks like a command.
+				if (!regex_search((LPCTSTR)strPath, (LPCTSTR)strPath + strPath.GetLength(), m_regexParameter, nFlags))
 				{
-					AddFileItem(strPath, StructureItem::missingBibFile, strActualFile, nActualLine, aSI, NULL, 
-						prefix.IsEmpty() ? NULL : prefix);
+					AddFileItem(strPath, StructureItem::missingBibFile, strActualFile, nActualLine, aSI, NULL, prefix.IsEmpty() ? NULL : prefix);
 
-					CString message;
-					message.Format(STE_FILE_EXIST, (LPCTSTR)strPath);
-
-					info.SetErrorMessage(message);
-
-					m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth,
-					                                       CParseOutputHandler::warning);
+					if (m_pParseOutputHandler && !m_bCancel)
+					{
+						CString message;
+						message.Format(STE_FILE_EXIST, (LPCTSTR)strPath);
+						info.SetErrorMessage(message);
+						m_pParseOutputHandler->OnParseLineInfo(info, nFileDepth,CParseOutputHandler::warning);
+					}
 				}
 			}
 
@@ -1393,8 +1408,7 @@ namespace
 		}
 
 		//Trim and return
-		NewStr.TrimLeft();
-		NewStr.TrimRight();
+		NewStr.Trim();
 		return NewStr;
 	}
 }

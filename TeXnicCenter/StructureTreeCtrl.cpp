@@ -138,8 +138,9 @@ void StructureTreeCtrl::OnParsingFinished()
 				// remember Array-Index
 				SetItemData(currentItem, index);
 
-				if (si.IsMissing() || si.HasParent() && si.GetParent(a)->IsMissing())
-					EnsureVisible(currentItem);
+				////We can highlight missing items by opening up the hierarchy. We did so in the past, but it becomes annoying.
+				//if (si.IsMissing() || si.HasParent() && si.GetParent(a)->IsMissing())
+				//	EnsureVisible(currentItem);
 
 				if (si.GetType() == StructureItem::bibFile)
 				{

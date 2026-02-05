@@ -44,6 +44,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
+% Test \newcommand definitions, which we want to ignore.
+\newcommand{\myinput}[1]{\input{#1}}
+\newcommand{\mygraphics}[1]{\includegraphics{#1}}
+\newcommand{\mybib}[1]{\bibliography{#1}}
+
 % Test nonexisting file
 \input{nonexistingfile}
 

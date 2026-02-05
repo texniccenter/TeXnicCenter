@@ -447,9 +447,9 @@ void FileTreeCtrl::Populate()
 		}
 	}
 
-	// Missing items should be visible
-	std::for_each(missingItems.begin(), missingItems.end(),
-		std::bind(&FileTreeCtrl::EnsureVisible, this, std::placeholders::_1));
+	//// Missing items could be made visible, but it ends up being annoying.
+	//std::for_each(missingItems.begin(), missingItems.end(),
+	//	std::bind(&FileTreeCtrl::EnsureVisible, this, std::placeholders::_1));
 
 	if (!bExpandAll) {
 		ExpandItems(astrExpandedItems);
