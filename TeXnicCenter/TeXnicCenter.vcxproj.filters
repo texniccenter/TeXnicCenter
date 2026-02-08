@@ -503,6 +503,9 @@
     <ClCompile Include="StructureParserCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PreviewImagePane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aboutbox.h">
@@ -1024,6 +1027,9 @@
     <ClInclude Include="StructureParserCommand.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="PreviewImagePane.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\additional.bmp">
@@ -1270,5 +1276,13 @@
     <CustomBuild Include="xmlschema\OutputProfiles.xsd">
       <Filter>Copy\XMLSchema</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\toolbar1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\previewbar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

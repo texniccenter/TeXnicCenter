@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WorkspacePaneBase.h"
+#include "PrivateToolBar.h"
 
 /**
  * @brief Dockable workspace pane with an optional toolbar and child client
@@ -26,32 +27,17 @@ public:
 	void SetClient(CWnd* p);
 
 	/**
-	 * @brief Sets the specified toolbar.
-	 * 
-	 * The ownership is maintained by the caller.
-	 * 
-	 * @param toolBar The toolbar to be set on top of the dockable pane.
-	 */
-	void SetToolBar(CMFCToolBar* toolBar);
-
-	/**
-	 * @brief Returns the dockable pane toolbar.
-	 */
-	CMFCToolBar* GetToolBar() const;
-
-	/**
-	 * @brief Creates a toolbar and assigns it to the dockable pane instance.
+	 * @brief Sets properties of a toolbar and assigns it to this dockable pane instance.
 	 *
-	 * The ownership of the dynamically created toolbar is held by the caller,
-	 * who is responsible for deleting the instance.
+	 * The ownership of the toolbar is held by the caller.
 	 * 
-	 * @param type The toolbar runtime class.
+	 * @param TB Reference to the toolbar.
 	 * @param id The toolbar ID.
 	 * @param style The toolbar style.
 	 * 
-	 * @return Pointer to the created toolbar.
+	 * @return void
 	 */
-	CMFCToolBar* CreateToolBar(CRuntimeClass* type, UINT id, UINT style = AFX_DEFAULT_TOOLBAR_STYLE);
+	void SetupToolBar(PrivateToolBar& TB, UINT id, UINT style = AFX_DEFAULT_TOOLBAR_STYLE);
 
 protected:
 	DECLARE_MESSAGE_MAP()

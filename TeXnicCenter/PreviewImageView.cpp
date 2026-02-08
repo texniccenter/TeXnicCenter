@@ -28,47 +28,11 @@
 
 #include "stdafx.h"
 #include "PreviewImageView.h"
-#include "mainfrm.h"
-#include "OutputDoc.h"
-#include "global.h"
 
 BEGIN_MESSAGE_MAP(CPreviewImageView, CWnd)
 	ON_WM_PAINT()
-	ON_MESSAGE(AfxUserMessages::PreviewImageViewUpdate, &CPreviewImageView::Update)
-	ON_MESSAGE(AfxUserMessages::PreviewImageViewStartProgressAnimation, &CPreviewImageView::StartProgress)
-	ON_MESSAGE(AfxUserMessages::PreviewImageViewStopProgressAnimation, &CPreviewImageView::StopProgress)
 END_MESSAGE_MAP()
 
-
-LRESULT CPreviewImageView::Update(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	//Invalidate the view to force a redraw.
-	Invalidate();
-
-	//Get image path and load it
-	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
-	if (pMainFrame && pMainFrame->GetOutputDoc())
-	{
-		CString Path = pMainFrame->GetOutputDoc()->GetPreviewImagePath();
-		if (!CPathTool::Exists(Path)) return 0L;
-
-		PreviewImage.Destroy();
-		HRESULT res = PreviewImage.Load(Path);
-		if (FAILED(res)) return 0L;
-	}
-
-	return 0L;
-}
-
-LRESULT CPreviewImageView::StartProgress(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	return LRESULT();
-}
-
-LRESULT CPreviewImageView::StopProgress(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	return LRESULT();
-}
 
 BOOL CPreviewImageView::Create(const RECT& rect, CWnd* pwndParent)
 {
@@ -88,10 +52,6 @@ BOOL CPreviewImageView::Create(const RECT& rect, CWnd* pwndParent)
 
 void CPreviewImageView::OnPaint()
 {
-	//CImage Img;
-	//HRESULT res = Img.Load(_T("D:\\Temp\\TXCLenseTest\\txcpreview\\preview.png"));
-	//if (FAILED(res)) return;
-
 	CPaintDC dc(this); // device context for painting
 	CRect FullClientRect;
 	GetClientRect(&FullClientRect);
@@ -119,19 +79,26 @@ void CPreviewImageView::OnPaint()
 			//We are bound by the width.
 			ScaledWidth = DestRect.Width();
 			ScaledHeight = static_cast<int>(ScaledWidth / AspectRatio);
-			StartY = (DestRect.Height() - ScaledHeight) / 2;
+			StartY += (DestRect.Height() - ScaledHeight) / 2;
 		}
 		else
 		{
 			//We are bound by the height.
 			ScaledHeight = DestRect.Height();
 			ScaledWidth = static_cast<int>(ScaledHeight * AspectRatio);
-			StartX = (DestRect.Width() - ScaledWidth) / 2;
+			StartX += (DestRect.Width() - ScaledWidth) / 2;
 		}
 
 		//Draw the scaled image onto the device context
 		dc.SetStretchBltMode(HALFTONE);
 		PreviewImage.Draw(dc.m_hDC, StartX, StartY, ScaledWidth, ScaledHeight);
-		//PreviewImage.StretchBlt(dc.m_hDC, 0, 0, ScaledWidth, ScaledHeight, SRCCOPY);
 	}
+}
+
+void CPreviewImageView::ZoomIn()
+{
+}
+
+void CPreviewImageView::ZoomFit()
+{
 }

@@ -49,7 +49,7 @@
 #include "LaTeXView.h"
 #include "TeXnicCenter.h"
 #include "PlaceHolder.h"
-#include "PreviewImageView.h"
+#include "PreviewImagePane.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -130,7 +130,7 @@ int COutputDoc::GetPreviewText(CString& PreviewText, CodeDocument* pPreviewDoc)
 			PreviewRange.second = pBackgroundView->GetCtrl().GetLineEndPosition(BMarks.second[1].GetLine());
 			pPreviewView = pBackgroundView;
 
-			//Re-activate this view, if we opened another one
+			//Re-activate this view, if we opened another one. TODO: Does this work and do we even want this?
 			if (pView != pBackgroundView)
 			{
 				CFrameWnd* pFrame = pView->GetParentFrame();
@@ -266,7 +266,7 @@ bool COutputDoc::CreatePreviewTemplateFromMainFile(const CString& PreviewDir, co
 		//Find the begin of the document
 		SCtrl.SetTargetStart(0);
 		SCtrl.SetTargetEnd(SCtrl.GetTextLength());
-		CString SearchText(_T("\\begin{document}"));
+		CString SearchText(_T("\\begin{document}")); //TODO: maybe we could be more regexp here with \s* and such
 		const int posBeginDoc = SCtrl.SearchInTarget(SearchText.GetLength(), SearchText);
 		if (posBeginDoc < 0) return false; //not found
 
@@ -377,17 +377,17 @@ void COutputDoc::OnBuildPreview()
 	// Then see also the UI Update for this menu entry
 	//m_pPreviewView
 	CWnd* pMainWnd = AfxGetMainWnd();
-	if (pMainWnd && m_pPreviewImageView)
+	if (pMainWnd && m_pPreviewImagePane)
 	{
 		PostMessage(pMainWnd->m_hWnd, AfxUserMessages::ShowDockingBarID, ID_VIEW_PREVIEW_IMAGE_PANE, 0);
-		PostMessage(m_pPreviewImageView->m_hWnd, AfxUserMessages::PreviewImageViewStartProgressAnimation, 0, 0);
+		PostMessage(m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStartProgressAnimation, 0, 0);
 
 		//After building the preview, the PreviewView needs to reload the image.
 		//We do this regardless of success.
 		//TODO: Consider displaying the success of the preview generation in the preview window.
 		//The builder could send the termination code.
-		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImageView->m_hWnd, AfxUserMessages::PreviewImageViewUpdate, 0, 0, false, 0);
-		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImageView->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, false, 0);
+		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewUpdate, 0, 0, false, 0);
+		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, false, 0);
 	}
 
 	DoPreviewRun();
@@ -426,9 +426,10 @@ void COutputDoc::DoPreviewRun()
 	TextDocument td(pPreviewDoc); //ok to be NULL
 	td.Write(PreviewContentPath, PreviewText);
 
-	//TODO: We will have a menu with more than 1 template. The user can choose one, the choice will be written to the tps file
+	//TODO: We will have a menu with more than 1 template. The user can choose one, the choice will be written to the tps file.
 	// See also GetAllPreviewTemplates()
-	CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Generated from Main File.tex"), true);
+	//CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Generated from Main File.tex"), true);
+	CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Simple Formula.tex"), true);
 
 	// build the preview
 	//m_builder.BuildPreview(NULL, NULL, /*this, m_pBuildView*/ PreviewDir, strPreviewMainPath);

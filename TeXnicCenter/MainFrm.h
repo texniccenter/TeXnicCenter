@@ -52,7 +52,7 @@ class StructurePane;
 class WorkspacePane;
 class LaTeXView;
 class COutputBuilder;
-class CPreviewImageView;
+class PreviewImagePane;
 
 void CreateColorButtonPalette(CPalette& palette, int& colors, int& columns);
 
@@ -361,9 +361,7 @@ private:
 	std::unique_ptr<CBuildView> preview_output_view_;
 
 	///Pane for the preview image view.
-	std::unique_ptr<WorkspacePane> preview_image_view_pane_;
-	/** Preview image view. */
-	std::unique_ptr<CPreviewImageView> preview_image_view_;
+	std::unique_ptr<PreviewImagePane> preview_image_pane_;
 
 	///View listing the errors of a compilation
 	std::unique_ptr<ErrorListPane> error_list_view_;

@@ -43,7 +43,7 @@
 
 class ErrorListPane;
 class CodeDocument;
-class CPreviewImageView;
+class PreviewImagePane;
 
 
 class COutputDoc :
@@ -91,7 +91,7 @@ public:
 
 	void SetAllViews(COutputView* pBuildView, COutputView* pGrepView1,
 	                 COutputView* pGrepView2, COutputView* pParseView,
-					 COutputView* pPreviewView, CPreviewImageView* pPreviewImageView);
+					 COutputView* pPreviewView, PreviewImagePane* pPreviewImagePane);
 
 	/**
 	Empties the build view and clears the error, warning and badbox
@@ -480,7 +480,7 @@ protected:
 	COutputView *m_pPreviewView;
 
 	/** Pointer to the attached preview-image-view. */
-	CPreviewImageView* m_pPreviewImageView;
+	PreviewImagePane* m_pPreviewImagePane;
 
 	/** Pointer to the attached grep-views. */
 	COutputView *m_apGrepView[2];

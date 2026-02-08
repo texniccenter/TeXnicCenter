@@ -1494,20 +1494,39 @@
 #define ID_BUILD_BUILDPREVIEW           40690
 #define ID_VIEW_PREVIEW_OUTPUT_PANE     40691
 #define ID_VIEW_PREVIEW_IMAGE_PANE      40692
+#define ID_PREVIEW_AUTO                 40693
+#define ID_PREVIEW_TEMPLATE_SELECT      40694
+#define ID_PREVIEW_TEMPLATE_EDIT        40695
+#define ID_PREVIEW_ZOOM_IN              40696
+#define ID_PREVIEW_ZOOM_FIT             40697
+#define ID_PREVIEW_DPI                  40698
+#define ID_PREVIEW_DPI_AUTO            40699
+#define ID_PREVIEW_DPI_75              40700
+#define ID_PREVIEW_DPI_150             40701
+#define ID_PREVIEW_DPI_300             40702
+#define ID_PREVIEW_DPI_600             40703
+#define ID_PREVIEW_DPI_900             40704
+#define ID_PREVIEW_DPI_1200            40705
+#define ID_PREVIEW_AUTO_GENERATE        40706
+#define ID_PREVIEW_AUTO_ENTER           40707
+#define ID_PREVIEW_AUTO_SAVE            40708
 #define IDR_BOOKMARK_VIEW               57672
 #define IDR_ERROR_VIEW                  57673
 #define IDR_MAINFRAMEOLD                57675
 #define IDR_LATEXDOCTYPEOLD             57676
 #define IDD_PROFILE_PPROCESSOR          57679
 #define IDD_PROFILE_PREVIEW             57684
+#define IDR_PREVIEW                     57686
+#define IDR_PREVIEW_DPI                 57687
+#define IDR_PREVIEW_AUTO                57688
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        57686
-#define _APS_NEXT_COMMAND_VALUE         40693
+#define _APS_NEXT_RESOURCE_VALUE        57689
+#define _APS_NEXT_COMMAND_VALUE         40709
 #define _APS_NEXT_CONTROL_VALUE         8688
 #define _APS_NEXT_SYMED_VALUE           57773
 #endif

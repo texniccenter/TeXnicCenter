@@ -81,7 +81,7 @@ COutputDoc::COutputDoc()
 		,m_nActiveFileGrep(0)
 		,m_pActiveOutputView(NULL)
 		,m_pParseView(NULL)
-		,m_pPreviewImageView(NULL)
+		,m_pPreviewImagePane(NULL)
 		,m_bActiveFileOperation(FALSE)
 		, errorListView_(0)
 {
@@ -99,20 +99,20 @@ COutputDoc::~COutputDoc()
 
 void COutputDoc::SetAllViews(COutputView* pBuildView, COutputView* pGrepView1,
 							 COutputView* pGrepView2, COutputView* pParseView,
-							 COutputView* pPreviewView, CPreviewImageView* pPreviewImageView)
+							 COutputView* pPreviewView, PreviewImagePane* pPreviewImagePane)
 {
 	ASSERT(pBuildView);
 	ASSERT(pGrepView1);
 	ASSERT(pGrepView2);
 	ASSERT(pParseView);
 	ASSERT(pPreviewView);
-	ASSERT(pPreviewImageView);
+	ASSERT(pPreviewImagePane);
 	m_pBuildView = pBuildView;
 	m_apGrepView[0] = pGrepView1;
 	m_apGrepView[1] = pGrepView2;
 	m_pParseView = pParseView;
 	m_pPreviewView = pPreviewView;
-	m_pPreviewImageView = pPreviewImageView;
+	m_pPreviewImagePane = pPreviewImagePane;
 
 	SetActiveView(m_pBuildView);
 }

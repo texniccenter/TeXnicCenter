@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "navigatorview.h"
-#include "PrivateToolBar.h"
 #include "WorkspacePane.h"
 
 IMPLEMENT_DYNAMIC(WorkspacePane, WorkspacePaneBase)
@@ -106,8 +105,7 @@ void WorkspacePane::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void WorkspacePane::SetClientFocus()
 {
-	if (client_ && client_->m_hWnd)
-		client_->SetFocus();
+	if (client_ && client_->m_hWnd) client_->SetFocus();
 }
 
 void WorkspacePane::Focus()
@@ -115,33 +113,14 @@ void WorkspacePane::Focus()
 	SetClientFocus();
 }
 
-void WorkspacePane::SetToolBar(CMFCToolBar* toolBar)
+void WorkspacePane::SetupToolBar(PrivateToolBar& TB, UINT id, UINT style)
 {
-	toolBar_ = toolBar;
-}
+	TB.Create(this, style | WS_TABSTOP, id);
+	TB.ModifyStyleEx(0, WS_EX_CONTROLPARENT);
+	TB.LoadToolBar(id, 0, 0, TRUE);
+	TB.AdjustStyle();
+	TB.SetRouteCommandsViaFrame(FALSE);
 
-CMFCToolBar* WorkspacePane::GetToolBar() const
-{
-	return toolBar_;
-}
-
-CMFCToolBar* WorkspacePane::CreateToolBar(CRuntimeClass* type, UINT id, UINT style)
-{
-	AFXASSUME(type);
-
-	CMFCToolBar* toolBar = dynamic_cast<CMFCToolBar*>(type->CreateObject());
-	ENSURE(toolBar);
-
-	toolBar->Create(this, style | WS_TABSTOP, id);
-	toolBar->ModifyStyleEx(0, WS_EX_CONTROLPARENT);
-	toolBar->LoadToolBar(id, 0, 0, TRUE);
-
-	if (PrivateToolBar* p = dynamic_cast<PrivateToolBar*>(toolBar))
-		p->AdjustStyle();
-
-	toolBar->SetRouteCommandsViaFrame(FALSE);
-
-	toolBar_ = toolBar;
-
-	return toolBar;
+	//We save a reference for future use.
+	toolBar_ = &TB;
 }

@@ -62,7 +62,7 @@
 #include "TransparencyDlg.h"
 #include "UserTool.h"
 #include "WorkspacePane.h"
-#include "PreviewImageView.h"
+#include "PreviewImagePane.h"
 
 // To hold the colours and their names
 struct ColourTableEntry
@@ -305,8 +305,7 @@ CMainFrame::CMainFrame()
 	, build_view_(new CBuildView)
 	, preview_output_view_pane_(new WorkspacePane)
 	, preview_output_view_(new CBuildView)
-	, preview_image_view_pane_(new WorkspacePane)
-	, preview_image_view_(new CPreviewImageView)
+	, preview_image_pane_(std::make_unique<PreviewImagePane>())//(new PreviewImagePane)
 	, error_list_view_(new ErrorListPane)
 	, grep_view_1_pane_(new WorkspacePane)
 	, grep_view_1_(new CGrepView)
@@ -591,7 +590,7 @@ void CMainFrame::GetAllPanes(std::vector< CBasePane* >& pAllPanes, bool bNavigat
 	if (bNavigatorPanes)
 	{
 		pAllPanes.push_back(bookmark_view_pane_.get());
-		pAllPanes.push_back(preview_image_view_pane_.get());
+		pAllPanes.push_back(preview_image_pane_.get());
 		pAllPanes.push_back(env_view_pane_.get());
 		pAllPanes.push_back(file_view_pane_.get());
 		pAllPanes.push_back(bib_view_pane_.get());
@@ -796,7 +795,7 @@ BOOL CMainFrame::OnToggleDockingBar(UINT nIDEvent)
 			break;
 
 		case ID_VIEW_PREVIEW_IMAGE_PANE:
-			pCtrlBar = preview_image_view_pane_.get();
+			pCtrlBar = preview_image_pane_.get();
 			break;
 
 		case ID_VIEW_GREP_1_PANE:
@@ -1801,7 +1800,7 @@ bool CMainFrame::CreateToolWindows()
 	//Right windows
 	bookmark_view_pane_->Create(GetCaption(ID_VIEW_BOOKMARKS_PANE), this,
 		CRect(CPoint(0, 0), size), TRUE, ID_VIEW_BOOKMARKS_PANE, pane_style | CBRS_RIGHT);
-	preview_image_view_pane_->Create(GetCaption(ID_VIEW_PREVIEW_IMAGE_PANE), this,
+	preview_image_pane_->Create(GetCaption(ID_VIEW_PREVIEW_IMAGE_PANE), this,
 		CRect(CPoint(0, 0), size), TRUE, ID_VIEW_PREVIEW_IMAGE_PANE, pane_style | CBRS_RIGHT);
 	//Bottom windows
 	error_list_view_->Create(GetCaption(ID_VIEW_ERROR_LIST_PANE), this,
@@ -1842,12 +1841,6 @@ bool CMainFrame::CreateToolWindows()
 		return false;
 	}
 
-	if (!preview_image_view_->Create(rectDummy, this))
-	{
-		TRACE0("Failed to create preview image view\n");
-		return false;
-	}
-
 	if (!grep_view_1_->Create(rectDummy, this))
 	{
 		TRACE0("Failed to create find 1 output view\n");
@@ -1873,7 +1866,7 @@ bool CMainFrame::CreateToolWindows()
 	env_view_pane_->SetClient(env_view_.get());
 	output_doc_->SetAllViews(build_view_.get(), grep_view_1_.get(), 
 							 grep_view_2_.get(), parse_view_.get(),
-							 preview_output_view_.get(), preview_image_view_.get());
+							 preview_output_view_.get(), preview_image_pane_.get());
 	build_view_->AttachDoc(output_doc_.get());
 	preview_output_view_->AttachDoc(output_doc_.get());
 	grep_view_1_->AttachDoc(output_doc_.get());
@@ -1885,15 +1878,11 @@ bool CMainFrame::CreateToolWindows()
 	//Set clients
 	build_view_pane_->SetClient(build_view_.get());
 	preview_output_view_pane_->SetClient(preview_output_view_.get());
-	preview_image_view_pane_->SetClient(preview_image_view_.get());
 	grep_view_1_pane_->SetClient(grep_view_1_.get());
 	grep_view_2_pane_->SetClient(grep_view_2_.get());
 	parse_view_pane_->SetClient(parse_view_.get());
 
 	//Set toolbars
-	//preview_image_view_pane_->SetToolBar(&m_wndFindBar);
-	//PrivateToolBar* pPTool = new PrivateToolBar();
-	//preview_image_view_pane_->CreateToolBar(pPTool->GetRuntimeClass(), IDR_FIND);
 
 	//Enable Docking
 	structure_view_->EnableDocking(CBRS_ALIGN_ANY);
@@ -1904,7 +1893,7 @@ bool CMainFrame::CreateToolWindows()
 	error_list_view_->EnableDocking(CBRS_ALIGN_ANY);
 	build_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	preview_output_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
-	preview_image_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
+	preview_image_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	grep_view_1_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	grep_view_2_pane_->EnableDocking(CBRS_ALIGN_ANY);
 	parse_view_pane_->EnableDocking(CBRS_ALIGN_ANY);
@@ -1935,7 +1924,7 @@ bool CMainFrame::CreateToolWindows()
 
 	//Bookmark view and its other windows
 	pDockablePane = NULL;
-	preview_image_view_pane_->AttachToTabWnd(bookmark_view_pane_.get(), DM_STANDARD, TRUE, &pDockablePane);
+	preview_image_pane_->AttachToTabWnd(bookmark_view_pane_.get(), DM_STANDARD, TRUE, &pDockablePane);
 
 	//Set Images
 	HIMAGELIST himl = ::ImageList_LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(
@@ -1945,7 +1934,7 @@ bool CMainFrame::CreateToolWindows()
 	file_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 2), FALSE);
 	bib_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 3), FALSE);
 	bookmark_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 4), FALSE);
-	preview_image_view_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 5), FALSE);
+	preview_image_pane_->SetIcon(::ImageList_ExtractIcon(0, himl, 5), FALSE);
 	::ImageList_Destroy(himl);
 	
 	if (CBaseTabbedPane* pane = dynamic_cast<CBaseTabbedPane*>(pDockablePane))
@@ -1992,7 +1981,7 @@ bool CMainFrame::CreateToolWindows()
 	ShowPaneEnsureVisibility(bookmark_view_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(build_view_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(preview_output_view_pane_.get(), false, false, false);
-	ShowPaneEnsureVisibility(preview_image_view_pane_.get(), false, false, false);
+	ShowPaneEnsureVisibility(preview_image_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(error_list_view_.get(), false, false, false);
 	ShowPaneEnsureVisibility(grep_view_1_pane_.get(), false, false, false);
 	ShowPaneEnsureVisibility(grep_view_2_pane_.get(), false, false, false);

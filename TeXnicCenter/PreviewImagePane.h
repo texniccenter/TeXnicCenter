@@ -27,41 +27,55 @@
  *********************************************************************/
 
 #pragma once
+#include "WorkspacePane.h"
+#include "PreviewImageView.h"
+#include "PrivateToolBar.h"
 
-/** Handles drawing the preview image.
+
+/** This pane contains and manages the preview and its toolbar.
+*
 */
-class CPreviewImageView : public CWnd
+class PreviewImagePane : public WorkspacePane
 {
 //Friends
 //Types
 public:
-	friend class PreviewImagePane;
 
-// construction/destruction
+//Construction / Deconstruction
 public:
-	CPreviewImageView(){};
-	virtual ~CPreviewImageView(){};
+    PreviewImagePane();
+    virtual ~PreviewImagePane() = default;
+	DECLARE_DYNAMIC(PreviewImagePane)
 
-// operations
-public:
-	BOOL Create(const RECT& rect, CWnd* pwndParent);
-
-// overrides and messages
+//Messages
 protected:
 	DECLARE_MESSAGE_MAP()
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 
-	afx_msg void OnPaint();
+	///Triggers reloading the preview image from disk.
+	LRESULT Update(WPARAM wParam, LPARAM lParam);
+
+	///Starts the progress animation.
+	LRESULT StartProgress(WPARAM wParam, LPARAM lParam);
+
+	///Stops the progress animation.
+	LRESULT StopProgress(WPARAM wParam, LPARAM lParam);
+
+	void OnTemplateEdit();
+	void OnZoomIn();
+	void OnZoomFit();
+
+//Methods
+public:
 
 //Attributes
+public:
 protected:
-	void ZoomIn();
-	void ZoomFit();
+	///The window responsible for showing, zooming, panning the preview image.
+	CPreviewImageView View;
 
-//Attributes
-protected:
-	///The image to be shown.
-	CImage PreviewImage;
+	///A toolbar with commands related to preview templates, resolution and other aspects.
+	PrivateToolBar Toolbar;
+
+	///The menu showing the templates.
 };
-
-
-

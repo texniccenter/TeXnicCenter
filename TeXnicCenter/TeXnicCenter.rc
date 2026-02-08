@@ -116,6 +116,8 @@ IDR_BOOKMARK_VIEW       BITMAP                  "res\\bookmark view toolbar.bmp"
 
 IDB_LIGHTBULB           BITMAP                  "res\\Lightbulb.bmp"
 
+IDR_PREVIEW             BITMAP                  "res\\previewbar.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -256,6 +258,17 @@ BEGIN
     BUTTON      ID_VIEW_PARSE_PANE
     BUTTON      ID_VIEW_ERROR_LIST_PANE
     BUTTON      ID_VIEW_PREVIEW_OUTPUT_PANE
+END
+
+IDR_PREVIEW TOOLBAR 16, 16
+BEGIN
+    BUTTON      ID_BUILD_BUILDPREVIEW
+    BUTTON      ID_PREVIEW_AUTO
+    BUTTON      ID_PREVIEW_TEMPLATE_SELECT
+    BUTTON      ID_PREVIEW_TEMPLATE_EDIT
+    BUTTON      ID_PREVIEW_ZOOM_IN
+    BUTTON      ID_PREVIEW_ZOOM_FIT
+    BUTTON      ID_PREVIEW_DPI
 END
 
 IDR_FIND TOOLBAR 16, 16
@@ -3244,6 +3257,32 @@ BEGIN
     END
 END
 
+IDR_PREVIEW_DPI MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "Automatisch",                 ID_PREVIEW_DPI_AUTO
+        MENUITEM SEPARATOR
+        MENUITEM "75 dpi",                      ID_PREVIEW_DPI_75
+        MENUITEM "150 dpi",                     ID_PREVIEW_DPI_150
+        MENUITEM "300 dpi",                     ID_PREVIEW_DPI_300
+        MENUITEM "600 dpi",                     ID_PREVIEW_DPI_600
+        MENUITEM "900 dpi",                     ID_PREVIEW_DPI_900
+        MENUITEM "1200 dpi",                    ID_PREVIEW_DPI_1200
+    END
+END
+
+IDR_PREVIEW_AUTO MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "Automatisch erstellen wenn:",  ID_PREVIEW_AUTO_GENERATE
+        MENUITEM SEPARATOR
+        MENUITEM "Enter gedrückt wird",              ID_PREVIEW_AUTO_ENTER
+        MENUITEM "eine Datei gespeichert wird",             ID_PREVIEW_AUTO_SAVE
+    END
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -5114,12 +5153,27 @@ BEGIN
                             "Blendet das Fenster mit der Ausgabe der Vorschauerstellung ein oder aus.\nVorschauerstellung"
     ID_VIEW_PREVIEW_IMAGE_PANE 
                             "Blendet das Fenster mit dem Vorschaubild ein oder aus.\nVorschaubild"
+    ID_PREVIEW_DPI_AUTO    "Automatisch die beste Auflösung für die nächste Erstellung bestimmen."
+    ID_PREVIEW_DPI_75      "Setzt den DPI-Platzhalter auf 75."
+    ID_PREVIEW_DPI_150     "Setzt den DPI-Platzhalter auf 150."
+    ID_PREVIEW_DPI_300     "Setzt den DPI-Platzhalter auf 300."
+    ID_PREVIEW_DPI_600     "Setzt den DPI-Platzhalter auf 600."
 END
 
 STRINGTABLE
 BEGIN
     STE_PREVIEW_GENERATEDTEMPLATE "Von Hauptdatei generiert"
 END
+
+STRINGTABLE
+BEGIN
+    ID_PREVIEW_DPI_900     "Setzt den DPI-Platzhalter auf 900."
+    ID_PREVIEW_DPI_1200    "Setzt den DPI-Platzhalter auf 1200."
+    ID_PREVIEW_AUTO_GENERATE "Erstellt die Vorschau wenn die folgenden Ereignisse eintreten."
+    ID_PREVIEW_AUTO_ENTER   "Vorschau erstellen wenn Enter in einem Editor gedrückt wird."
+    ID_PREVIEW_AUTO_SAVE    "Vorschau erstellen wenn eine Datei gespeichert wird."
+END
+
 
 #endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
@@ -7499,6 +7553,32 @@ BEGIN
     END
 END
 
+IDR_PREVIEW_DPI MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "Automatic",                   ID_PREVIEW_DPI_AUTO
+        MENUITEM SEPARATOR
+        MENUITEM "75 dpi",                      ID_PREVIEW_DPI_75
+        MENUITEM "150 dpi",                     ID_PREVIEW_DPI_150
+        MENUITEM "300 dpi",                     ID_PREVIEW_DPI_300
+        MENUITEM "600 dpi",                     ID_PREVIEW_DPI_600
+        MENUITEM "900 dpi",                     ID_PREVIEW_DPI_900
+        MENUITEM "1200 dpi",                    ID_PREVIEW_DPI_1200
+    END
+END
+
+IDR_PREVIEW_AUTO MENU
+BEGIN
+    POPUP "Menu"
+    BEGIN
+        MENUITEM "Update automatically when:",  ID_PREVIEW_AUTO_GENERATE
+        MENUITEM SEPARATOR
+        MENUITEM "pressing Enter",              ID_PREVIEW_AUTO_ENTER
+        MENUITEM "saving any file",             ID_PREVIEW_AUTO_SAVE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -9360,11 +9440,25 @@ BEGIN
                             "Shows or hides the Output from the Preview Build Process\nPreview Build Output"
     ID_VIEW_PREVIEW_IMAGE_PANE 
                             "Shows or hides the Preview Image\nPreview Image"
+    ID_PREVIEW_DPI_AUTO    "Automatically determine the best resolution for the next run."
+    ID_PREVIEW_DPI_75      "Sets the DPI placeholder to 75."
+    ID_PREVIEW_DPI_150     "Sets the DPI placeholder to 150."
+    ID_PREVIEW_DPI_300     "Sets the DPI placeholder to 300."
+    ID_PREVIEW_DPI_600     "Sets the DPI placeholder to 600."
 END
 
 STRINGTABLE
 BEGIN
     STE_PREVIEW_GENERATEDTEMPLATE "Generated from Main File"
+END
+
+STRINGTABLE
+BEGIN
+    ID_PREVIEW_DPI_900     "Sets the DPI placeholder to 900."
+    ID_PREVIEW_DPI_1200    "Sets the DPI placeholder to 1200."
+    ID_PREVIEW_AUTO_GENERATE "Update the preview based on the triggers below."
+    ID_PREVIEW_AUTO_ENTER   "Triggers update of preview when pressing Enter in any edit window."
+    ID_PREVIEW_AUTO_SAVE    "Triggers update of preview when saving any file."
 END
 
 #endif    // English (United States) resources
