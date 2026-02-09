@@ -76,6 +76,4 @@ protected:
 
 	///A toolbar with commands related to preview templates, resolution and other aspects.
 	PrivateToolBar Toolbar;
-
-	///The menu showing the templates.
 };

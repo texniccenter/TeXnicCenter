@@ -130,7 +130,7 @@ void PreviewImagePane::OnTemplateEdit()
 
 void PreviewImagePane::OnZoomIn()
 {
-	View.ZoomIn();
+	View.Zoom(1);
 }
 
 void PreviewImagePane::OnZoomFit()

@@ -39,29 +39,73 @@ public:
 
 // construction/destruction
 public:
-	CPreviewImageView(){};
+	CPreviewImageView();
 	virtual ~CPreviewImageView(){};
 
 // operations
 public:
 	BOOL Create(const RECT& rect, CWnd* pwndParent);
 
-// overrides and messages
+//Overrides and messages
 protected:
 	DECLARE_MESSAGE_MAP()
-
+	//Double-buffered drawing, fitting image to window
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 
-//Attributes
+	//Implements pan/zoom interface
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+
+//Methods
 protected:
-	void ZoomIn();
+	/** Zooms into or out of the image.
+	* 
+	* @param nSteps
+	* If the sign of @c nSteps is negative, then we zoom out.
+	* Otherwise, we zoom in. Each step represents 10 percent of @c PreviousDrawRect.
+	* 
+	* @param GravityPoint
+	* Adjust the position of the image such that this point coincides with the same pixel.
+	*/
+	void Zoom(const int nSteps, CPoint GravityPoint = CPoint(-1, -1));
+
+	///Activates a mode in which the image will always be fit fully into the window.
 	void ZoomFit();
+
+	///Fills the given data structures with the rectangle describing the window, and a padded version for drawing.
+	void GetViewRects(CRect& FullClientRect, CRect& WinRect);
+
+private:
+	///Returns a scaled source rectangle fitted and centered into target.
+	CRect FitRectIntoRect(const CRect& Target, const CRect& Source);
+
+	///Make sure the source overlaps with the target. If not, adjust position or even size.
+	CRect CoverRectByRect(const CRect& Target, const CRect& Source);
+
+	///Adjusts the range [c, d] such that it covers [a, b], while keeping (d-c) constant.
+	void Cover1D(const LONG& a, const LONG& b, LONG& c, LONG& d);
 
 //Attributes
 protected:
 	///The image to be shown.
 	CImage PreviewImage;
+
+	///Whether or not to always fit the image into the window size
+	bool bFitImageToWindow;
+
+private:
+	///The rectangle describing the scaling and positioning
+	///of the current/previous image.
+	CRect PreviousDrawRect;
+
+	///Padding we would like to have around the edges.
+	int Padding;
+
+	///Previous position of the mouse cursor; used for panning.
+	CPoint PreviousMousePos;
+	bool bValidPreviousMousePos;
+
+	///Current zoom factor
+	double CurrentZoomFactor;
 };
-
-
-

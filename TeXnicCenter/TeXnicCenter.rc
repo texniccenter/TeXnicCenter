@@ -796,6 +796,17 @@ BEGIN
     BUTTON      ID_BUTTON38600
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ID_PREVIEW_ZOOM_IN      "Increase zoom level."
+END
+
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -3276,10 +3287,10 @@ IDR_PREVIEW_AUTO MENU
 BEGIN
     POPUP "Menu"
     BEGIN
-        MENUITEM "Automatisch erstellen wenn:",  ID_PREVIEW_AUTO_GENERATE
+        MENUITEM "Automatisch erstellen wenn:", ID_PREVIEW_AUTO_GENERATE
         MENUITEM SEPARATOR
-        MENUITEM "Enter gedrückt wird",              ID_PREVIEW_AUTO_ENTER
-        MENUITEM "eine Datei gespeichert wird",             ID_PREVIEW_AUTO_SAVE
+        MENUITEM "Enter gedrückt wird",         ID_PREVIEW_AUTO_ENTER
+        MENUITEM "eine Datei gespeichert wird", ID_PREVIEW_AUTO_SAVE
     END
 END
 
@@ -5153,11 +5164,11 @@ BEGIN
                             "Blendet das Fenster mit der Ausgabe der Vorschauerstellung ein oder aus.\nVorschauerstellung"
     ID_VIEW_PREVIEW_IMAGE_PANE 
                             "Blendet das Fenster mit dem Vorschaubild ein oder aus.\nVorschaubild"
-    ID_PREVIEW_DPI_AUTO    "Automatisch die beste Auflösung für die nächste Erstellung bestimmen."
-    ID_PREVIEW_DPI_75      "Setzt den DPI-Platzhalter auf 75."
-    ID_PREVIEW_DPI_150     "Setzt den DPI-Platzhalter auf 150."
-    ID_PREVIEW_DPI_300     "Setzt den DPI-Platzhalter auf 300."
-    ID_PREVIEW_DPI_600     "Setzt den DPI-Platzhalter auf 600."
+    ID_PREVIEW_DPI_AUTO     "Automatisch die beste Auflösung für die nächste Erstellung bestimmen."
+    ID_PREVIEW_DPI_75       "Setzt den DPI-Platzhalter auf 75."
+    ID_PREVIEW_DPI_150      "Setzt den DPI-Platzhalter auf 150."
+    ID_PREVIEW_DPI_300      "Setzt den DPI-Platzhalter auf 300."
+    ID_PREVIEW_DPI_600      "Setzt den DPI-Platzhalter auf 600."
 END
 
 STRINGTABLE
@@ -5167,13 +5178,13 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_PREVIEW_DPI_900     "Setzt den DPI-Platzhalter auf 900."
-    ID_PREVIEW_DPI_1200    "Setzt den DPI-Platzhalter auf 1200."
-    ID_PREVIEW_AUTO_GENERATE "Erstellt die Vorschau wenn die folgenden Ereignisse eintreten."
+    ID_PREVIEW_DPI_900      "Setzt den DPI-Platzhalter auf 900."
+    ID_PREVIEW_DPI_1200     "Setzt den DPI-Platzhalter auf 1200."
+    ID_PREVIEW_AUTO_GENERATE 
+                            "Erstellt die Vorschau wenn die folgenden Ereignisse eintreten."
     ID_PREVIEW_AUTO_ENTER   "Vorschau erstellen wenn Enter in einem Editor gedrückt wird."
     ID_PREVIEW_AUTO_SAVE    "Vorschau erstellen wenn eine Datei gespeichert wird."
 END
-
 
 #endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
@@ -9440,11 +9451,11 @@ BEGIN
                             "Shows or hides the Output from the Preview Build Process\nPreview Build Output"
     ID_VIEW_PREVIEW_IMAGE_PANE 
                             "Shows or hides the Preview Image\nPreview Image"
-    ID_PREVIEW_DPI_AUTO    "Automatically determine the best resolution for the next run."
-    ID_PREVIEW_DPI_75      "Sets the DPI placeholder to 75."
-    ID_PREVIEW_DPI_150     "Sets the DPI placeholder to 150."
-    ID_PREVIEW_DPI_300     "Sets the DPI placeholder to 300."
-    ID_PREVIEW_DPI_600     "Sets the DPI placeholder to 600."
+    ID_PREVIEW_DPI_AUTO     "Automatically determine the best resolution for the next run."
+    ID_PREVIEW_DPI_75       "Sets the DPI placeholder to 75."
+    ID_PREVIEW_DPI_150      "Sets the DPI placeholder to 150."
+    ID_PREVIEW_DPI_300      "Sets the DPI placeholder to 300."
+    ID_PREVIEW_DPI_600      "Sets the DPI placeholder to 600."
 END
 
 STRINGTABLE
@@ -9454,8 +9465,8 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_PREVIEW_DPI_900     "Sets the DPI placeholder to 900."
-    ID_PREVIEW_DPI_1200    "Sets the DPI placeholder to 1200."
+    ID_PREVIEW_DPI_900      "Sets the DPI placeholder to 900."
+    ID_PREVIEW_DPI_1200     "Sets the DPI placeholder to 1200."
     ID_PREVIEW_AUTO_GENERATE "Update the preview based on the triggers below."
     ID_PREVIEW_AUTO_ENTER   "Triggers update of preview when pressing Enter in any edit window."
     ID_PREVIEW_AUTO_SAVE    "Triggers update of preview when saving any file."
