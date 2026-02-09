@@ -98,7 +98,7 @@ int CParseOutputView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	                        MAKEINTRESOURCE(IDB_PARSE_VIEW),16,1,RGB(255,0,255),IMAGE_BITMAP,
 	                        LR_CREATEDIBSECTION);
 
-	SetImageList(&m_images);
+	SetImageList(&m_images);//TODO: we get an access violation on destruction of this class because of images. Difficult to reproduce.
 
 	return 0;
 }
