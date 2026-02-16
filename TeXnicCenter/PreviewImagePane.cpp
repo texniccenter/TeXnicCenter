@@ -48,7 +48,11 @@ BEGIN_MESSAGE_MAP(PreviewImagePane, WorkspacePane)
 	ON_MESSAGE(AfxUserMessages::PreviewImageViewStopProgressAnimation, &PreviewImagePane::StopProgress)
 	ON_COMMAND(ID_PREVIEW_TEMPLATE_EDIT, &PreviewImagePane::OnTemplateEdit)
 	ON_COMMAND(ID_PREVIEW_ZOOM_IN, &PreviewImagePane::OnZoomIn)
+	ON_COMMAND(ID_PREVIEW_ZOOM_OUT, &PreviewImagePane::OnZoomOut)
 	ON_COMMAND(ID_PREVIEW_ZOOM_FIT, &PreviewImagePane::OnZoomFit)
+	//ON_UPDATE_COMMAND_UI(ID_PREVIEW_ZOOM_IN, &PreviewImagePane::OnZoomUpdateUI)
+	ON_UPDATE_COMMAND_UI(ID_PREVIEW_ZOOM_OUT, &PreviewImagePane::OnZoomOutUpdateUI)
+	ON_UPDATE_COMMAND_UI(ID_PREVIEW_ZOOM_FIT, &PreviewImagePane::OnZoomFitUpdateUI)
 END_MESSAGE_MAP()
 
 
@@ -133,8 +137,23 @@ void PreviewImagePane::OnZoomIn()
 	View.Zoom(1);
 }
 
+void PreviewImagePane::OnZoomOut()
+{
+	View.Zoom(-1);
+}
+
 void PreviewImagePane::OnZoomFit()
 {
 	View.ZoomFit();
+}
+
+void PreviewImagePane::OnZoomOutUpdateUI(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!View.bFitImageToWindow);
+}
+
+void PreviewImagePane::OnZoomFitUpdateUI(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(View.bFitImageToWindow);
 }
 

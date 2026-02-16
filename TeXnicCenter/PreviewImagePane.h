@@ -63,7 +63,10 @@ protected:
 
 	void OnTemplateEdit();
 	void OnZoomIn();
+	void OnZoomOut();
 	void OnZoomFit();
+	void OnZoomOutUpdateUI(CCmdUI* pCmdUI);
+	void OnZoomFitUpdateUI(CCmdUI* pCmdUI);
 
 //Methods
 public:
