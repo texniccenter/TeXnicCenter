@@ -386,8 +386,8 @@ void COutputDoc::OnBuildPreview()
 		//We do this regardless of success.
 		//TODO: Consider displaying the success of the preview generation in the preview window.
 		//The builder could send the termination code.
-		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewUpdate, 0, 0, false, 0);
-		m_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, false, 0);
+		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewUpdate, 0, 0, false, 0);
+		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, false, 0);
 	}
 
 	DoPreviewRun();
@@ -396,7 +396,7 @@ void COutputDoc::OnBuildPreview()
 
 void COutputDoc::DoPreviewRun()
 {
-	if (m_builder.IsStillRunning()) return;
+	if (m_preview_builder.IsStillRunning()) return;
 
 	//For previews, we do not scan the errors, warnings, etc.
 	//We also do not activate the output.
@@ -428,10 +428,10 @@ void COutputDoc::DoPreviewRun()
 
 	//TODO: We will have a menu with more than 1 template. The user can choose one, the choice will be written to the tps file.
 	// See also GetAllPreviewTemplates()
-	//CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Generated from Main File.tex"), true);
-	CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Simple Formula.tex"), true);
+	CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Generated from Main File.tex"), true);
+	//CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Simple Formula.tex"), true);
 
 	// build the preview
-	//m_builder.BuildPreview(NULL, NULL, /*this, m_pBuildView*/ PreviewDir, strPreviewMainPath);
-	m_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
+	//m_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
+	m_preview_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
 }

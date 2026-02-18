@@ -546,6 +546,9 @@ private:
 	/** Object used to build the output. */
 	COutputBuilder m_builder;
 
+	/** Object used to build the preview. */
+	COutputBuilder m_preview_builder;
+
 public:
 	// Clears all the warnings, errors, bad boxes etc.
 	void ClearMessages();
