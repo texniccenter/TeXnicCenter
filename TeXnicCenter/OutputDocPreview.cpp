@@ -371,11 +371,20 @@ bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwri
 }
 
 
+void COutputDoc::OnUpdateBuildPreview(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(
+	    theApp.GetProject()
+	    && !CProfileMap::GetInstance()->GetActiveProfileKey().IsEmpty()
+	    && !m_preview_builder.IsStillRunning()
+	);
+}
+
+
 void COutputDoc::OnBuildPreview()
 {
 	//TODO: Decide on whether this can be run for single active files.
-	// Then see also the UI Update for this menu entry
-	//m_pPreviewView
+	// Then see also the UI Update for this menu entry above.
 	CWnd* pMainWnd = AfxGetMainWnd();
 	if (pMainWnd && m_pPreviewImagePane)
 	{

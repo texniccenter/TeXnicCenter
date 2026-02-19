@@ -234,6 +234,7 @@ protected:
 	afx_msg void OnUpdateLatexClean(CCmdUI* pCmdUI);
 	afx_msg void OnLatexRunAndView();
 	afx_msg void OnLatexFileCompileAndView();
+	afx_msg void OnUpdateBuildPreview(CCmdUI* pCmdUI);
 	afx_msg void OnBuildPreview();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
