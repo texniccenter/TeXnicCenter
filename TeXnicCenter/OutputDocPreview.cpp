@@ -199,39 +199,29 @@ int COutputDoc::GetPreviewText(CString& PreviewText, CodeDocument* pPreviewDoc)
 }
 
 
-CString COutputDoc::GetPreviewGeneratedTemplateFileName() const
+bool COutputDoc::WritePreviewText(const CString& PreviewContentPath)
 {
-	return _T("Template ") + AfxLoadString(STE_PREVIEW_GENERATEDTEMPLATE) + _T(".tex");
+	//Get the preview text. Check validity.
+	CString PreviewText;
+	CodeDocument* pPreviewDoc = NULL;
+	const int nValidPreviewText = GetPreviewText(PreviewText, pPreviewDoc);
+	if (nValidPreviewText < 1)
+	{
+		if (nValidPreviewText == 0) AfxMessageBox(STE_PREVIEW_NOSELECTION);
+		return false;
+	}
+
+	//Write preview text; same encoding as original file
+	TextDocument td(pPreviewDoc); //ok to be NULL
+	td.Write(PreviewContentPath, PreviewText);
+
+	return true;
 }
 
 
-bool COutputDoc::GetAllPreviewTemplates(std::vector<CString>& AllTemplates, int& idPreferred) const
+CString COutputDoc::GetPreviewGeneratedTemplateFileName() const
 {
-	//Get the path to the preview folder
-	CString PreviewDir = GetPreviewDir();
-
-	//Get all template files in the preview folder
-	AllTemplates.clear();
-	idPreferred = -1;
-	CFileFind finder;
-	BOOL bWorking = finder.FindFile(CPathTool::Cat(PreviewDir, _T("Template*.tex"), true));
-	while (bWorking)
-	{
-		bWorking = finder.FindNextFile();
-		if (!finder.IsDirectory())
-		{
-			//Add this file to the list
-			AllTemplates.push_back(finder.GetFileName());
-
-			////Is this the preferred template?
-			//if (finder.GetFileName() == )
-			//{
-			//	idPreferred = AllTemplates.size() - 1;
-			//}
-		}
-	}
-	
-	return true;
+	return _T("Template ") + AfxLoadString(STE_PREVIEW_GENERATEDTEMPLATE) + _T(".tex");
 }
 
 
@@ -285,7 +275,8 @@ bool COutputDoc::CreatePreviewTemplateFromMainFile(const CString& PreviewDir, co
 }
 
 
-bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwrite)
+bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwrite,
+									const bool bCopyTemplates, const bool bCreateFromMainFile)
 {
 	//Create the directory 'PreviewDir' recursively using the Windows API
 	int nRes = SHCreateDirectoryEx(theApp.GetMainWnd()->GetSafeHwnd(), PreviewDir, NULL);
@@ -300,83 +291,125 @@ bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwri
 		return false;
 	}
 
+	//Record whether we could achieve something below regarding templates.
+	bool bSomeSuccess(false);
 
 	//Where are our templates?
 	CString TemplateDir = CPathTool::Cat(theApp.GetWorkingDir(), _T("Templates\\Preview"));
 	//if (!CPathTool::Exists(TemplateDir)) return false;
 
 	//Copy all files from the templates directory to the preview directory
-	CFileFind finder;
-	CString strAccumulatedErrorMessages;
-	bool bSomeSuccess(false);
-	bool bWorking = finder.FindFile(TemplateDir + _T("\\*.*"));
-	if (!bWorking) strAccumulatedErrorMessages += AfxFormatSystemString(GetLastError());
-	while (bWorking)
+	if (bCopyTemplates)
 	{
-		bWorking = finder.FindNextFile();
-		if (finder.IsDirectory()) continue;
-
-		//Get the file name
-		CString strFileName = finder.GetFileName();
-		//Get the full path
-		CString strFilePath = finder.GetFilePath();
-		//Get the destination path
-		CString strDestPath = CPathTool::Cat(PreviewDir, strFileName);
-
-		//Does the file exist? If so, we only copy if the user wants us to overwrite.
-		if (!CPathTool::Exists(strDestPath) || bOverwrite)
+		CFileFind finder;
+		CString strAccumulatedErrorMessages;
+		bool bWorking = finder.FindFile(TemplateDir + _T("\\*.*"));
+		if (!bWorking) strAccumulatedErrorMessages += AfxFormatSystemString(GetLastError());
+		while (bWorking)
 		{
-			//Copy the file, potentially overwrite
-			const bool bSuccess = CopyFile(strFilePath, strDestPath, false);
-			bSomeSuccess = bSomeSuccess || bSuccess;		
-			if (!bSuccess)
+			bWorking = finder.FindNextFile();
+			if (finder.IsDirectory()) continue;
+
+			//Get the file name
+			CString strFileName = finder.GetFileName();
+			//Get the full path
+			CString strFilePath = finder.GetFilePath();
+			//Get the destination path
+			CString strDestPath = CPathTool::Cat(PreviewDir, strFileName);
+
+			//Does the file exist? If so, we only copy if the user wants us to overwrite.
+			if (!CPathTool::Exists(strDestPath) || bOverwrite)
 			{
-				if (!strAccumulatedErrorMessages.IsEmpty()) strAccumulatedErrorMessages += "\n";
-				strAccumulatedErrorMessages += AfxFormatSystemString(GetLastError());
+				//Copy the file, potentially overwrite
+				const bool bSuccess = CopyFile(strFilePath, strDestPath, false);
+				bSomeSuccess = bSomeSuccess || bSuccess;		
+				if (!bSuccess)
+				{
+					if (!strAccumulatedErrorMessages.IsEmpty()) strAccumulatedErrorMessages += "\n";
+					strAccumulatedErrorMessages += AfxFormatSystemString(GetLastError());
+				}
+			}
+			else
+			{
+				//File exists and we do not want to overwrite. This is a success.
+				bSomeSuccess = true;
 			}
 		}
-		else
-		{
-			//File exists and we do not want to overwrite. This is a success.
-			bSomeSuccess = true;
-		}
-	}
 
-	//Any errors?
-	if (!strAccumulatedErrorMessages.IsEmpty())
-	{
-		CString strMsg;
-		strMsg.Format(STE_PREVIEW_TEMPLATE_COPY_ERRORS,
-						(LPCTSTR)TemplateDir,
-						(LPCTSTR)PreviewDir,
-						(LPCTSTR)strAccumulatedErrorMessages);
+		//Any errors?
+		if (!strAccumulatedErrorMessages.IsEmpty())
+		{
+			CString strMsg;
+			strMsg.Format(STE_PREVIEW_TEMPLATE_COPY_ERRORS,
+							(LPCTSTR)TemplateDir,
+							(LPCTSTR)PreviewDir,
+							(LPCTSTR)strAccumulatedErrorMessages);
 
-		UINT MsgBoxErrorOrInfo = MB_OK;
-		if (bSomeSuccess)
-		{
-			MsgBoxErrorOrInfo |= MB_ICONINFORMATION;
+			UINT MsgBoxErrorOrInfo = MB_OK;
+			if (bSomeSuccess)
+			{
+				MsgBoxErrorOrInfo |= MB_ICONINFORMATION;
+			}
+			else
+			{
+				MsgBoxErrorOrInfo |= MB_ICONERROR;
+			}
+			AfxMessageBox(strMsg, MsgBoxErrorOrInfo);
 		}
-		else
-		{
-			MsgBoxErrorOrInfo |= MB_ICONERROR;
-		}
-		AfxMessageBox(strMsg, MsgBoxErrorOrInfo);
 	}
 
 	//Create template from main document
-	bSomeSuccess = CreatePreviewTemplateFromMainFile(PreviewDir, bOverwrite);
-	//if (!bSomeSuccess) <== we could display an error message.
+	if (bCreateFromMainFile)
+	{
+		const bool bSuccess = CreatePreviewTemplateFromMainFile(PreviewDir, bOverwrite);
+		bSomeSuccess = bSomeSuccess || bSuccess;		
+		//if (!bSomeSuccess) <== we could display an error message.
+	}
 
 	return bSomeSuccess;
 }
 
 
+bool COutputDoc::PrepareFastPreview(const CString& PreviewDir)
+{
+	bool bSuccess(true);
+	
+	//Take care of our helper application for fast mode
+	CString ExeName = _T("WaitForFileChange.exe");
+	CString PreviewExePath = CPathTool::Cat(PreviewDir, ExeName, true);
+	if (!CPathTool::Exists(PreviewExePath))
+	{
+		//Where is our original preview helper executable?
+		CString OrigExe = CPathTool::Cat(theApp.GetWorkingDir(), ExeName);
+		if (!CPathTool::Exists(OrigExe))
+		{
+			//We need to switch off fast mode. Our helper does not exist anywhere.
+			CConfiguration::GetInstance()->m_bPreviewFastMode = false;
+			return false;
+		}
+
+		bSuccess = CopyFile(OrigExe, PreviewExePath, true);
+	}
+
+	//Put default text into 'content.tex'
+	CString ContentName = _T("content.tex");
+	CString ContentPath = CPathTool::Cat(PreviewDir, ContentName, true);
+	const CString Content(_T("\\immediate\\write18{WaitForFileChange}\n\\input{content2}\n"));
+	TextDocument td(NULL); //ok to be NULL
+	bSuccess = bSuccess && td.Write(ContentPath, Content);
+
+	return bSuccess;
+}
+
+
 void COutputDoc::OnUpdateBuildPreview(CCmdUI* pCmdUI)
 {
+	const bool bFastMode = CConfiguration::GetInstance()->m_bPreviewFastMode;
+
 	pCmdUI->Enable(
 	    theApp.GetProject()
 	    && !CProfileMap::GetInstance()->GetActiveProfileKey().IsEmpty()
-	    && !m_preview_builder.IsStillRunning()
+	    && (bFastMode || !m_preview_builder.IsStillRunning())
 	);
 }
 
@@ -385,10 +418,100 @@ void COutputDoc::OnBuildPreview()
 {
 	//TODO: Decide on whether this can be run for single active files.
 	// Then see also the UI Update for this menu entry above.
+
+	//Open tool window to show feedback and preview image itself.
+	CWnd* pMainWnd = AfxGetMainWnd();
+	if (pMainWnd) PostMessage(pMainWnd->m_hWnd, AfxUserMessages::ShowDockingBarID, ID_VIEW_PREVIEW_IMAGE_PANE, 0);
+
+	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
+	{
+		// Fast Mode ///////////////////////////////////////////////////
+		
+		bool bSuccess(true);
+
+		//Start the previewer builder, if it is not running yet
+		if (!m_preview_builder.IsStillRunning())
+		{
+			bSuccess = bSuccess && DoPreviewRun();
+		}
+
+		//Write the preview text to file: this triggers the finalization of the preview run
+		const CString PreviewDir = GetPreviewDir();
+		CString PreviewContentPath = CPathTool::Cat(PreviewDir, _T("content2.tex"), true);
+		bSuccess = bSuccess && WritePreviewText(PreviewContentPath);
+
+		//TODO: inform the user!
+		if (!bSuccess)
+		{
+			//Disable fast mode, so we do not run unsuccessfully forever
+			CConfiguration::GetInstance()->m_bPreviewFastMode = false;
+		}
+	}	
+	else
+	{
+		// Regular Mode ////////////////////////////////////////////////
+		DoPreviewRun();
+	}
+}
+
+
+bool COutputDoc::DoPreviewRun()
+{
+	//Get the working directory for the preview.
+	const CString PreviewDir = GetPreviewDir();
+
+	//Does it exist? Create it, if necessary.
+	if (!CPathTool::Exists(PreviewDir))
+	{
+		//This generates a template from the main file, and copies generic templates.
+		if (!CreatePreviewDir(PreviewDir, false, true, true)) return false;
+	}
+
+	//The following steps need to be all successful. If not, fast mode is disabled, and we leave here.
+	bool bSuccess(true);
+
+	//Kill a still running preview run. TODO: Test this in relation to fast mode, where I feel it is necessary when switching between modes.
+	if (m_preview_builder.IsStillRunning())
+	{
+		bSuccess = bSuccess && m_preview_builder.CancelExecution();
+	}
+
+	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
+	{
+		// Fast Mode ///////////////////////////////////////////////////
+		bSuccess = bSuccess && PrepareFastPreview(PreviewDir);
+	}	
+	else
+	{
+		// Regular Mode ////////////////////////////////////////////////
+		//Write the preview text to file
+		CString PreviewContentPath = CPathTool::Cat(PreviewDir, _T("content.tex"), true);
+		bSuccess = bSuccess && WritePreviewText(PreviewContentPath);
+	}
+
+	//TODO: inform user on error! bSuccess
+	if (!bSuccess)
+	{
+		//Always switch off fast mode in case of errors. We do not want to run unsuccessfully over and over again.
+		CConfiguration::GetInstance()->m_bPreviewFastMode = false;
+		return false;
+	}
+
+
+	//Get the selected template.
+	CString strPreviewMainPath = CPathTool::Cat(PreviewDir,
+		_T("Template ") + CConfiguration::GetInstance()->m_strPreviewTemplate + _T(".tex"),
+		true);
+	
+	//Reset old message settings
+	//TODO: check necessity
+	m_preview_builder.MsgsAfterTermination.ClearAllMessages();
+
+	//Messages to open tool windows, provide feedback, and update content after preview run.
 	CWnd* pMainWnd = AfxGetMainWnd();
 	if (pMainWnd && m_pPreviewImagePane)
 	{
-		PostMessage(pMainWnd->m_hWnd, AfxUserMessages::ShowDockingBarID, ID_VIEW_PREVIEW_IMAGE_PANE, 0);
+		//PostMessage(pMainWnd->m_hWnd, AfxUserMessages::ShowDockingBarID, ID_VIEW_PREVIEW_IMAGE_PANE, 0);
 		PostMessage(m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStartProgressAnimation, 0, 0);
 
 		//After building the preview, the PreviewView needs to reload the image.
@@ -399,48 +522,9 @@ void COutputDoc::OnBuildPreview()
 		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, false, 0);
 	}
 
-	DoPreviewRun();
-}
-
-
-void COutputDoc::DoPreviewRun()
-{
-	if (m_preview_builder.IsStillRunning()) return;
-
+	//Build the preview
 	//For previews, we do not scan the errors, warnings, etc.
 	//We also do not activate the output.
-
-	//Get the preview text. Check validity.
-	CString PreviewText;
-	CodeDocument* pPreviewDoc = NULL;
-	const int nValidPreviewText = GetPreviewText(PreviewText, pPreviewDoc);
-	if (nValidPreviewText < 1)
-	{
-		if (nValidPreviewText == 0) AfxMessageBox(STE_PREVIEW_NOSELECTION);
-		return;
-	}
-	
-	//Get the working directory for the preview.
-	const CString PreviewDir = GetPreviewDir();
-
-	//Does it exist? Create it, if necessary.
-	if (!CPathTool::Exists(PreviewDir))
-	{
-		//This generates a template from the main file, and copies generic templates.
-		if (!CreatePreviewDir(PreviewDir, false)) return;
-	}
-
-	//Write preview text to 'content.tex' in the preview folder; same encoding as original file
-	CString PreviewContentPath = CPathTool::Cat(PreviewDir, _T("content.tex"), true);
-	TextDocument td(pPreviewDoc); //ok to be NULL
-	td.Write(PreviewContentPath, PreviewText);
-
-	//TODO: We will have a menu with more than 1 template. The user can choose one, the choice will be written to the tps file.
-	// See also GetAllPreviewTemplates()
-	CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Generated from Main File.tex"), true);
-	//CString strPreviewMainPath = CPathTool::Cat(PreviewDir, _T("Template Simple Formula.tex"), true);
-
-	// build the preview
 	//m_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
-	m_preview_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
+	return m_preview_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
 }

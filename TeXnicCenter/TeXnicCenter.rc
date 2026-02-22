@@ -141,6 +141,7 @@ BEGIN
     "I",            ID_EDIT_FIND_INCREMENTAL_BACKWARD, VIRTKEY, SHIFT, CONTROL, NOINVERT
     "I",            ID_EDIT_FIND_INCREMENTAL_FORWARD, VIRTKEY, CONTROL, NOINVERT
     VK_F3,          ID_EDIT_FIND_PREVIOUS,  VIRTKEY, SHIFT, NOINVERT
+    "G",            ID_EDIT_GOTO,           VIRTKEY, CONTROL, NOINVERT
     VK_LEFT,        ID_EDIT_GOTO_LAST_CHANGE, VIRTKEY, ALT, NOINVERT
     VK_F2,          ID_EDIT_GOTO_NEXT_BOOKMARK, VIRTKEY, NOINVERT
     VK_F2,          ID_EDIT_GOTO_PREV_BOOKMARK, VIRTKEY, SHIFT, NOINVERT
@@ -205,7 +206,7 @@ BEGIN
     "8",            ID_VIEW_WHITE_SPACE,    VIRTKEY, SHIFT, CONTROL, NOINVERT
     VK_TAB,         ID_WINDOW_NEXT,         VIRTKEY, SHIFT, CONTROL, NOINVERT
     VK_TAB,         ID_WINDOW_PREVIOUS,     VIRTKEY, CONTROL, NOINVERT
-    "G",            ID_EDIT_GOTO,           VIRTKEY, CONTROL, NOINVERT
+    VK_OEM_1,       ID_BUILD_PREVIEW,       VIRTKEY, CONTROL, NOINVERT
 END
 
 
@@ -262,17 +263,9 @@ END
 
 IDR_PREVIEW TOOLBAR 16, 16
 BEGIN
-    BUTTON      ID_BUILD_BUILDPREVIEW
-    BUTTON      ID_PREVIEW_AUTO
-    SEPARATOR
+    BUTTON      ID_PREVIEW_REFRESH
+    BUTTON      ID_PREVIEW_OPTIONS
     BUTTON      ID_PREVIEW_TEMPLATE_SELECT
-    BUTTON      ID_PREVIEW_TEMPLATE_EDIT
-    SEPARATOR
-    BUTTON      ID_PREVIEW_ZOOM_IN
-    BUTTON      ID_PREVIEW_ZOOM_OUT
-    BUTTON      ID_PREVIEW_ZOOM_FIT
-    SEPARATOR
-    BUTTON      ID_PREVIEW_DPI
 END
 
 IDR_FIND TOOLBAR 16, 16
@@ -414,6 +407,8 @@ BEGIN
     SEPARATOR
     BUTTON      ID_LATEX_RUNANDVIEW
     BUTTON      ID_LATEX_FILECOMPILEANDVIEW
+    SEPARATOR
+    BUTTON      ID_BUILD_PREVIEW
     SEPARATOR
     BUTTON      ID_NEXT_ERROR
     BUTTON      ID_PREV_ERROR
@@ -3037,7 +3032,7 @@ BEGIN
         MENUITEM "Ausgabe erstellen &und betrachten", ID_LATEX_RUNANDVIEW
         MENUITEM "Projekt auf&räumen",          ID_LATEX_CLEAN
         MENUITEM SEPARATOR
-        MENUITEM "Vors&chaubild erstellen",     ID_BUILD_BUILDPREVIEW
+        MENUITEM "Vors&chaubild erstellen",     ID_BUILD_PREVIEW
         MENUITEM SEPARATOR
         MENUITEM "Nächster &Fehler",            ID_NEXT_ERROR
         MENUITEM "&Vorheriger Fehler",          ID_PREV_ERROR
@@ -3262,29 +3257,37 @@ BEGIN
     END
 END
 
-IDR_PREVIEW_DPI MENU
+IDR_PREVIEW_OPTIONSMENU MENU
 BEGIN
     POPUP "Menu"
     BEGIN
-        MENUITEM "Automatisch",                 ID_PREVIEW_DPI_AUTO
+        MENUITEM "Schnellmodus",                ID_PREVIEW_FASTMODE
         MENUITEM SEPARATOR
-        MENUITEM "75 dpi",                      ID_PREVIEW_DPI_75
-        MENUITEM "150 dpi",                     ID_PREVIEW_DPI_150
-        MENUITEM "300 dpi",                     ID_PREVIEW_DPI_300
-        MENUITEM "600 dpi",                     ID_PREVIEW_DPI_600
-        MENUITEM "900 dpi",                     ID_PREVIEW_DPI_900
-        MENUITEM "1200 dpi",                    ID_PREVIEW_DPI_1200
-    END
-END
-
-IDR_PREVIEW_AUTO MENU
-BEGIN
-    POPUP "Menu"
-    BEGIN
-        MENUITEM "Automatisch erstellen wenn:", ID_PREVIEW_AUTO_GENERATE
+        POPUP "Automatisch erstellen"
+        BEGIN
+            MENUITEM "wenn Enter gedrückt wird",    ID_PREVIEW_AUTO_ENTER
+            MENUITEM "wenn eine Datei gespeichert wird", ID_PREVIEW_AUTO_SAVE
+        END
         MENUITEM SEPARATOR
-        MENUITEM "Enter gedrückt wird",         ID_PREVIEW_AUTO_ENTER
-        MENUITEM "eine Datei gespeichert wird", ID_PREVIEW_AUTO_SAVE
+        MENUITEM "Aktuelle Vorlage bearbeiten", ID_PREVIEW_TEMPLATE_EDIT
+        MENUITEM "Vorlagen von Hauptdatei erstellen",  ID_PREVIEW_TEMPLATE_CREATE
+        MENUITEM "Nach neuen Vorlagen suchen",  ID_PREVIEW_TEMPLATE_SCAN
+        MENUITEM SEPARATOR
+        MENUITEM "Ansicht vergrößern",          ID_PREVIEW_ZOOM_IN
+        MENUITEM "Ansicht verkleinern",         ID_PREVIEW_ZOOM_OUT
+        MENUITEM "Bild einpassen",              ID_PREVIEW_ZOOM_FIT
+        MENUITEM SEPARATOR
+        POPUP "Auflösung"
+        BEGIN
+            MENUITEM "Automatisch",                 ID_PREVIEW_DPI_AUTO
+            MENUITEM SEPARATOR
+            MENUITEM "75 dpi",                      ID_PREVIEW_DPI_75
+            MENUITEM "150 dpi",                     ID_PREVIEW_DPI_150
+            MENUITEM "300 dpi",                     ID_PREVIEW_DPI_300
+            MENUITEM "600 dpi",                     ID_PREVIEW_DPI_600
+            MENUITEM "900 dpi",                     ID_PREVIEW_DPI_900
+            MENUITEM "1200 dpi",                    ID_PREVIEW_DPI_1200
+        END
     END
 END
 
@@ -5153,32 +5156,39 @@ END
 STRINGTABLE
 BEGIN
     ID_BIBTEX_KEY           "Nach BibTeX Key / Label suchen."
-    ID_BUILD_BUILDPREVIEW   "Erstellt ein Vorschaubild vom markierten Text.\nVorschaubild erstellen"
+    ID_BUILD_PREVIEW        "Erstellt ein Vorschaubild vom markierten Text.\nVorschaubild erstellen"
     ID_VIEW_PREVIEW_OUTPUT_PANE 
                             "Blendet das Fenster mit der Ausgabe der Vorschauerstellung ein oder aus.\nVorschauerstellung"
     ID_VIEW_PREVIEW_IMAGE_PANE 
                             "Blendet das Fenster mit dem Vorschaubild ein oder aus.\nVorschaubild"
-    ID_PREVIEW_ZOOM_IN      "Ansicht vergrößern"
+    ID_PREVIEW_FASTMODE     "Erstellt die Vorschau im Schnellmodus."
+    ID_PREVIEW_AUTO_ENTER   "Vorschau erstellen wenn Enter in einem Editor gedrückt wird."
+    ID_PREVIEW_AUTO_SAVE    "Vorschau erstellen wenn eine Datei gespeichert wird."
+    ID_PREVIEW_TEMPLATE_EDIT 
+                            "Die gewählte Vorlage im Editor zur Bearbeitung öffnen."
+    ID_PREVIEW_TEMPLATE_CREATE 
+                            "Erstellt eine Vorlage basiered auf der Hauptdatei des Projektes."
+    ID_PREVIEW_TEMPLATE_SCAN 
+                            "Liste der Vorlagen aktualisieren basierend auf dem Installations- und Vorschauverzeichnis."
+    ID_PREVIEW_ZOOM_IN      "Vergrößert die Darstellung des Vorschaubildes."
+    ID_PREVIEW_ZOOM_OUT     "Verkleinert die Darstellung des Vorschaubildes."
+    ID_PREVIEW_ZOOM_FIT     "Bild in das Vorschaufenster einpassen."
+END
+
+STRINGTABLE
+BEGIN
     ID_PREVIEW_DPI_AUTO     "Automatisch die beste Auflösung für die nächste Erstellung bestimmen."
     ID_PREVIEW_DPI_75       "Setzt den DPI-Platzhalter auf 75."
     ID_PREVIEW_DPI_150      "Setzt den DPI-Platzhalter auf 150."
     ID_PREVIEW_DPI_300      "Setzt den DPI-Platzhalter auf 300."
     ID_PREVIEW_DPI_600      "Setzt den DPI-Platzhalter auf 600."
+    ID_PREVIEW_DPI_900      "Setzt den DPI-Platzhalter auf 900."
+    ID_PREVIEW_DPI_1200     "Setzt den DPI-Platzhalter auf 1200."
 END
 
 STRINGTABLE
 BEGIN
     STE_PREVIEW_GENERATEDTEMPLATE "Von Hauptdatei generiert"
-END
-
-STRINGTABLE
-BEGIN
-    ID_PREVIEW_DPI_900      "Setzt den DPI-Platzhalter auf 900."
-    ID_PREVIEW_DPI_1200     "Setzt den DPI-Platzhalter auf 1200."
-    ID_PREVIEW_AUTO_GENERATE 
-                            "Erstellt die Vorschau wenn die folgenden Ereignisse eintreten."
-    ID_PREVIEW_AUTO_ENTER   "Vorschau erstellen wenn Enter in einem Editor gedrückt wird."
-    ID_PREVIEW_AUTO_SAVE    "Vorschau erstellen wenn eine Datei gespeichert wird."
 END
 
 STRINGTABLE
@@ -7347,7 +7357,7 @@ BEGIN
         MENUITEM "Build &and View Output",      ID_LATEX_RUNANDVIEW
         MENUITEM "&Clean Project",              ID_LATEX_CLEAN
         MENUITEM SEPARATOR
-        MENUITEM "Build Preview &Image",        ID_BUILD_BUILDPREVIEW
+        MENUITEM "Build Preview &Image",        ID_BUILD_PREVIEW
         MENUITEM SEPARATOR
         MENUITEM "Next &Error",                 ID_NEXT_ERROR
         MENUITEM "&Previous Error",             ID_PREV_ERROR
@@ -7572,29 +7582,37 @@ BEGIN
     END
 END
 
-IDR_PREVIEW_DPI MENU
+IDR_PREVIEW_OPTIONSMENU MENU
 BEGIN
     POPUP "Menu"
     BEGIN
-        MENUITEM "Automatic",                   ID_PREVIEW_DPI_AUTO
+        MENUITEM "Fast Mode",                   ID_PREVIEW_FASTMODE
         MENUITEM SEPARATOR
-        MENUITEM "75 dpi",                      ID_PREVIEW_DPI_75
-        MENUITEM "150 dpi",                     ID_PREVIEW_DPI_150
-        MENUITEM "300 dpi",                     ID_PREVIEW_DPI_300
-        MENUITEM "600 dpi",                     ID_PREVIEW_DPI_600
-        MENUITEM "900 dpi",                     ID_PREVIEW_DPI_900
-        MENUITEM "1200 dpi",                    ID_PREVIEW_DPI_1200
-    END
-END
-
-IDR_PREVIEW_AUTO MENU
-BEGIN
-    POPUP "Menu"
-    BEGIN
-        MENUITEM "Update automatically when:",  ID_PREVIEW_AUTO_GENERATE
+        POPUP "Automatic Update"
+        BEGIN
+            MENUITEM "When Pressing Enter",         ID_PREVIEW_AUTO_ENTER
+            MENUITEM "When Saving any File",        ID_PREVIEW_AUTO_SAVE
+        END
         MENUITEM SEPARATOR
-        MENUITEM "pressing Enter",              ID_PREVIEW_AUTO_ENTER
-        MENUITEM "saving any file",             ID_PREVIEW_AUTO_SAVE
+        MENUITEM "Edit Current Template",       ID_PREVIEW_TEMPLATE_EDIT
+        MENUITEM "Create Template from Main File",      ID_PREVIEW_TEMPLATE_CREATE
+        MENUITEM "Scan for new Templates",      ID_PREVIEW_TEMPLATE_SCAN
+        MENUITEM SEPARATOR
+        MENUITEM "Zoom In",                     ID_PREVIEW_ZOOM_IN
+        MENUITEM "Zoom Out",                    ID_PREVIEW_ZOOM_OUT
+        MENUITEM "Fit Image",                   ID_PREVIEW_ZOOM_FIT
+        MENUITEM SEPARATOR
+        POPUP "Image Resolution"
+        BEGIN
+            MENUITEM "Automatic",                   ID_PREVIEW_DPI_AUTO
+            MENUITEM SEPARATOR
+            MENUITEM "75 dpi",                      ID_PREVIEW_DPI_75
+            MENUITEM "150 dpi",                     ID_PREVIEW_DPI_150
+            MENUITEM "300 dpi",                     ID_PREVIEW_DPI_300
+            MENUITEM "600 dpi",                     ID_PREVIEW_DPI_600
+            MENUITEM "900 dpi",                     ID_PREVIEW_DPI_900
+            MENUITEM "1200 dpi",                    ID_PREVIEW_DPI_1200
+        END
     END
 END
 
@@ -9454,31 +9472,38 @@ END
 STRINGTABLE
 BEGIN
     ID_BIBTEX_KEY           "Search for bibTeX key / label."
-    ID_BUILD_BUILDPREVIEW   "Creates a preview image from the selected text\nBuild Preview Image"
+    ID_BUILD_PREVIEW        "Creates a preview image from the selected text\nBuild Preview Image"
     ID_VIEW_PREVIEW_OUTPUT_PANE 
                             "Shows or hides the Output from the Preview Build Process\nPreview Build Output"
     ID_VIEW_PREVIEW_IMAGE_PANE 
                             "Shows or hides the Preview Image\nPreview Image"
-    ID_PREVIEW_ZOOM_IN      "Increase zoom level."
+    ID_PREVIEW_FASTMODE     "Enables or disables fast preview mode."
+    ID_PREVIEW_AUTO_ENTER   "Triggers update of preview when pressing Enter in any edit window."
+    ID_PREVIEW_AUTO_SAVE    "Triggers update of preview when saving any file."
+    ID_PREVIEW_TEMPLATE_EDIT "Open the selected template in the editor."
+    ID_PREVIEW_TEMPLATE_CREATE 
+                            "Creates a template based on the main file of the project."
+    ID_PREVIEW_TEMPLATE_SCAN 
+                            "Refresh the list of templates based on the installation and preview directories."
+    ID_PREVIEW_ZOOM_IN      "Increases the zoom level of the preview image."
+    ID_PREVIEW_ZOOM_OUT     "Decreases the zoom level of the preview image."
+    ID_PREVIEW_ZOOM_FIT     "Fits image into the preview window."
+END
+
+STRINGTABLE
+BEGIN
     ID_PREVIEW_DPI_AUTO     "Automatically determine the best resolution for the next run."
     ID_PREVIEW_DPI_75       "Sets the DPI placeholder to 75."
     ID_PREVIEW_DPI_150      "Sets the DPI placeholder to 150."
     ID_PREVIEW_DPI_300      "Sets the DPI placeholder to 300."
     ID_PREVIEW_DPI_600      "Sets the DPI placeholder to 600."
+    ID_PREVIEW_DPI_900      "Sets the DPI placeholder to 900."
+    ID_PREVIEW_DPI_1200     "Sets the DPI placeholder to 1200."
 END
 
 STRINGTABLE
 BEGIN
     STE_PREVIEW_GENERATEDTEMPLATE "Generated from Main File"
-END
-
-STRINGTABLE
-BEGIN
-    ID_PREVIEW_DPI_900      "Sets the DPI placeholder to 900."
-    ID_PREVIEW_DPI_1200     "Sets the DPI placeholder to 1200."
-    ID_PREVIEW_AUTO_GENERATE "Update the preview based on the triggers below."
-    ID_PREVIEW_AUTO_ENTER   "Triggers update of preview when pressing Enter in any edit window."
-    ID_PREVIEW_AUTO_SAVE    "Triggers update of preview when saving any file."
 END
 
 #endif    // English (United States) resources

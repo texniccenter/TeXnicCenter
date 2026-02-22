@@ -311,8 +311,35 @@ public:
 	*/
 	CString GetPreviewGeneratedTemplateFileName() const;
 
-	/// TODO: Finish this.
-	bool GetAllPreviewTemplates(std::vector<CString>& AllTemplates, int& idPreferred) const;
+	/** Builds the preview.
+	 */
+	bool DoPreviewRun();
+	
+	/**	Creates the preview directory for this project.
+		
+		The directory will be created and template files
+		will be copied into it.
+		
+		@param PreviewDir
+		An absolute path to the directory that has to be created.
+		This directory can already exist.
+
+		@param bOverwrite
+		Whether to overwrite existing files in the preview directory.
+
+		@param bCopyTemplates
+		Whether to copy templates to the preview directory.
+
+		@param bCreateFromMainFile
+		Whether to create a new template from the main file.
+
+		@return
+		True, if the preview directory exists
+		and at least one template file could be copied.
+	*/
+	bool CreatePreviewDir(const CString& PreviewDir, const bool bOverwrite,
+							const bool bCopyTemplates, const bool bCreateFromMainFile);
+
 
 protected:
 	/**	Gets the text/code to be previewed.
@@ -332,23 +359,14 @@ protected:
 	*/
 	int GetPreviewText(CString& PreviewText, CodeDocument* pPreviewDoc);
 
-	/**	Creates the preview directory for this project.
+	/**	Writes the text/code to be previewed to the given file path.
 		
-		The directory will be created and template files
-		will be copied into it.
-		
-		@param PreviewDir
-		An absolute path to the directory that has to be created.
-		This directory can already exist.
+		@param PreviewContentPath
+		Path to a file to write the text to.
 
-		@param bOverwrite
-		Whether to overwrite existing files in the preview directory.
-
-		@return
-		True, if the preview directory exists
-		and at least one template file could be copied.
+		@returns TRUE, if successful.
 	*/
-	bool CreatePreviewDir(const CString& PreviewDir, const bool bOverwrite);
+	bool WritePreviewText(const CString& PreviewContentPath);
 
 	/** Creates a preview template from the current main file.
 
@@ -363,9 +381,18 @@ protected:
 	*/
 	bool CreatePreviewTemplateFromMainFile(const CString& PreviewDir, const bool bOverwrite);
 
-	/** Builds the preview.
-	 */
-	void DoPreviewRun();
+	/** Writes files to preview directory necessary for fast preview mode.
+
+		Makes sure that an executable 'WaitForFileChange.exe' is available in the folder.
+		This executable is from our installation and part of TXC.
+		Further, it writes a default text to 'content.tex' to bring
+		this executable into play during the LaTeX preview run.
+		
+		@param PreviewDir
+		An absolute path to the directory into which the files shall be written.
+		The directory has to exist.
+	*/
+	bool PrepareFastPreview(const CString& PreviewDir);
 
 	/**@}*/
 

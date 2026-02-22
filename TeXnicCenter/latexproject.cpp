@@ -524,8 +524,9 @@ void CLaTeXProject::SerializeSession(CIniFile &ini, BOOL bWrite)
 {
 	LPCTSTR const BookmarksKey = _T("Bookmarks");
 	LPCTSTR const FoldingKey = _T("Folding");
+	LPCTSTR const PreviewKey = _T("Preview");
 
-	if (bWrite)
+	if (bWrite) // Write ////////////////////////////////////////////////
 	{
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		//Format information
@@ -554,15 +555,15 @@ void CLaTeXProject::SerializeSession(CIniFile &ini, BOOL bWrite)
 					++actual_frame_count;
 				}
 				else if (nActiveFrame == i)
+				{
 					nActiveFrame = -1; // This document has not been saved but was active
-									   // we don't serialize unsaved documents, reset
+				}					   // we don't serialize unsaved documents, reset
 			}
 
 			// Set Number of Frames
 			ini.SetValue(KEY_SESSIONINFO,VAL_SESSIONINFO_FRAMECOUNT,actual_frame_count);
 			// Set active MDI Child
 			ini.SetValue(KEY_SESSIONINFO,VAL_SESSIONINFO_ACTIVEFRAME,nActiveFrame);
-
 		}
 
 #pragma region Bookmarks
@@ -599,9 +600,19 @@ void CLaTeXProject::SerializeSession(CIniFile &ini, BOOL bWrite)
 		}
 
 #pragma endregion
+
+#pragma region Preview
+
+		//ini.SetValue(PreviewKey, _T());
+		//Save stuff in CConfiguration and here as well.
+		//Loading a tps overrides the Config, but new projects inherit from the global config
+
+#pragma endregion
+
 	}
-	else // Restore
+	else // Restore ////////////////////////////////////////////////
 	{
+
 #pragma region Bookmarks
 
 		// Restore the bookmarks before the views are created

@@ -95,6 +95,10 @@ COutputDoc::COutputDoc()
 
 COutputDoc::~COutputDoc()
 {
+	m_builder.CancelExecution();
+
+	//TODO: Cancel harder by touching content2.tex. Create a func for it, so that we can call from elsewhere.
+	m_preview_builder.CancelExecution();
 }
 
 void COutputDoc::SetAllViews(COutputView* pBuildView, COutputView* pGrepView1,
@@ -159,8 +163,8 @@ BEGIN_MESSAGE_MAP(COutputDoc,CCmdTarget)
 	ON_UPDATE_COMMAND_UI(ID_LATEX_RUNANDVIEW,OnUpdateLatexRun)
 	ON_UPDATE_COMMAND_UI(ID_LATEX_FILECOMPILEANDVIEW,OnUpdateFileCompile)
 	ON_UPDATE_COMMAND_UI(ID_LATEX_VIEW,OnUpdateLatexView)
-	ON_UPDATE_COMMAND_UI(ID_BUILD_BUILDPREVIEW, &COutputDoc::OnUpdateBuildPreview)
-	ON_COMMAND(ID_BUILD_BUILDPREVIEW, &COutputDoc::OnBuildPreview)
+	ON_UPDATE_COMMAND_UI(ID_BUILD_PREVIEW, &COutputDoc::OnUpdateBuildPreview)
+	ON_COMMAND(ID_BUILD_PREVIEW, &COutputDoc::OnBuildPreview)
 	//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 

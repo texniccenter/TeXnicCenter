@@ -489,10 +489,19 @@ public:
 	bool m_bOptimizeMenuForVisuallyHandicappedUsersOnNextStart;
 
 	///////////////////////////////////////////////////////////////////
-	// Accessibility
+	// Preview
 
-	/** TRUE to optimize the GUI for visually handicapped users. */
-	CString m_strQuickRunTmpFilePattern;
+	/** TRUE for running preview in fast mode. */
+	bool m_bPreviewFastMode{true};
+
+	/** TRUE for running preview when pressing Enter in edit window. */
+	bool m_bPreviewAutoBuildOnEnter{false};
+
+	/** TRUE for running preview when saving any file. */
+	bool m_bPreviewAutoBuildOnSave{false};
+
+	/** Name of the used preview template. */
+	CString m_strPreviewTemplate;
 };
 
 // declaration of one and only global configuration object

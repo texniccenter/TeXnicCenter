@@ -61,15 +61,38 @@ protected:
 	///Stops the progress animation.
 	LRESULT StopProgress(WPARAM wParam, LPARAM lParam);
 
+	void OnRefresh();
+
+	void OnUpdateFastMode(CCmdUI* pCmdUI);
+	void OnFastMode();
+
+	void OnUpdateAutoBuildOnEnter(CCmdUI* pCmdUI);
+	void OnAutoBuildOnEnter();
+	void OnUpdateAutoBuildOnSave(CCmdUI* pCmdUI);
+	void OnAutoBuildOnSave();
+
 	void OnTemplateEdit();
+	void OnTemplateCreate();
+	void OnTemplateScan();
+
 	void OnZoomIn();
+	void OnUpdateZoomOut(CCmdUI* pCmdUI);
 	void OnZoomOut();
+	void OnUpdateZoomFit(CCmdUI* pCmdUI);
 	void OnZoomFit();
-	void OnZoomOutUpdateUI(CCmdUI* pCmdUI);
-	void OnZoomFitUpdateUI(CCmdUI* pCmdUI);
+
+	void OnDPI(UINT nID);
+
+	void OnUpdateTemplateSelect(CCmdUI* pCmdUI);
+	void OnTemplateSelect();
 
 //Methods
 public:
+	///Adds the template names to the drop down.
+	void FillTemplateDropDown();
+
+	///Returns a pointer to the drop down for the templates.
+	CMFCToolBarComboBoxButton* GetTemplateDropDown();
 
 //Attributes
 public:
