@@ -34,6 +34,12 @@
 #include "resource.h"
 #include "configuration.h"
 
+//Indices in the IDB_PREVIEW for status images for the refresh button
+#define BTNREFRESH_NORMAL 0
+#define BTNREFRESH_WORKING 3
+#define BTNREFRESH_SUCCESS 4
+#define BTNREFRESH_ERROR 5
+
 IMPLEMENT_DYNAMIC(PreviewImagePane, WorkspacePane)
 
 PreviewImagePane::PreviewImagePane()
@@ -93,6 +99,11 @@ int PreviewImagePane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//Init toolbar
 	SetupToolBar(Toolbar, IDR_PREVIEW);
 
+	//The last buttons are differently colored referesh buttons to communicate status to the user
+	Toolbar.RemoveButton(BTNREFRESH_ERROR);
+	Toolbar.RemoveButton(BTNREFRESH_SUCCESS);
+	Toolbar.RemoveButton(BTNREFRESH_WORKING);
+
 	//Replace AutoGeneration button with menu on the toolbar
 	CMenu AutoGenMenu;
 	AutoGenMenu.LoadMenu(IDR_PREVIEW_OPTIONSMENU);	
@@ -102,7 +113,6 @@ int PreviewImagePane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//Replace Template Button with a drop down list for selecting the template
 	CMFCToolBarComboBoxButton TemplateList(ID_PREVIEW_TEMPLATE_SELECT, 1, CBS_DROPDOWNLIST | CBS_SORT, 200);
-	//TemplateList.SetMessageWnd(this);
 	Toolbar.ReplaceButton(ID_PREVIEW_TEMPLATE_SELECT, TemplateList);
 	//Add templates to combo box
 	FillTemplateDropDown();
@@ -150,11 +160,24 @@ LRESULT PreviewImagePane::Update(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 LRESULT PreviewImagePane::StartProgress(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
+	if (Toolbar.GetButton(BTNREFRESH_NORMAL))
+	{
+		Toolbar.GetButton(BTNREFRESH_NORMAL)->SetImage(BTNREFRESH_WORKING);
+		Toolbar.InvalidateButton(BTNREFRESH_NORMAL);
+	}
+
 	return LRESULT();
 }
 
 LRESULT PreviewImagePane::StopProgress(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
+	//TODO: Get error code
+	if (Toolbar.GetButton(BTNREFRESH_NORMAL))
+	{
+		Toolbar.GetButton(BTNREFRESH_NORMAL)->SetImage(BTNREFRESH_SUCCESS);
+		Toolbar.InvalidateButton(BTNREFRESH_NORMAL);
+	}
+
 	//Restart right away, if in fast mode
 	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
 	{
@@ -183,11 +206,18 @@ void PreviewImagePane::OnUpdateFastMode(CCmdUI* pCmdUI)
 
 void PreviewImagePane::OnFastMode()
 {
+	//Cancel an ongoing fast-mode run, otherwise it will wait forever
+	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
+	{
+		CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+		if (pMainFrame && pMainFrame->GetOutputDoc())
+		{
+			pMainFrame->GetOutputDoc()->CancelBuilds(false, true);
+		}
+	}
+
 	//Switch mode
 	CConfiguration::GetInstance()->m_bPreviewFastMode = !CConfiguration::GetInstance()->m_bPreviewFastMode;
-
-	//TODO: I am certain we need to cancel an ongoing fast-mode run here.
-	//Or we always write to both files 'content.tex' and 'content2.tex'
 }
 
 

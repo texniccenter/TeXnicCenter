@@ -95,10 +95,7 @@ COutputDoc::COutputDoc()
 
 COutputDoc::~COutputDoc()
 {
-	m_builder.CancelExecution();
-
-	//TODO: Cancel harder by touching content2.tex. Create a func for it, so that we can call from elsewhere.
-	m_preview_builder.CancelExecution();
+	CancelBuilds();
 }
 
 void COutputDoc::SetAllViews(COutputView* pBuildView, COutputView* pGrepView1,
@@ -595,6 +592,30 @@ BOOL COutputDoc::GetRunMakeIndex() const
 	else
 		return theApp.GetProject()->GetRunMakeIndex();
 }
+
+
+void COutputDoc::CancelBuilds(const bool bCompilation /*= true*/, const bool bPreview /*= true*/)
+{
+	//For the regular builder, this is all we can do.
+	if (bCompilation) m_builder.CancelExecution();
+
+	//For the preview, we can cancel the current tool as well.
+	if (bPreview)
+	{
+		m_preview_builder.CancelExecution();
+
+		//However, the WaitForFileChange.exe in a fast preview run
+		// will not be cancelled this way. We need to touch content2.tex
+		// to trigger its exit.
+		CFileStatus Status;
+		if (CFile::GetStatus(LastWaitForFileChangePath, Status))
+		{
+			Status.m_mtime = CTime::GetCurrentTime();
+			CFile::SetStatus(LastWaitForFileChangePath, Status);
+		}
+	}
+}
+
 
 CDocument* COutputDoc::GetActiveDocument() const
 {

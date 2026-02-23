@@ -275,6 +275,9 @@ public:
 	 */
 	BOOL GetRunMakeIndex() const;
 
+	///Cancels selected builds. This includes the regular LaTeX compilation and the preview run.
+	void CancelBuilds(const bool bCompilation = true, const bool bPreview = true);
+
 	/**
 	 * \defgroup Preview Functions related to Preview
 	 * @{
@@ -576,6 +579,11 @@ private:
 
 	/** Object used to build the preview. */
 	COutputBuilder m_preview_builder;
+
+	/** The last time that a fast-mode preview was run, this was the file being waited on.
+		The file name is empty, if the last preview run was regular.
+	*/
+	CString LastWaitForFileChangePath;
 
 public:
 	// Clears all the warnings, errors, bad boxes etc.

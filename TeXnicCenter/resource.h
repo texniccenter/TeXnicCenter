@@ -50,6 +50,7 @@
 #define IDR_HIDDEN_CMDS                 206
 #define IDR_POPUP_REGULAREXPRESSION     213
 #define IDB_NAVIGATION_BAR              214
+#define IDB_PREVIEW                     215
 #define IDR_POPUP_PLACEHOLDER           217
 #define IDB_ITEM_TYPES                  218
 #define IDR_ADDITIONAL_COMMANDS         219
@@ -1513,6 +1514,9 @@
 #define ID_PREVIEW_DPI_600              40709
 #define ID_PREVIEW_DPI_900              40710
 #define ID_PREVIEW_DPI_1200             40711
+#define ID_PREVIEW_REFRESH_WORKING      40712
+#define ID_PREVIEW_REFRESH_SUCCESS      40713
+#define ID_PREVIEW_REFRESH_ERROR        40714
 #define IDR_BOOKMARK_VIEW               57672
 #define IDR_ERROR_VIEW                  57673
 #define IDR_MAINFRAMEOLD                57675
@@ -1528,7 +1532,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        57687
-#define _APS_NEXT_COMMAND_VALUE         40712
+#define _APS_NEXT_COMMAND_VALUE         40715
 #define _APS_NEXT_CONTROL_VALUE         8688
 #define _APS_NEXT_SYMED_VALUE           57773
 #endif

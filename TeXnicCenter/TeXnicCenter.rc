@@ -118,6 +118,8 @@ IDB_LIGHTBULB           BITMAP                  "res\\Lightbulb.bmp"
 
 IDR_PREVIEW             BITMAP                  "res\\previewbar.bmp"
 
+IDB_PREVIEW             BITMAP                  "res\\previewbar.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -266,6 +268,9 @@ BEGIN
     BUTTON      ID_PREVIEW_REFRESH
     BUTTON      ID_PREVIEW_OPTIONS
     BUTTON      ID_PREVIEW_TEMPLATE_SELECT
+    BUTTON      ID_PREVIEW_REFRESH_WORKING
+    BUTTON      ID_PREVIEW_REFRESH_SUCCESS
+    BUTTON      ID_PREVIEW_REFRESH_ERROR
 END
 
 IDR_FIND TOOLBAR 16, 16
@@ -3270,7 +3275,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "Aktuelle Vorlage bearbeiten", ID_PREVIEW_TEMPLATE_EDIT
-        MENUITEM "Vorlagen von Hauptdatei erstellen",  ID_PREVIEW_TEMPLATE_CREATE
+        MENUITEM "Vorlagen von Hauptdatei erstellen", ID_PREVIEW_TEMPLATE_CREATE
         MENUITEM "Nach neuen Vorlagen suchen",  ID_PREVIEW_TEMPLATE_SCAN
         MENUITEM SEPARATOR
         MENUITEM "Ansicht vergrößern",          ID_PREVIEW_ZOOM_IN
@@ -5172,11 +5177,11 @@ BEGIN
                             "Liste der Vorlagen aktualisieren basierend auf dem Installations- und Vorschauverzeichnis."
     ID_PREVIEW_ZOOM_IN      "Vergrößert die Darstellung des Vorschaubildes."
     ID_PREVIEW_ZOOM_OUT     "Verkleinert die Darstellung des Vorschaubildes."
-    ID_PREVIEW_ZOOM_FIT     "Bild in das Vorschaufenster einpassen."
 END
 
 STRINGTABLE
 BEGIN
+    ID_PREVIEW_ZOOM_FIT     "Bild in das Vorschaufenster einpassen."
     ID_PREVIEW_DPI_AUTO     "Automatisch die beste Auflösung für die nächste Erstellung bestimmen."
     ID_PREVIEW_DPI_75       "Setzt den DPI-Platzhalter auf 75."
     ID_PREVIEW_DPI_150      "Setzt den DPI-Platzhalter auf 150."
@@ -7595,7 +7600,7 @@ BEGIN
         END
         MENUITEM SEPARATOR
         MENUITEM "Edit Current Template",       ID_PREVIEW_TEMPLATE_EDIT
-        MENUITEM "Create Template from Main File",      ID_PREVIEW_TEMPLATE_CREATE
+        MENUITEM "Create Template from Main File", ID_PREVIEW_TEMPLATE_CREATE
         MENUITEM "Scan for new Templates",      ID_PREVIEW_TEMPLATE_SCAN
         MENUITEM SEPARATOR
         MENUITEM "Zoom In",                     ID_PREVIEW_ZOOM_IN
@@ -9487,11 +9492,11 @@ BEGIN
                             "Refresh the list of templates based on the installation and preview directories."
     ID_PREVIEW_ZOOM_IN      "Increases the zoom level of the preview image."
     ID_PREVIEW_ZOOM_OUT     "Decreases the zoom level of the preview image."
-    ID_PREVIEW_ZOOM_FIT     "Fits image into the preview window."
 END
 
 STRINGTABLE
 BEGIN
+    ID_PREVIEW_ZOOM_FIT     "Fits image into the preview window."
     ID_PREVIEW_DPI_AUTO     "Automatically determine the best resolution for the next run."
     ID_PREVIEW_DPI_75       "Sets the DPI placeholder to 75."
     ID_PREVIEW_DPI_150      "Sets the DPI placeholder to 150."

@@ -398,6 +398,9 @@ bool COutputDoc::PrepareFastPreview(const CString& PreviewDir)
 	TextDocument td(NULL); //ok to be NULL
 	bSuccess = bSuccess && td.Write(ContentPath, Content);
 
+	//We record the name of the file that we are waiting on. Good for canceling the process.
+	LastWaitForFileChangePath = CPathTool::Cat(PreviewDir, _T("content2.tex"), true);
+
 	return bSuccess;
 }
 
@@ -470,10 +473,11 @@ bool COutputDoc::DoPreviewRun()
 	//The following steps need to be all successful. If not, fast mode is disabled, and we leave here.
 	bool bSuccess(true);
 
-	//Kill a still running preview run. TODO: Test this in relation to fast mode, where I feel it is necessary when switching between modes.
+	//Kill a still running preview run.
 	if (m_preview_builder.IsStillRunning())
 	{
-		bSuccess = bSuccess && m_preview_builder.CancelExecution();
+		CancelBuilds(false, true);
+		bSuccess = bSuccess && !m_preview_builder.IsStillRunning();
 	}
 
 	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
@@ -487,6 +491,7 @@ bool COutputDoc::DoPreviewRun()
 		//Write the preview text to file
 		CString PreviewContentPath = CPathTool::Cat(PreviewDir, _T("content.tex"), true);
 		bSuccess = bSuccess && WritePreviewText(PreviewContentPath);
+		LastWaitForFileChangePath.Empty();
 	}
 
 	//TODO: inform user on error! bSuccess
