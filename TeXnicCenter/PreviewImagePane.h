@@ -88,9 +88,10 @@ protected:
 
 //Methods
 public:
-	///Adds the template names to the drop down.
+	///Scans for templates in the preview directory and add their names to the drop down.
 	void FillTemplateDropDown();
 
+protected:
 	///Returns a pointer to the drop down for the templates.
 	CMFCToolBarComboBoxButton* GetTemplateDropDown();
 

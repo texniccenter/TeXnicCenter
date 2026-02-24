@@ -366,6 +366,9 @@ bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwri
 		//if (!bSomeSuccess) <== we could display an error message.
 	}
 
+	//The preview pane needs to update its drop down
+	if (m_pPreviewImagePane) m_pPreviewImagePane->FillTemplateDropDown();
+
 	return bSomeSuccess;
 }
 
@@ -414,6 +417,17 @@ void COutputDoc::OnUpdateBuildPreview(CCmdUI* pCmdUI)
 	    && !CProfileMap::GetInstance()->GetActiveProfileKey().IsEmpty()
 	    && (bFastMode || !m_preview_builder.IsStillRunning())
 	);
+}
+
+
+void COutputDoc::OnActiveProfileChange()
+{
+	//Profiles define how previews are done.
+	//Any running preview needs to be cancelled.
+	CancelBuilds(false, true);
+
+	//Rescan for preview templates in the possibly new preview folder.
+	m_pPreviewImagePane->FillTemplateDropDown();
 }
 
 
@@ -502,12 +516,28 @@ bool COutputDoc::DoPreviewRun()
 		return false;
 	}
 
-
 	//Get the selected template.
 	CString strPreviewMainPath = CPathTool::Cat(PreviewDir,
 		_T("Template ") + CConfiguration::GetInstance()->m_strPreviewTemplate + _T(".tex"),
 		true);
-	
+
+	//Does the template actually exist? The config may even be empty.
+	//Is any template selected? Force a scan. We do know that the preview directory exists, see above.
+	if (!CPathTool::Exists(strPreviewMainPath))
+	{
+		//Let us scan based on the current settings.
+		if (m_pPreviewImagePane) m_pPreviewImagePane->FillTemplateDropDown();
+
+		//Construct the template name.
+		strPreviewMainPath = CPathTool::Cat(PreviewDir,
+			_T("Template ") + CConfiguration::GetInstance()->m_strPreviewTemplate + _T(".tex"),
+			true);
+
+		//Is the filename still invalid? Then give up.
+		if (!CPathTool::Exists(strPreviewMainPath)) return false;
+		//TODO: Inform user. They should scan for templates, create from main file, or manually add some. See manual.
+	}
+
 	//Reset old message settings
 	//TODO: check necessity
 	m_preview_builder.MsgsAfterTermination.ClearAllMessages();

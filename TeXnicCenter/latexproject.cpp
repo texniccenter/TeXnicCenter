@@ -480,7 +480,7 @@ BOOL CLaTeXProject::Serialize(CIniFile &ini, BOOL bWrite)
 
 		if (nVersion > 2)
 		{
-			if (CProfileMap::GetInstance()->SetActiveProfile(ini.GetValue(KEY_PROJECTINFO,VAL_PROJECTINFO_ACTIVEPROFILE,_T("")),false))
+			if (CProfileMap::GetInstance()->SetActiveProfile(ini.GetValue(KEY_PROJECTINFO,VAL_PROJECTINFO_ACTIVEPROFILE,_T("")), false, true))
 			{
 				//Successfull change of the active profile - update UI
 				theApp.UpdateLaTeXProfileSel();

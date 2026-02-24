@@ -277,6 +277,10 @@ public:
 
 	///Cancels selected builds. This includes the regular LaTeX compilation and the preview run.
 	void CancelBuilds(const bool bCompilation = true, const bool bPreview = true);
+	
+	///Called by the CProfile when the selected output profile changes.
+	void OnActiveProfileChange();
+
 
 	/**
 	 * \defgroup Preview Functions related to Preview

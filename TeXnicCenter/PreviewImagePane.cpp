@@ -258,8 +258,6 @@ void PreviewImagePane::OnTemplateCreate()
 		const CString PreviewDir = pDoc->GetPreviewDir();
 		pDoc->CreatePreviewDir(PreviewDir, true, false, true);
 		//TODO: Error handling
-		//Add new templates to drop down
-		FillTemplateDropDown();
 	}
 }
 
@@ -272,8 +270,6 @@ void PreviewImagePane::OnTemplateScan()
 		const CString PreviewDir = pDoc->GetPreviewDir();
 		pDoc->CreatePreviewDir(PreviewDir, false, true, false);
 		//TODO: Error handling
-		//Add new templates to drop down
-		FillTemplateDropDown();
 	}
 }
 
@@ -337,16 +333,19 @@ void PreviewImagePane::FillTemplateDropDown()
 	//Get the dropdown list
 	CMFCToolBarComboBoxButton* pTemplateList = GetTemplateDropDown();
 	if (!pTemplateList) return;
-	//auto Test = pTemplateList->GetParentWnd();
 
 	//Which template is currently selected? If none, then the string is empty.
 	CString strPreviousSelection(pTemplateList->GetItem());
-	//TODO: Consider getting the previously selected name from the config / tps
+	//If empty, then we get the previously selected name from the config
+	strPreviousSelection = CConfiguration::GetInstance()->m_strPreviewTemplate;
 
 	//Get the path to the preview folder
 	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 	if (!pMainFrame || !pMainFrame->GetOutputDoc()) return;
 	const CString PreviewDir = pMainFrame->GetOutputDoc()->GetPreviewDir();
+
+	//Clear the drop down
+	pTemplateList->RemoveAllItems();
 
 	//Get all template files in the preview folder
 	CFileFind finder;
@@ -356,7 +355,7 @@ void PreviewImagePane::FillTemplateDropDown()
 		bWorking = finder.FindNextFile();
 		if (!finder.IsDirectory())
 		{
-			//Remove common parts from name "Template*.tex"
+			//Remove common parts from name "Template *.tex"
 			CString Name = finder.GetFileName();
 			if (Name.GetLength() > 13)
 			{
@@ -385,4 +384,3 @@ void PreviewImagePane::FillTemplateDropDown()
 	//Somehow this is not called through the above code.
 	OnTemplateSelect();
 }
-

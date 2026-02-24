@@ -90,7 +90,7 @@ CProfileDialog::CProfileDialog(CWnd* pParent /*=NULL*/)
 		m_profiles.Add(strKey, *pProfile);
 	}
 
-	m_profiles.SetActiveProfile(CProfileMap::GetInstance()->GetActiveProfileKey(), false);
+	m_profiles.SetActiveProfile(CProfileMap::GetInstance()->GetActiveProfileKey(), false, false);
 
 	//{{AFX_DATA_INIT(CProfileDialog)
 	//}}AFX_DATA_INIT
@@ -204,7 +204,7 @@ void CProfileDialog::OnSelectionChanged()
 	m_wndPagePreview.OnUpdateDataSet(pProfile);
 
 	m_pCurrentProfile = pProfile;
-	m_profiles.SetActiveProfile(strProfile);
+	m_profiles.SetActiveProfile(strProfile, false, false);
 
 	UpdateControlStates();
 }

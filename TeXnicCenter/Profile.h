@@ -613,14 +613,17 @@ public:
 	/**
 	Activates the profile with the specified key.
 	May set the active project to be modified (bSetModifiedProject == true)
+	and may inform the OutputDoc of the change.
 
 	@return
 	        FALSE, if there does not exist a profile with the specified key.
 	@return
 	        TRUE, if the specified key could be found in the list of profiles.
-	                In this case, the ModifiedFlag of the active project will be set.
+	                The ModifiedFlag of the active project will be set only,
+					if this profile was not selected before.
 	 */
-	BOOL SetActiveProfile(LPCTSTR lpszKey, bool bSetModifiedProject = true);
+	BOOL SetActiveProfile(LPCTSTR lpszKey, bool bSetModifiedProject = true,
+							bool bInformOutputDoc = true);
 
 	/**
 	Returns a pointer to the active profile or NULL if there are no

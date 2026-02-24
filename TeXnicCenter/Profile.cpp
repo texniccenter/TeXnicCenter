@@ -39,6 +39,8 @@
 #include "ProfileExchangeDialog.h"
 #include "RegistryStack.h"
 #include "TeXnicCenter.h"
+#include "mainfrm.h"
+#include "OutputDoc.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -151,18 +153,34 @@ BOOL CProfileMap::Rename(LPCTSTR lpszOldKey, LPCTSTR lpszNewKey)
 	return TRUE;
 }
 
-BOOL CProfileMap::SetActiveProfile(LPCTSTR lpszKey, bool bSetModifiedProject/* = true*/)
+BOOL CProfileMap::SetActiveProfile(LPCTSTR lpszKey, bool bSetModifiedProject/* = true*/,
+									bool bInformOutputDoc /*= true*/)
 {
-	if (!Exists(lpszKey))
-		return FALSE;
+	//Does the key exist?
+	if (!Exists(lpszKey)) return FALSE;
+
+	//Does it actually change the active profile?
+	const bool bModified = (m_strActiveProfile.Compare(lpszKey) == 0);
 
 	m_strActiveProfile = lpszKey;
-	if (bSetModifiedProject)
+	if (bSetModifiedProject && bModified)
 	{
 		//Set the ModifiedFlag of the project, because this change needs to be saved.
 		CLaTeXProject* pLProject = ((CTeXnicCenterApp*)AfxGetApp())->GetProject();
 		if (pLProject) pLProject->SetModifiedFlag(true);
 	}
+
+	if (bInformOutputDoc)
+	{
+		//Inform the OutputDoc about the changes.
+		//It has implications of preview generation.
+		CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+		if (pMainFrame && pMainFrame->GetOutputDoc())
+		{
+			pMainFrame->GetOutputDoc()->OnActiveProfileChange();
+		}
+	}
+
 	return TRUE;
 }
 
