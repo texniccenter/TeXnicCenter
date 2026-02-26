@@ -430,6 +430,10 @@ void COutputDoc::OnActiveProfileChange()
 	m_pPreviewImagePane->FillTemplateDropDown();
 }
 
+bool COutputDoc::IsPreviewRunning()
+{
+	return m_preview_builder.IsStillRunning();
+}
 
 void COutputDoc::OnBuildPreview()
 {
@@ -554,7 +558,10 @@ bool COutputDoc::DoPreviewRun()
 		//TODO: Consider displaying the success of the preview generation in the preview window.
 		//The builder could send the termination code.
 		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewUpdate, 0, 0, false, 0);
-		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, false, 0);
+		// - only sent when successful
+		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, true, 0);
+		// - only sent when unsuccessful
+		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 1, 0, true, 1);
 	}
 
 	//Build the preview

@@ -210,6 +210,12 @@ UINT COutputBuilder::OnTerminate(UINT unExitCode)
 			m_pView->AddLine(_T(""));
 			m_pView->AddLine(CString((LPCTSTR)STE_LATEX_CANCELED));
 		}
+
+		//The exit code is a wild number. In case we have been cancelled, we set it to 1,
+		//then the rest of the code can act accordingly, in particular,
+		//the messages that shall be sent.
+		unExitCode = 1;
+
 		retval = ~0U;
 	}
 	else
@@ -480,7 +486,8 @@ BOOL COutputBuilder::RunPreviewProcessors()
 	for (int i = 0; ((i < a.GetSize()) && (!m_bCancel)); i++)
 	{
 		current_process_name_ = a[i].GetTitle();
-		a[i].Execute(m_strMainPath, m_strWorkingDir, hOutput, &m_hCurrentProcess);
+		const bool bIndividualResult = a[i].Execute(m_strMainPath, m_strWorkingDir, hOutput, &m_hCurrentProcess);
+		bResult = bResult && bIndividualResult;
 
 		if (m_bCancel) //only cancel on user request
 		{

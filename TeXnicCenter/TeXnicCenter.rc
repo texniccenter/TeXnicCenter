@@ -3273,6 +3273,7 @@ BEGIN
             MENUITEM "wenn Enter gedrückt wird",    ID_PREVIEW_AUTO_ENTER
             MENUITEM "wenn eine Datei gespeichert wird", ID_PREVIEW_AUTO_SAVE
         END
+        MENUITEM "Vorschauerstellung abbrechen", ID_PREVIEW_CANCEL
         MENUITEM SEPARATOR
         MENUITEM "Aktuelle Vorlage bearbeiten", ID_PREVIEW_TEMPLATE_EDIT
         MENUITEM "Vorlagen von Hauptdatei erstellen", ID_PREVIEW_TEMPLATE_CREATE
@@ -5189,6 +5190,7 @@ BEGIN
     ID_PREVIEW_DPI_600      "Setzt den DPI-Platzhalter auf 600."
     ID_PREVIEW_DPI_900      "Setzt den DPI-Platzhalter auf 900."
     ID_PREVIEW_DPI_1200     "Setzt den DPI-Platzhalter auf 1200."
+    ID_PREVIEW_CANCEL       "Bricht die aktuelle Vorschauerstellung ab."
 END
 
 STRINGTABLE
@@ -7598,6 +7600,7 @@ BEGIN
             MENUITEM "When Pressing Enter",         ID_PREVIEW_AUTO_ENTER
             MENUITEM "When Saving any File",        ID_PREVIEW_AUTO_SAVE
         END
+        MENUITEM "Cancel Preview Build",        40715
         MENUITEM SEPARATOR
         MENUITEM "Edit Current Template",       ID_PREVIEW_TEMPLATE_EDIT
         MENUITEM "Create Template from Main File", ID_PREVIEW_TEMPLATE_CREATE
@@ -9504,6 +9507,7 @@ BEGIN
     ID_PREVIEW_DPI_600      "Sets the DPI placeholder to 600."
     ID_PREVIEW_DPI_900      "Sets the DPI placeholder to 900."
     ID_PREVIEW_DPI_1200     "Sets the DPI placeholder to 1200."
+    ID_PREVIEW_CANCEL       "Cancels current preview generation."
 END
 
 STRINGTABLE

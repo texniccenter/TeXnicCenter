@@ -56,11 +56,14 @@ BEGIN_MESSAGE_MAP(PreviewImagePane, WorkspacePane)
 	ON_UPDATE_COMMAND_UI(ID_PREVIEW_FASTMODE, &PreviewImagePane::OnUpdateFastMode)
 	ON_COMMAND(ID_PREVIEW_FASTMODE, &PreviewImagePane::OnFastMode)
 
-	ON_COMMAND(ID_PREVIEW_AUTO_ENTER, &PreviewImagePane::OnAutoBuildOnEnter)
 	ON_UPDATE_COMMAND_UI(ID_PREVIEW_AUTO_ENTER, &PreviewImagePane::OnUpdateAutoBuildOnEnter)
+	ON_COMMAND(ID_PREVIEW_AUTO_ENTER, &PreviewImagePane::OnAutoBuildOnEnter)
 
 	ON_UPDATE_COMMAND_UI(ID_PREVIEW_AUTO_SAVE, &PreviewImagePane::OnUpdateAutoBuildOnSave)
 	ON_COMMAND(ID_PREVIEW_AUTO_SAVE, &PreviewImagePane::OnAutoBuildOnSave)
+
+	ON_UPDATE_COMMAND_UI(ID_PREVIEW_CANCEL, &PreviewImagePane::OnUpdateCancel)
+	ON_COMMAND(ID_PREVIEW_CANCEL, &PreviewImagePane::OnCancel)
 
 	ON_COMMAND(ID_PREVIEW_TEMPLATE_EDIT, &PreviewImagePane::OnTemplateEdit)
 	ON_COMMAND(ID_PREVIEW_TEMPLATE_CREATE, &PreviewImagePane::OnTemplateCreate)
@@ -169,17 +172,19 @@ LRESULT PreviewImagePane::StartProgress(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	return LRESULT();
 }
 
-LRESULT PreviewImagePane::StopProgress(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT PreviewImagePane::StopProgress(WPARAM wParam, LPARAM /*lParam*/)
 {
-	//TODO: Get error code
+	//Error or Cancelled?
+	const bool bError = (wParam != 0);
+
 	if (Toolbar.GetButton(BTNREFRESH_NORMAL))
 	{
-		Toolbar.GetButton(BTNREFRESH_NORMAL)->SetImage(BTNREFRESH_SUCCESS);
+		Toolbar.GetButton(BTNREFRESH_NORMAL)->SetImage(bError ? BTNREFRESH_ERROR : BTNREFRESH_SUCCESS);
 		Toolbar.InvalidateButton(BTNREFRESH_NORMAL);
 	}
 
 	//Restart right away, if in fast mode
-	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
+	if (!bError && CConfiguration::GetInstance()->m_bPreviewFastMode)
 	{
 		CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 		if (pMainFrame && pMainFrame->GetOutputDoc())
@@ -207,14 +212,7 @@ void PreviewImagePane::OnUpdateFastMode(CCmdUI* pCmdUI)
 void PreviewImagePane::OnFastMode()
 {
 	//Cancel an ongoing fast-mode run, otherwise it will wait forever
-	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
-	{
-		CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
-		if (pMainFrame && pMainFrame->GetOutputDoc())
-		{
-			pMainFrame->GetOutputDoc()->CancelBuilds(false, true);
-		}
-	}
+	CancelPreviewBuild(true);
 
 	//Switch mode
 	CConfiguration::GetInstance()->m_bPreviewFastMode = !CConfiguration::GetInstance()->m_bPreviewFastMode;
@@ -241,6 +239,25 @@ void PreviewImagePane::OnAutoBuildOnSave()
 {
 	//Switch mode
 	CConfiguration::GetInstance()->m_bPreviewAutoBuildOnSave = !CConfiguration::GetInstance()->m_bPreviewAutoBuildOnSave;
+}
+
+
+void PreviewImagePane::OnUpdateCancel(CCmdUI* pCmdUI)
+{
+	bool bEnable(false);
+
+	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	if (pMainFrame && pMainFrame->GetOutputDoc())
+	{
+		bEnable = pMainFrame->GetOutputDoc()->IsPreviewRunning();
+	}
+
+	pCmdUI->Enable(bEnable);
+}
+
+void PreviewImagePane::OnCancel()
+{
+	CancelPreviewBuild(false);
 }
 
 
@@ -324,8 +341,17 @@ void PreviewImagePane::OnTemplateSelect()
 	CMFCToolBarComboBoxButton* pTemplateList = GetTemplateDropDown();
 	if (!pTemplateList) return;
 
-	//Which template is currently selected? If none, then the string is empty.
-	CConfiguration::GetInstance()->m_strPreviewTemplate = pTemplateList->GetItem();
+	//Actually anything new?
+	LPCTSTR NewName = pTemplateList->GetItem();
+	if (NewName != CConfiguration::GetInstance()->m_strPreviewTemplate)
+	{
+		//Set the currently selected template as active? If none, then the string is empty.
+		CConfiguration::GetInstance()->m_strPreviewTemplate = NewName;
+
+		//Changing the template requires us to terminate the preview build.
+		//We can restrict this to fast mode here.
+		CancelPreviewBuild(true);
+	}
 }
 
 void PreviewImagePane::FillTemplateDropDown()
@@ -383,4 +409,17 @@ void PreviewImagePane::FillTemplateDropDown()
 
 	//Somehow this is not called through the above code.
 	OnTemplateSelect();
+}
+
+
+void PreviewImagePane::CancelPreviewBuild(const bool bOnlyWhenFastMode)
+{
+	if (!bOnlyWhenFastMode || CConfiguration::GetInstance()->m_bPreviewFastMode)
+	{
+		CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+		if (pMainFrame && pMainFrame->GetOutputDoc())
+		{
+			pMainFrame->GetOutputDoc()->CancelBuilds(false, true);
+		}
+	}
 }

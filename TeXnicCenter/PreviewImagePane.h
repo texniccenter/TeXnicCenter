@@ -71,6 +71,9 @@ protected:
 	void OnUpdateAutoBuildOnSave(CCmdUI* pCmdUI);
 	void OnAutoBuildOnSave();
 
+	void OnUpdateCancel(CCmdUI* pCmdUI);
+	void OnCancel();
+
 	void OnTemplateEdit();
 	void OnTemplateCreate();
 	void OnTemplateScan();
@@ -94,6 +97,14 @@ public:
 protected:
 	///Returns a pointer to the drop down for the templates.
 	CMFCToolBarComboBoxButton* GetTemplateDropDown();
+
+	/** Helper function for cancelling the preview build.
+		
+		@param bOnlyWhenFastMode
+		If true, the preview build will only be cancelled
+		if we are in fast mode.
+	*/
+	void CancelPreviewBuild(const bool bOnlyWhenFastMode);
 
 //Attributes
 public:

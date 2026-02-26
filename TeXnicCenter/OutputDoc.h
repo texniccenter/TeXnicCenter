@@ -322,6 +322,9 @@ public:
 	 */
 	bool DoPreviewRun();
 	
+	///Returns true, if the preview builder is active.
+	bool IsPreviewRunning();
+
 	/**	Creates the preview directory for this project.
 		
 		The directory will be created and template files
