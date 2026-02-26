@@ -177,9 +177,16 @@ LRESULT PreviewImagePane::StopProgress(WPARAM wParam, LPARAM /*lParam*/)
 	//Error or Cancelled?
 	const bool bError = (wParam != 0);
 
+	//Set image on refresh button to indicate success and status
 	if (Toolbar.GetButton(BTNREFRESH_NORMAL))
 	{
-		Toolbar.GetButton(BTNREFRESH_NORMAL)->SetImage(bError ? BTNREFRESH_ERROR : BTNREFRESH_SUCCESS);
+		int nImageID = BTNREFRESH_SUCCESS;
+		if (bError)
+		{
+			nImageID = (wParam == 1) ? BTNREFRESH_NORMAL : BTNREFRESH_ERROR; //User Cancel vs. Build Error
+		}
+
+		Toolbar.GetButton(BTNREFRESH_NORMAL)->SetImage(nImageID);
 		Toolbar.InvalidateButton(BTNREFRESH_NORMAL);
 	}
 

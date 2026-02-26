@@ -220,6 +220,7 @@ UINT COutputBuilder::OnTerminate(UINT unExitCode)
 	}
 	else
 	{
+		//Add lines to the output view for the user to see how the run went.
 		if (m_pView && (!m_strLatexResult.IsEmpty() || !bibtex_result_.IsEmpty()))
 		{
 			m_pView->AddLine(_T(""));
@@ -230,6 +231,10 @@ UINT COutputBuilder::OnTerminate(UINT unExitCode)
 			if (!bibtex_result_.IsEmpty())
 				m_pView->AddLine(bibtex_result_);
 		}
+
+		//Use a simple exit code for downstream code to understand
+		// that the tools returned an error code.
+		if (unExitCode == ~0U) unExitCode = 2;
 	}
 
 	//Call callback messages.

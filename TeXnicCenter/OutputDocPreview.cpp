@@ -550,18 +550,20 @@ bool COutputDoc::DoPreviewRun()
 	CWnd* pMainWnd = AfxGetMainWnd();
 	if (pMainWnd && m_pPreviewImagePane)
 	{
-		//PostMessage(pMainWnd->m_hWnd, AfxUserMessages::ShowDockingBarID, ID_VIEW_PREVIEW_IMAGE_PANE, 0);
 		PostMessage(m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStartProgressAnimation, 0, 0);
 
 		//After building the preview, the PreviewView needs to reload the image.
 		//We do this regardless of success.
-		//TODO: Consider displaying the success of the preview generation in the preview window.
-		//The builder could send the termination code.
 		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewUpdate, 0, 0, false, 0);
+
+		//We display the success of the preview generation on the refresh button.
+		//The builder sends the termination code: 1: user cancelled, 2: build error.
 		// - only sent when successful
 		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 0, 0, true, 0);
-		// - only sent when unsuccessful
+		// - only sent when unsuccessful: user cancelled
 		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 1, 0, true, 1);
+		// - only sent when unsuccessful: build error
+		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 2, 0, true, 2);
 	}
 
 	//Build the preview
