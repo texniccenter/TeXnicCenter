@@ -37,6 +37,7 @@
 #include "MainFrm.h"
 #include "PlaceHolder.h"
 #include "TeXnicCenter.h"
+#include "configuration.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -164,6 +165,11 @@ CString AfxExpandPlaceholders(LPCTSTR lpszStringWithPlaceholders,
 
 	if (lpszCurrentSelection != NULL)
 		strCmdLine.Replace(_T("%s"),lpszCurrentSelection);
+
+	//DPI setting for preview
+	CString strDPI;
+	strDPI.Format(_T("%d"), CConfiguration::GetInstance()->m_nPreviewDPIValue);
+	strCmdLine.Replace(_T("%DPI"), strDPI);
 
 	// restore "%"
 	strCmdLine.Replace(_T("\a"),_T("%"));

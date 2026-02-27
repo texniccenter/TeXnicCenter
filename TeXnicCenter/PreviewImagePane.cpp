@@ -77,6 +77,7 @@ BEGIN_MESSAGE_MAP(PreviewImagePane, WorkspacePane)
 	ON_UPDATE_COMMAND_UI(ID_PREVIEW_ZOOM_FIT, &PreviewImagePane::OnUpdateZoomFit)
 	ON_COMMAND(ID_PREVIEW_REFRESH, &PreviewImagePane::OnRefresh)
 
+	ON_UPDATE_COMMAND_UI_RANGE(ID_PREVIEW_DPI_AUTO, ID_PREVIEW_DPI_1200, &PreviewImagePane::OnUpdateDPI)
 	ON_COMMAND_RANGE(ID_PREVIEW_DPI_AUTO, ID_PREVIEW_DPI_1200, &PreviewImagePane::OnDPI)
 	ON_UPDATE_COMMAND_UI(ID_PREVIEW_TEMPLATE_SELECT, &PreviewImagePane::OnUpdateTemplateSelect)
 	ON_COMMAND(ID_PREVIEW_TEMPLATE_SELECT, &PreviewImagePane::OnTemplateSelect)
@@ -323,18 +324,60 @@ void PreviewImagePane::OnZoomFit()
 	View.ZoomFit();
 }
 
+void PreviewImagePane::OnUpdateDPI(CCmdUI* pCmdUI)
+{
+	//Convert from the enum to the resource ID. Works only if resource IDs are continuous and AUTO is first.
+	const int nModeID = CConfiguration::GetInstance()->m_nPreviewDPISetting + ID_PREVIEW_DPI_AUTO;
+
+	pCmdUI->SetRadio(pCmdUI->m_nID == nModeID);
+}
 
 void PreviewImagePane::OnDPI(UINT nID)
 {
+	auto pConfig = CConfiguration::GetInstance();
 
-//ID_PREVIEW_DPI_AUTO
-//ID_PREVIEW_DPI_75
-//ID_PREVIEW_DPI_150
-//ID_PREVIEW_DPI_300
-//ID_PREVIEW_DPI_600
-//ID_PREVIEW_DPI_900
-//ID_PREVIEW_DPI_1200        
+	switch (nID)
+	{
+		case ID_PREVIEW_DPI_AUTO:
+		default:
+		{
+			pConfig->m_nPreviewDPISetting = (int)DPISettings::Auto;
+			break;
+		}
+		case ID_PREVIEW_DPI_75:
+		{
+			pConfig->m_nPreviewDPISetting = (int)DPISettings::DPI75;
+			break;
+		}
+		case ID_PREVIEW_DPI_150:
+		{
+			pConfig->m_nPreviewDPISetting = (int)DPISettings::DPI150;
+			break;
+		}
+		case ID_PREVIEW_DPI_300:
+		{
+			pConfig->m_nPreviewDPISetting = (int)DPISettings::DPI300;
+			break;
+		}
+		case ID_PREVIEW_DPI_600:
+		{
+			pConfig->m_nPreviewDPISetting = (int)DPISettings::DPI600;
+			break;
+		}
+		case ID_PREVIEW_DPI_900:
+		{
+			pConfig->m_nPreviewDPISetting = (int)DPISettings::DPI900;
+			break;
+		}
+		case ID_PREVIEW_DPI_1200:
+		{
+			pConfig->m_nPreviewDPISetting = (int)DPISettings::DPI1200;
+			break;
+		}
+	}
 
+	//Set the actual value in a different function, which we can call from other places as well.
+	SetDPIValue();
 }
 
 void PreviewImagePane::OnUpdateTemplateSelect(CCmdUI* pCmdUI)
@@ -427,6 +470,51 @@ void PreviewImagePane::CancelPreviewBuild(const bool bOnlyWhenFastMode)
 		if (pMainFrame && pMainFrame->GetOutputDoc())
 		{
 			pMainFrame->GetOutputDoc()->CancelBuilds(false, true);
+		}
+	}
+}
+
+void PreviewImagePane::SetDPIValue()
+{
+	auto pConfig = CConfiguration::GetInstance();
+
+	switch (pConfig->m_nPreviewDPISetting)
+	{
+		case DPISettings::Auto:
+		default:
+		{
+			pConfig->m_nPreviewDPIValue = View.BestDPI;
+			break;
+		}
+		case DPISettings::DPI75:
+		{
+			pConfig->m_nPreviewDPIValue = 75;
+			break;
+		}
+		case DPISettings::DPI150:
+		{
+			pConfig->m_nPreviewDPIValue = 150;
+			break;
+		}
+		case DPISettings::DPI300:
+		{
+			pConfig->m_nPreviewDPIValue = 300;
+			break;
+		}
+		case DPISettings::DPI600:
+		{
+			pConfig->m_nPreviewDPIValue = 600;
+			break;
+		}
+		case DPISettings::DPI900:
+		{
+			pConfig->m_nPreviewDPIValue = 900;
+			break;
+		}
+		case DPISettings::DPI1200:
+		{
+			pConfig->m_nPreviewDPIValue = 1200;
+			break;
 		}
 	}
 }

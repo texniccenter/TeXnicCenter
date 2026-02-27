@@ -40,6 +40,18 @@ class PreviewImagePane : public WorkspacePane
 //Friends
 //Types
 public:
+	///Enum for DPI settings
+	enum DPISettings
+	{
+		Auto
+		,DPI75
+		,DPI150
+		,DPI300
+		,DPI600
+		,DPI900
+		,DPI1200
+	};
+
 
 //Construction / Deconstruction
 public:
@@ -84,6 +96,7 @@ protected:
 	void OnUpdateZoomFit(CCmdUI* pCmdUI);
 	void OnZoomFit();
 
+	void OnUpdateDPI(CCmdUI* pCmdUI);
 	void OnDPI(UINT nID);
 
 	void OnUpdateTemplateSelect(CCmdUI* pCmdUI);
@@ -93,6 +106,9 @@ protected:
 public:
 	///Scans for templates in the preview directory and add their names to the drop down.
 	void FillTemplateDropDown();
+
+	///Sets the DPI value to the global config, so that the preview runs can use it via Placeholders.
+	void SetDPIValue();
 
 protected:
 	///Returns a pointer to the drop down for the templates.

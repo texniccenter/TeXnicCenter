@@ -106,6 +106,7 @@ private:
 	CPoint PreviousMousePos;
 	bool bValidPreviousMousePos;
 
-	///Current zoom factor
-	double CurrentZoomFactor;
+	///A factor indicating how much smaller/larger the DPI needs to be
+	//such that 1 pixel in the image covers 1 pixel on screen.
+	int BestDPI;
 };

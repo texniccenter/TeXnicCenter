@@ -502,6 +502,12 @@ public:
 
 	/** Name of the used preview template. */
 	CString m_strPreviewTemplate;
+
+	/** Identifies the DPI setting in the preview image pane. */
+	int m_nPreviewDPISetting{0};
+
+	/** Actual DPI value used for preview generation. */
+	int m_nPreviewDPIValue{300};
 };
 
 // declaration of one and only global configuration object

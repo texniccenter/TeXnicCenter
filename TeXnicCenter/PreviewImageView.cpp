@@ -28,6 +28,7 @@
 
 #include "stdafx.h"
 #include "PreviewImageView.h"
+#include "configuration.h"
 
 BEGIN_MESSAGE_MAP(CPreviewImageView, CWnd)
 	ON_WM_PAINT()
@@ -43,7 +44,7 @@ CPreviewImageView::CPreviewImageView()
 	,bFitImageToWindow(true)
 	,PreviousMousePos(-1, -1)
 	,bValidPreviousMousePos(false)
-	,CurrentZoomFactor(1.0)
+	,BestDPI(300)
 {
 }
 
@@ -115,9 +116,12 @@ void CPreviewImageView::OnPaint()
 		// - keep track of how we map the image, so we can do something similar in the next call.
 		PreviousDrawRect = DrawRect;
 
-		//Figure out the current scale factor. We can show it to the user
-		//and we need it for proper translation when zooming with the mouse wheel below.
-		CurrentZoomFactor = (double)CurrentSourceRect.Width() / DrawRect.Width();
+		//Figure out the best DPI for the current settings. Used for Auto-DPI.
+		const double DPIFactor = max((double)DrawRect.Width() / CurrentSourceRect.Width(), (double)DrawRect.Height() / CurrentSourceRect.Height());
+		BestDPI = CConfiguration::GetInstance()->m_nPreviewDPIValue * DPIFactor;
+		BestDPI *= 2; //We increase by a factor of 2 to have some antialiasing and zooming in does not look bad right away.
+		BestDPI = max(75, BestDPI);
+		BestDPI = min(1600, BestDPI);
 
 		//Draw the scaled image onto the memory device context with proper anti-aliasing
 		MemoryDC.SetStretchBltMode(HALFTONE);

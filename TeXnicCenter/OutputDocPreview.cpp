@@ -444,6 +444,9 @@ void COutputDoc::OnBuildPreview()
 	CWnd* pMainWnd = AfxGetMainWnd();
 	if (pMainWnd) PostMessage(pMainWnd->m_hWnd, AfxUserMessages::ShowDockingBarID, ID_VIEW_PREVIEW_IMAGE_PANE, 0);
 
+	//Set the DPI based on the size of the preview image view and the previous run's DPI
+	m_pPreviewImagePane->SetDPIValue();
+
 	if (CConfiguration::GetInstance()->m_bPreviewFastMode)
 	{
 		// Fast Mode ///////////////////////////////////////////////////
