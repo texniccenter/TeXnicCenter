@@ -312,10 +312,18 @@ void CConfiguration::Serialize(SERDIRECTION direction)
 
 #pragma endregion
 
-	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// Profiles
-	//	strSection = "Profiles";
-	//	SerializeProfileString( strSection, _T("QuickRunFilePattern"), &m_strQuickRunTmpFilePattern, direction, _T("%bm_part.tex"));
+#pragma region Preview
+	strSection = "Settings\\Preview";
+
+	SerializeProfileBool(strSection,_T("FastMode"), m_bPreviewFastMode, direction, true);
+	SerializeProfileBool(strSection,_T("AutoBuildOnEnter"), m_bPreviewAutoBuildOnEnter, direction, true);
+	SerializeProfileBool(strSection,_T("AutoBuildOnSave"), m_bPreviewAutoBuildOnSave, direction, true);
+	SerializeProfileString(strSection,_T("PreviewTemplate"), &m_strPreviewTemplate, direction);
+	SerializeProfileInt(strSection,_T("DPISetting"), &m_nPreviewDPISetting, direction, 0);
+	SerializeProfileInt(strSection,_T("DPIValue"), &m_nPreviewDPIValue, direction, 300);
+
+#pragma endregion
+
 }
 
 #pragma endregion

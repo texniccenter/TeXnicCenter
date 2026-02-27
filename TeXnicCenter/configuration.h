@@ -491,6 +491,9 @@ public:
 	///////////////////////////////////////////////////////////////////
 	// Preview
 
+	//NOTE: These values are saved in the global config, but also in
+	//the tps-file for a project. See CLaTeXProject::SerializeSession().
+
 	/** TRUE for running preview in fast mode. */
 	bool m_bPreviewFastMode{true};
 

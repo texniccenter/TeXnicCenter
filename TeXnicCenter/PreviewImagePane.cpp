@@ -327,7 +327,7 @@ void PreviewImagePane::OnZoomFit()
 void PreviewImagePane::OnUpdateDPI(CCmdUI* pCmdUI)
 {
 	//Convert from the enum to the resource ID. Works only if resource IDs are continuous and AUTO is first.
-	const int nModeID = CConfiguration::GetInstance()->m_nPreviewDPISetting + ID_PREVIEW_DPI_AUTO;
+	const unsigned int nModeID = (unsigned int)CConfiguration::GetInstance()->m_nPreviewDPISetting + ID_PREVIEW_DPI_AUTO;
 
 	pCmdUI->SetRadio(pCmdUI->m_nID == nModeID);
 }
@@ -393,7 +393,7 @@ void PreviewImagePane::OnTemplateSelect()
 
 	//Actually anything new?
 	LPCTSTR NewName = pTemplateList->GetItem();
-	if (NewName != CConfiguration::GetInstance()->m_strPreviewTemplate)
+	if (NewName && NewName != CConfiguration::GetInstance()->m_strPreviewTemplate)
 	{
 		//Set the currently selected template as active? If none, then the string is empty.
 		CConfiguration::GetInstance()->m_strPreviewTemplate = NewName;

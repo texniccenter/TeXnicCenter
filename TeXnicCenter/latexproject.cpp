@@ -517,14 +517,21 @@ BOOL CLaTeXProject::Serialize(CIniFile &ini, BOOL bWrite)
 
 #define KEY_FRAMEINFO							_T("Frame%d")
 
-#define CURRENTFORMATVERSION					2
+#define CURRENTFORMATVERSION					3
 #define	FORMATTYPE								_T("TeXnicCenterProjectSessionInformation")
+
+#define KEY_PREVIEW								_T("Preview")
+#define VAL_PREVIEW_FASTMODE					_T("FastMode")
+#define VAL_PREVIEW_AUTOBUILDONENTER			_T("AutoBuildOnEnter")
+#define VAL_PREVIEW_AUTOBUILDONSAVE				_T("AutoBuildOnSave")
+#define VAL_PREVIEW_TEMPLATE					_T("Template")
+#define VAL_PREVIEW_DPISETTING					_T("DPISetting")
+#define VAL_PREVIEW_DPIVALUE					_T("DPIValue")
 
 void CLaTeXProject::SerializeSession(CIniFile &ini, BOOL bWrite)
 {
 	LPCTSTR const BookmarksKey = _T("Bookmarks");
 	LPCTSTR const FoldingKey = _T("Folding");
-	LPCTSTR const PreviewKey = _T("Preview");
 
 	if (bWrite) // Write ////////////////////////////////////////////////
 	{
@@ -603,9 +610,15 @@ void CLaTeXProject::SerializeSession(CIniFile &ini, BOOL bWrite)
 
 #pragma region Preview
 
-		//ini.SetValue(PreviewKey, _T());
-		//Save stuff in CConfiguration and here as well.
+		//Save settings in CConfiguration and here as well.
 		//Loading a tps overrides the Config, but new projects inherit from the global config
+		auto pConfig = CConfiguration::GetInstance();
+		ini.SetValue(KEY_PREVIEW, VAL_PREVIEW_FASTMODE, pConfig->m_bPreviewFastMode);
+		ini.SetValue(KEY_PREVIEW, VAL_PREVIEW_AUTOBUILDONENTER, pConfig->m_bPreviewAutoBuildOnEnter);
+		ini.SetValue(KEY_PREVIEW, VAL_PREVIEW_AUTOBUILDONSAVE, pConfig->m_bPreviewAutoBuildOnSave);
+		ini.SetValue(KEY_PREVIEW, VAL_PREVIEW_TEMPLATE, pConfig->m_strPreviewTemplate);
+		ini.SetValue(KEY_PREVIEW, VAL_PREVIEW_DPISETTING, pConfig->m_nPreviewDPISetting);
+		ini.SetValue(KEY_PREVIEW, VAL_PREVIEW_DPIVALUE, pConfig->m_nPreviewDPIValue);
 
 #pragma endregion
 
@@ -677,7 +690,21 @@ void CLaTeXProject::SerializeSession(CIniFile &ini, BOOL bWrite)
 		}
 
 #pragma endregion
-		
+
+#pragma region Preview
+
+		//Save settings in CConfiguration and here as well.
+		//Loading a tps overrides the Config, but new projects inherit from the global config
+		auto pConfig = CConfiguration::GetInstance();
+		pConfig->m_bPreviewFastMode = ini.GetValue(KEY_PREVIEW, VAL_PREVIEW_FASTMODE, pConfig->m_bPreviewFastMode);
+		pConfig->m_bPreviewAutoBuildOnEnter = ini.GetValue(KEY_PREVIEW, VAL_PREVIEW_AUTOBUILDONENTER, pConfig->m_bPreviewAutoBuildOnEnter);
+		pConfig->m_bPreviewAutoBuildOnSave = ini.GetValue(KEY_PREVIEW, VAL_PREVIEW_AUTOBUILDONSAVE, pConfig->m_bPreviewAutoBuildOnSave);
+		pConfig->m_strPreviewTemplate = ini.GetValue(KEY_PREVIEW, VAL_PREVIEW_TEMPLATE, pConfig->m_strPreviewTemplate);
+		pConfig->m_nPreviewDPISetting = ini.GetValue(KEY_PREVIEW, VAL_PREVIEW_DPISETTING, pConfig->m_nPreviewDPISetting);
+		pConfig->m_nPreviewDPIValue = ini.GetValue(KEY_PREVIEW, VAL_PREVIEW_DPIVALUE, pConfig->m_nPreviewDPIValue);
+
+#pragma endregion
+
 #pragma region Reading format information
 
 		CString strKey;
