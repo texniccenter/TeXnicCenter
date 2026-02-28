@@ -33,6 +33,8 @@
 #include "global.h"
 #include "resource.h"
 #include "configuration.h"
+#include "TeXnicCenter.h"
+
 
 //Indices in the IDB_PREVIEW for status images for the refresh button
 #define BTNREFRESH_NORMAL 0
@@ -272,7 +274,12 @@ void PreviewImagePane::OnCancel()
 
 void PreviewImagePane::OnTemplateEdit()
 {
-	//TODO: Implement
+	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	if (pMainFrame && pMainFrame->GetOutputDoc())
+	{
+		CString strPreviewMainPath = pMainFrame->GetOutputDoc()->GetPreviewTemplatePath();
+		theApp.OpenLatexDocument(strPreviewMainPath, false, -1, false, false, true);
+	}
 }
 
 void PreviewImagePane::OnTemplateCreate()

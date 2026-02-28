@@ -318,6 +318,12 @@ public:
 	*/
 	CString GetPreviewGeneratedTemplateFileName() const;
 
+	/** Returns the path of the preview template
+		that is currently selected in the UI.
+		The file is not guaranteed to exist.
+	*/
+	CString GetPreviewTemplatePath() const;
+
 	/** Builds the preview.
 	 */
 	bool DoPreviewRun();

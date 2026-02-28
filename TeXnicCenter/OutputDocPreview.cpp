@@ -225,6 +225,14 @@ CString COutputDoc::GetPreviewGeneratedTemplateFileName() const
 }
 
 
+CString COutputDoc::GetPreviewTemplatePath() const
+{
+	return CPathTool::Cat(GetPreviewDir(),
+		_T("Template ") + CConfiguration::GetInstance()->m_strPreviewTemplate + _T(".tex"),
+		true);
+}
+
+
 bool COutputDoc::CreatePreviewTemplateFromMainFile(const CString& PreviewDir, const bool bOverwrite)
 {
 	//Write template text to 'Template Generated from Main File.tex' in the preview folder.
@@ -519,9 +527,7 @@ bool COutputDoc::DoPreviewRun()
 	//}
 
 	//Get the selected template.
-	CString strPreviewMainPath = CPathTool::Cat(PreviewDir,
-		_T("Template ") + CConfiguration::GetInstance()->m_strPreviewTemplate + _T(".tex"),
-		true);
+	CString strPreviewMainPath = GetPreviewTemplatePath();
 
 	//Does the template actually exist? The config may even be empty.
 	//Is any template selected? Force a scan. We do know that the preview directory exists, see above.
@@ -531,9 +537,7 @@ bool COutputDoc::DoPreviewRun()
 		if (m_pPreviewImagePane) m_pPreviewImagePane->FillTemplateDropDown();
 
 		//Construct the template name.
-		strPreviewMainPath = CPathTool::Cat(PreviewDir,
-			_T("Template ") + CConfiguration::GetInstance()->m_strPreviewTemplate + _T(".tex"),
-			true);
+		strPreviewMainPath = GetPreviewTemplatePath();
 
 		//Is the filename still invalid? Then give up.
 		if (!CPathTool::Exists(strPreviewMainPath)) return false;
