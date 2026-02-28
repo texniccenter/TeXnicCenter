@@ -197,6 +197,7 @@ LRESULT PreviewImagePane::StopProgress(WPARAM wParam, LPARAM /*lParam*/)
 		CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
 		if (pMainFrame && pMainFrame->GetOutputDoc())
 		{
+			//This is the one call in the system where fast mode renews itself, i.e., starts a new run
 			pMainFrame->GetOutputDoc()->DoPreviewRun();
 		}
 	}

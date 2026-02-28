@@ -465,11 +465,9 @@ void COutputDoc::OnBuildPreview()
 		bSuccess = bSuccess && WritePreviewText(PreviewContentPath);
 
 		//TODO: inform the user!
-		if (!bSuccess)
-		{
-			//Disable fast mode, so we do not run unsuccessfully forever
-			CConfiguration::GetInstance()->m_bPreviewFastMode = false;
-		}
+		//if (!bSuccess)
+		//{
+		//}
 	}	
 	else
 	{
@@ -516,12 +514,9 @@ bool COutputDoc::DoPreviewRun()
 	}
 
 	//TODO: inform user on error! bSuccess
-	if (!bSuccess)
-	{
-		//Always switch off fast mode in case of errors. We do not want to run unsuccessfully over and over again.
-		CConfiguration::GetInstance()->m_bPreviewFastMode = false;
-		return false;
-	}
+	//if (!bSuccess)
+	//{
+	//}
 
 	//Get the selected template.
 	CString strPreviewMainPath = CPathTool::Cat(PreviewDir,
