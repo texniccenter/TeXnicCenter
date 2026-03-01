@@ -358,12 +358,6 @@ void CLaTeXProject::OnClosing()
 	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// Clean up
 
-	//// add views to the docking bars in the frame wnd
-	//CMainFrame *pwndMainFrame = (CMainFrame*)AfxGetMainWnd();
-
-	//if (!pwndMainFrame)
-	//    return;
-
 	// cancel structure parsing
 	if (m_pStructureParser)
 	{
