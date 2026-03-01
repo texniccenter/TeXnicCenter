@@ -111,11 +111,11 @@ int PreviewImagePane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	Toolbar.RemoveButton(BTNREFRESH_WORKING);
 
 	//Replace AutoGeneration button with menu on the toolbar
-	CMenu AutoGenMenu;
-	AutoGenMenu.LoadMenu(IDR_PREVIEW_OPTIONSMENU);	
-	CMFCToolBarMenuButton AutoGenMenuButton(~0U, AutoGenMenu.GetSubMenu(0)->GetSafeHmenu(), 1);
-	AutoGenMenuButton.SetMessageWnd(this);
-	Toolbar.ReplaceButton(ID_PREVIEW_OPTIONS, AutoGenMenuButton);
+	CMenu PreviewOptionsMenu;
+	PreviewOptionsMenu.LoadMenu(IDR_PREVIEW_OPTIONSMENU);	
+	CMFCToolBarMenuButton PreviewOptionsMenuButton(~0U, PreviewOptionsMenu.GetSubMenu(0)->GetSafeHmenu(), 1);
+	PreviewOptionsMenuButton.SetMessageWnd(this);
+	Toolbar.ReplaceButton(ID_PREVIEW_OPTIONS, PreviewOptionsMenuButton);
 
 	//Replace Template Button with a drop down list for selecting the template
 	CMFCToolBarComboBoxButton TemplateList(ID_PREVIEW_TEMPLATE_SELECT, 1, CBS_DROPDOWNLIST | CBS_SORT, 200);
@@ -525,4 +525,19 @@ void PreviewImagePane::SetDPIValue()
 			break;
 		}
 	}
+}
+
+
+void PreviewImagePane::Clear()
+{
+	//This gets called when the LaTeX project is closing
+	// - clear the view and reset its zoom
+	View.PreviewImage.Destroy();
+	View.bFitImageToWindow = true;
+	View.Invalidate();
+	// - clear the drop down and other parts of the Toolbar
+	CMFCToolBarComboBoxButton* pTemplateList = GetTemplateDropDown();
+	if (pTemplateList) pTemplateList->RemoveAllItems();
+	if (Toolbar.GetButton(BTNREFRESH_NORMAL)) Toolbar.GetButton(BTNREFRESH_NORMAL)->SetImage(BTNREFRESH_NORMAL);
+	Toolbar.Invalidate();
 }

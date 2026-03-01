@@ -30,12 +30,13 @@
 #include "WorkspacePane.h"
 #include "PreviewImageView.h"
 #include "PrivateToolBar.h"
+#include "ProjectView.h"
 
 
 /** This pane contains and manages the preview and its toolbar.
 *
 */
-class PreviewImagePane : public WorkspacePane
+class PreviewImagePane : public WorkspacePane, public CProjectView
 {
 //Friends
 //Types
@@ -109,6 +110,9 @@ public:
 
 	///Sets the DPI value to the global config, so that the preview runs can use it via Placeholders.
 	void SetDPIValue();
+
+	///CProjectView-Interface function for clearing content when the project closes.
+	virtual void Clear();
 
 protected:
 	///Returns a pointer to the drop down for the templates.

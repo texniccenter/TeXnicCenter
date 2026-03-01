@@ -1999,6 +1999,7 @@ const std::vector<CProjectView*> CMainFrame::GetViews()
 	views.push_back(env_view_.get());
 	views.push_back(bib_view_pane_.get());
 	views.push_back(bookmark_view_pane_.get());
+	views.push_back(preview_image_pane_.get());
 
 	return views;
 }
