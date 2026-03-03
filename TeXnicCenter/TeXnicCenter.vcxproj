@@ -641,6 +641,7 @@
     <ClInclude Include="WorkspacePaneBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resource.hm" />
     <None Include="res\additional.bmp" />
     <None Include="res\bibtextype.ico" />
     <None Include="res\bibtoolbar.bmp" />

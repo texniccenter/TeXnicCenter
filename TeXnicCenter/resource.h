@@ -119,6 +119,7 @@
 #define IDD_GRAPHIC                     1025
 #define IDC_DOCUMENTTEMPLATES           1027
 #define IDD_HEADER                      1028
+#define IDC_PREVIEWTEMPLATES            1028
 #define IDD_ITEM_PROPERTIES             1029
 #define IDD_OPTIONS_EDITOR              1030
 #define IDD_OPTIONS_FILE                1031
@@ -537,8 +538,10 @@
 #define IDC_SELECT_ENCODING             2067
 #define IDC_LIST_TEMPLATES              2068
 #define IDC_ADD_DOCUMENTTEMPLATES       2071
+#define IDC_ADD_PREVIEWTEMPLATES        2072
 #define IDC_REMOVE_DOCUMENTTEMPLATES    2073
 #define IDC_TYPES                       2074
+#define IDC_REMOVE_PREVIEWTEMPLATES     2074
 #define IDC_INTYPE_DESCR                2075
 #define IDC_TITLE                       2079
 #define IDC_BROWSE_MAIN_FILE            2080
