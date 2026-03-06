@@ -55,9 +55,14 @@ BEGIN_MESSAGE_MAP(COptionPagePath,CMFCPropertyPage)
 	ON_BN_CLICKED(IDC_ADD_PROJECTTEMPLATES,OnAddProjectTemplates)
 	ON_BN_CLICKED(IDC_REMOVE_PROJECTTEMPLATES,OnRemoveProjectTemplates)
 	ON_LBN_SELCHANGE(IDC_PROJECTTEMPLATES,OnSelchangeProjectTemplates)
+
 	ON_BN_CLICKED(IDC_ADD_DOCUMENTTEMPLATES,OnAddDocumentTemplates)
 	ON_BN_CLICKED(IDC_REMOVE_DOCUMENTTEMPLATES,OnRemoveDocumentTemplates)
 	ON_LBN_SELCHANGE(IDC_DOCUMENTTEMPLATES,OnSelchangeDocumentTemplates)
+
+	ON_BN_CLICKED(IDC_ADD_PREVIEWTEMPLATES,OnAddPreviewTemplates)
+	ON_BN_CLICKED(IDC_REMOVE_PREVIEWTEMPLATES,OnRemovePreviewTemplates)
+	ON_LBN_SELCHANGE(IDC_PREVIEWTEMPLATES,OnSelchangePreviewTemplates)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -79,11 +84,16 @@ void COptionPagePath::DoDataExchange(CDataExchange* pDX)
 {
 	CMFCPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(COptionPagePath)
-	DDX_Control(pDX,IDC_BROWSE_DEFAULT_PATH,m_wndBrowseBtn);
 	DDX_Control(pDX,IDC_REMOVE_PROJECTTEMPLATES,m_wndProjectRemoveButton);
 	DDX_Control(pDX,IDC_PROJECTTEMPLATES,m_wndProjectTemplateList);
+
 	DDX_Control(pDX,IDC_REMOVE_DOCUMENTTEMPLATES,m_wndDocumentRemoveButton);
 	DDX_Control(pDX,IDC_DOCUMENTTEMPLATES,m_wndDocumentTemplateList);
+
+	DDX_Control(pDX,IDC_REMOVE_PREVIEWTEMPLATES,m_wndPreviewRemoveButton);
+	DDX_Control(pDX,IDC_PREVIEWTEMPLATES,m_wndPreviewTemplateList);
+
+	DDX_Control(pDX,IDC_BROWSE_DEFAULT_PATH,m_wndBrowseBtn);
 	DDX_Text(pDX,IDC_OPTIONS_DEFAULT_PATH_EDIT,m_strDefaultPath);
 	//}}AFX_DATA_MAP
 }
@@ -94,14 +104,24 @@ BOOL COptionPagePath::OnInitDialog()
 
 	// fill template list
 	for (int i = 0; i < CConfiguration::GetInstance()->m_astrProjectTemplatePaths.GetSize(); i++)
+	{
 		m_wndProjectTemplateList.AddString(CConfiguration::GetInstance()->m_astrProjectTemplatePaths[i]);
+	}
 
 	for (int i = 0; i < CConfiguration::GetInstance()->m_astrDocumentTemplatePaths.GetSize(); i++)
+	{
 		m_wndDocumentTemplateList.AddString(CConfiguration::GetInstance()->m_astrDocumentTemplatePaths[i]);
+	}
+
+	for (int i = 0; i < CConfiguration::GetInstance()->m_astrPreviewTemplatePaths.GetSize(); i++)
+	{
+		m_wndPreviewTemplateList.AddString(CConfiguration::GetInstance()->m_astrPreviewTemplatePaths[i]);
+	}
 
 	// disable remove button
 	m_wndProjectRemoveButton.EnableWindow(FALSE);
 	m_wndDocumentRemoveButton.EnableWindow(FALSE);
+	m_wndPreviewRemoveButton.EnableWindow(FALSE);
 
 	return TRUE;
 }
@@ -168,6 +188,37 @@ void COptionPagePath::OnSelchangeDocumentTemplates()
 	m_wndDocumentRemoveButton.EnableWindow(nIndex != LB_ERR);
 }
 
+void COptionPagePath::OnAddPreviewTemplates()
+{
+	CString InitFolder;
+	if (m_wndPreviewTemplateList.GetCount() > 0)
+	{
+		m_wndPreviewTemplateList.GetText(m_wndPreviewTemplateList.GetCount() - 1, InitFolder);
+	}
+
+	CFolderSelect dlg(AfxLoadString(STE_GET_PATH), InitFolder.IsEmpty() ? NULL : InitFolder);
+
+	if (dlg.DoModal() == IDOK)
+	{
+		m_wndPreviewTemplateList.AddString(dlg.GetPath());
+	}
+}
+
+void COptionPagePath::OnRemovePreviewTemplates()
+{
+	int nItem = m_wndPreviewTemplateList.GetCurSel();
+
+	if (nItem != LB_ERR)
+		m_wndPreviewTemplateList.DeleteString(nItem);
+}
+
+void COptionPagePath::OnSelchangePreviewTemplates()
+{
+	int nIndex = m_wndPreviewTemplateList.GetCurSel();
+
+	m_wndPreviewRemoveButton.EnableWindow(nIndex != LB_ERR);
+}
+
 void COptionPagePath::OnOK()
 {
 	UpdateData();
@@ -176,7 +227,6 @@ void COptionPagePath::OnOK()
 	CString strElement;
 
 	CConfiguration::GetInstance()->m_astrProjectTemplatePaths.RemoveAll();
-
 	for (int i = 0; i < m_wndProjectTemplateList.GetCount(); i++)
 	{
 		m_wndProjectTemplateList.GetText(i,strElement);
@@ -184,11 +234,17 @@ void COptionPagePath::OnOK()
 	}
 
 	CConfiguration::GetInstance()->m_astrDocumentTemplatePaths.RemoveAll();
-
 	for (int i = 0; i < m_wndDocumentTemplateList.GetCount(); i++)
 	{
 		m_wndDocumentTemplateList.GetText(i,strElement);
 		CConfiguration::GetInstance()->m_astrDocumentTemplatePaths.Add(strElement);
+	}
+
+	CConfiguration::GetInstance()->m_astrPreviewTemplatePaths.RemoveAll();
+	for (int i = 0; i < m_wndPreviewTemplateList.GetCount(); i++)
+	{
+		m_wndPreviewTemplateList.GetText(i,strElement);
+		CConfiguration::GetInstance()->m_astrPreviewTemplatePaths.Add(strElement);
 	}
 
 	//Kill leading and ending spaces

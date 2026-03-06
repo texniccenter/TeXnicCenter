@@ -263,6 +263,9 @@ public:
 	/** Paths to search for document templates in. */
 	CStringArray m_astrDocumentTemplatePaths;
 
+	/** Paths to search for preview templates. */
+	CStringArray m_astrPreviewTemplatePaths;
+
 	/** Maximal number of entries (editor windows) in the window menu. */
 	int m_nWndMenuMaxEntries;
 

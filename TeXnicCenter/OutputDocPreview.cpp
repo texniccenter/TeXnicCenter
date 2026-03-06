@@ -282,6 +282,15 @@ bool COutputDoc::CreatePreviewTemplateFromMainFile(const CString& PreviewDir, co
 	return true;
 }
 
+namespace
+{
+	void AddToErrorMessages(CString& ErrorList, const CString& NewError)
+	{
+		if (!ErrorList.IsEmpty()) ErrorList += _T("\n");
+		ErrorList += NewError;
+	}
+}
+
 
 bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwrite,
 									const bool bCopyTemplates, const bool bCreateFromMainFile)
@@ -303,44 +312,47 @@ bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwri
 	bool bSomeSuccess(false);
 
 	//Where are our templates?
-	CString TemplateDir = CPathTool::Cat(theApp.GetWorkingDir(), _T("Templates\\Preview"));
-	//if (!CPathTool::Exists(TemplateDir)) return false;
-
-	//Copy all files from the templates directory to the preview directory
 	if (bCopyTemplates)
 	{
-		CFileFind finder;
 		CString strAccumulatedErrorMessages;
-		bool bWorking = finder.FindFile(TemplateDir + _T("\\*.*"));
-		if (!bWorking) strAccumulatedErrorMessages += AfxFormatSystemString(GetLastError());
-		while (bWorking)
+		for (int i = 0; i < CConfiguration::GetInstance()->m_astrPreviewTemplatePaths.GetSize(); i++)
 		{
-			bWorking = finder.FindNextFile();
-			if (finder.IsDirectory()) continue;
-
-			//Get the file name
-			CString strFileName = finder.GetFileName();
-			//Get the full path
-			CString strFilePath = finder.GetFilePath();
-			//Get the destination path
-			CString strDestPath = CPathTool::Cat(PreviewDir, strFileName);
-
-			//Does the file exist? If so, we only copy if the user wants us to overwrite.
-			if (!CPathTool::Exists(strDestPath) || bOverwrite)
+			const CString& TemplateDir = CConfiguration::GetInstance()->m_astrPreviewTemplatePaths[i];
+			if (!CPathTool::Exists(TemplateDir))
 			{
-				//Copy the file, potentially overwrite
-				const bool bSuccess = CopyFile(strFilePath, strDestPath, false);
-				bSomeSuccess = bSomeSuccess || bSuccess;		
-				if (!bSuccess)
-				{
-					if (!strAccumulatedErrorMessages.IsEmpty()) strAccumulatedErrorMessages += "\n";
-					strAccumulatedErrorMessages += AfxFormatSystemString(GetLastError());
-				}
+				AddToErrorMessages(strAccumulatedErrorMessages, AfxLoadString(STE_NOFOLDER) + _T(" ") + TemplateDir);
+				continue;
 			}
-			else
+
+			//Copy all files from the templates directory to the preview directory
+			CFileFind finder;
+			bool bWorking = finder.FindFile(TemplateDir + _T("\\*.*"));
+			if (!bWorking) AddToErrorMessages(strAccumulatedErrorMessages, AfxFormatSystemString(GetLastError()));
+			while (bWorking)
 			{
-				//File exists and we do not want to overwrite. This is a success.
-				bSomeSuccess = true;
+				bWorking = finder.FindNextFile();
+				if (finder.IsDirectory()) continue;
+
+				//Get the file name
+				CString strFileName = finder.GetFileName();
+				//Get the full path
+				CString strFilePath = finder.GetFilePath();
+				//Get the destination path
+				CString strDestPath = CPathTool::Cat(PreviewDir, strFileName);
+
+				//Does the file exist? If so, we only copy if the user wants us to overwrite.
+				if (!CPathTool::Exists(strDestPath) || bOverwrite)
+				{
+					//Copy the file, potentially overwrite
+					const bool bSuccess = CopyFile(strFilePath, strDestPath, false);
+					bSomeSuccess = bSomeSuccess || bSuccess;		
+					if (!bSuccess) AddToErrorMessages(strAccumulatedErrorMessages, AfxFormatSystemString(GetLastError()));
+				}
+				else
+				{
+					//File exists and we do not want to overwrite. This is a success.
+					bSomeSuccess = true;
+				}
 			}
 		}
 
@@ -348,30 +360,21 @@ bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwri
 		if (!strAccumulatedErrorMessages.IsEmpty())
 		{
 			CString strMsg;
-			strMsg.Format(STE_PREVIEW_TEMPLATE_COPY_ERRORS,
-							(LPCTSTR)TemplateDir,
-							(LPCTSTR)PreviewDir,
-							(LPCTSTR)strAccumulatedErrorMessages);
+			strMsg.Format(STE_PREVIEW_TEMPLATE_COPY_ERRORS, (LPCTSTR)strAccumulatedErrorMessages);
 
 			UINT MsgBoxErrorOrInfo = MB_OK;
-			if (bSomeSuccess)
-			{
-				MsgBoxErrorOrInfo |= MB_ICONINFORMATION;
-			}
-			else
-			{
-				MsgBoxErrorOrInfo |= MB_ICONERROR;
-			}
+			MsgBoxErrorOrInfo |= bSomeSuccess ? MB_ICONINFORMATION : MB_ICONERROR;
 			AfxMessageBox(strMsg, MsgBoxErrorOrInfo);
 		}
 	}
+
 
 	//Create template from main document
 	if (bCreateFromMainFile)
 	{
 		const bool bSuccess = CreatePreviewTemplateFromMainFile(PreviewDir, bOverwrite);
 		bSomeSuccess = bSomeSuccess || bSuccess;		
-		//if (!bSomeSuccess) <== we could display an error message.
+		//if (!bSomeSuccess) <== TODO: we could display an error message.
 	}
 
 	//The preview pane needs to update its drop down

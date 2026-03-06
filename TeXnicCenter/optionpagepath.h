@@ -46,6 +46,7 @@
 @ingroup dialogs
 
 @author Sven Wiegand
+@author Tino Weinkauf
  */
 class COptionPagePath : public CMFCPropertyPage
 {
@@ -74,6 +75,9 @@ protected:
 	afx_msg void OnAddDocumentTemplates();
 	afx_msg void OnRemoveDocumentTemplates();
 	afx_msg void OnSelchangeDocumentTemplates();
+	afx_msg void OnAddPreviewTemplates();
+	afx_msg void OnRemovePreviewTemplates();
+	afx_msg void OnSelchangePreviewTemplates();
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 
@@ -87,11 +91,16 @@ private:
 		IDD = IDD_OPTIONS_PATHS
 	};
 
-	CBrowseButton m_wndBrowseBtn;
 	CButton m_wndProjectRemoveButton;
 	CListBox m_wndProjectTemplateList;
+
 	CButton m_wndDocumentRemoveButton;
 	CListBox m_wndDocumentTemplateList;
+
+	CButton m_wndPreviewRemoveButton;
+	CListBox m_wndPreviewTemplateList;
+
+	CBrowseButton m_wndBrowseBtn;
 	CString m_strDefaultPath;
 	//}}AFX_DATA
 };

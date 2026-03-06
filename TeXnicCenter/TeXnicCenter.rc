@@ -4039,7 +4039,7 @@ BEGIN
     STE_TCP_INVALID         "Dies ist keine gültige Projektdatei."
     STE_XML_PARSE_ERROR     "Beim Lesen einer XML-Datei ist ein Fehler aufgetreten.\n\nFehler 0x%08x: %s\n\nDatei:\t%s\nZeile:\t%d\nZeichen:\t%d\n\n%s"
     STE_PREVIEW_TEMPLATE_COPY_ERRORS 
-                            "Beim Kopieren der Vorlagen sind Fehler aufgetreten.\n\nSie sollten von diesem Verzeichnis\n\n%s\n\nin dieses Verzeichnis kopiert werden:\n\n%s\n\nDie Fehlermeldungen lauten:\n\n%s"
+                            "Beim Kopieren der Vorschauvorlagen sind die folgenden Fehler aufgetreten:\n\n%s"
     IDS_NEWTEXTMODULE       "Neuer Textbaustein"
     STE_XML_INSTALLNEEDED   "Zur Nutzung dieser Funktion muss folgende Software auf Ihrem System korrekt installiert sein\n\n\tMicrosoft XML Parser (MSXML)\n\nEinen Verweis auf die aktuelle Version finden Sie im Download-Bereich von\n\n\thttp://www.TeXnicCenter.org/"
 END
@@ -8260,7 +8260,7 @@ BEGIN
     STE_TCP_INVALID         "This is not a valid project file."
     STE_XML_PARSE_ERROR     "An error occured while reading an XML file.\n\nError 0x%08x: %s\n\nFile:\t%s\nLine:\t%d\nCharacter:\t%d\n\n%s"
     STE_PREVIEW_TEMPLATE_COPY_ERRORS 
-                            "There were errors while copying the templates.\n\nThey should have been copied from this folder\n\n%s\n\nto this folder:\n\n%s\n\nThe error messages are:\n\n%s"
+                            "The following errors occured while copying the preview templates:\n\n%s"
     IDS_NEWTEXTMODULE       "New Text Module"
     STE_XML_INSTALLNEEDED   "In order to use this function, the following software must be properly installed on your system\n\n\tMicrosoft XML Parser (MSXML)\n\nA link to the newest version can be found in the download area of\n\n\thttp://www.TeXnicCenter.org/"
 END

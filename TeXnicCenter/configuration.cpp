@@ -73,6 +73,7 @@ void CConfiguration::Serialize(SERDIRECTION direction)
 	strSection = _T("Settings\\Options");
 	SerializeProfileStringArray(strSection,_T("ProjectTemplatePaths"),&m_astrProjectTemplatePaths,direction);
 	SerializeProfileStringArray(strSection,_T("DocumentTemplatePaths"),&m_astrDocumentTemplatePaths,direction);
+	SerializeProfileStringArray(strSection,_T("PreviewTemplatePaths"),&m_astrPreviewTemplatePaths,direction);
 	SerializeProfileBool(strSection,_T("SaveBeforeCompilation"),m_bSaveBeforeCompilation,direction,true);
 	SerializeProfileBool(strSection,_T("SaveNewDocuments"),m_bSaveNewDocuments,direction,false);
 

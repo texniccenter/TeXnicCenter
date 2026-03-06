@@ -1490,9 +1490,6 @@ bool CStructureParser::AddParserCommandBasic(StructureParserCommand* pNewCmd, co
 		case std::regex_constants::error_stack:
 			strErrorDesc = _T("insufficient memory to match regular expression");
 			break;
-		case std::regex_constants::error_syntax:
-			strErrorDesc = _T("parsing failed due to a syntax error");
-			break;
 		default:
 			strErrorDesc = _T("unknown regular expression error");
 			break;
