@@ -333,12 +333,12 @@ bool COutputDoc::CreatePreviewDir(const CString& PreviewDir, const bool bOverwri
 				bWorking = finder.FindNextFile();
 				if (finder.IsDirectory()) continue;
 
-				//Get the file name
-				CString strFileName = finder.GetFileName();
-				//Get the full path
+				//Get the full path of the source
 				CString strFilePath = finder.GetFilePath();
+				//Get the file name and construct a destination file name "Template foo.tex"
+				CString strTemplateFileName = _T("Template ") + finder.GetFileName();
 				//Get the destination path
-				CString strDestPath = CPathTool::Cat(PreviewDir, strFileName);
+				CString strDestPath = CPathTool::Cat(PreviewDir, strTemplateFileName);
 
 				//Does the file exist? If so, we only copy if the user wants us to overwrite.
 				if (!CPathTool::Exists(strDestPath) || bOverwrite)
