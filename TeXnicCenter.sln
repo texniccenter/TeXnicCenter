@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.33516.290
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11520.95 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InterfaceWrapper", "InterfaceWrapper\source\InterfaceWrapper.vcxproj", "{884A5C93-0BE0-42E0-A688-DDC80C53DF48}"
 EndProject
@@ -20,7 +20,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TeXnicCenter", "TeXnicCente
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TeXnicCenterObjects", "TeXnicCenterObjects\Source\TeXnicCenterObjects.vcxproj", "{7D010430-948A-4400-85C4-7D18CB92068F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Templates", "Templates\Templates.vcxproj", "{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Templates", "Templates\Templates.vcxproj", "{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TxcResDeutsch", "TeXnicCenter\TxcDeutsch.vcxproj", "{E8E006D1-6599-43C2-AD30-75E5B5B9F68F}"
 EndProject
@@ -92,14 +92,14 @@ Global
 		{7D010430-948A-4400-85C4-7D18CB92068F}.Release|Win32.Build.0 = Release|Win32
 		{7D010430-948A-4400-85C4-7D18CB92068F}.Release|x64.ActiveCfg = Release|x64
 		{7D010430-948A-4400-85C4-7D18CB92068F}.Release|x64.Build.0 = Release|x64
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Debug|Win32.Build.0 = Debug|Win32
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Debug|x64.ActiveCfg = Debug|x64
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Debug|x64.Build.0 = Debug|x64
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Release|Win32.ActiveCfg = Release|Win32
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Release|Win32.Build.0 = Release|Win32
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Release|x64.ActiveCfg = Release|x64
-		{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}.Release|x64.Build.0 = Release|x64
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Debug|Win32.Build.0 = Debug|Win32
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Debug|x64.ActiveCfg = Debug|x64
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Debug|x64.Build.0 = Debug|x64
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Release|Win32.ActiveCfg = Release|Win32
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Release|Win32.Build.0 = Release|Win32
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Release|x64.ActiveCfg = Release|x64
+		{A44A6573-DF1A-4AF7-A835-BBDB2EC21DB0}.Release|x64.Build.0 = Release|x64
 		{E8E006D1-6599-43C2-AD30-75E5B5B9F68F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E8E006D1-6599-43C2-AD30-75E5B5B9F68F}.Debug|Win32.Build.0 = Debug|Win32
 		{E8E006D1-6599-43C2-AD30-75E5B5B9F68F}.Debug|x64.ActiveCfg = Debug|x64

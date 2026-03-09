@@ -1,17 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
@@ -19,545 +19,258 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BA9151F3-0EF2-4A3C-99CB-35B0A3A3D38F}</ProjectGuid>
-    <RootNamespace>Templates</RootNamespace>
-    <Keyword>MakeFileProj</Keyword>
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a44a6573-df1a-4af7-a835-bbdb2ec21db0}</ProjectGuid>
+    <RootNamespace>FileCopy</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Utility</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
-    <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v145</PlatformToolset>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
-    <UseOfMfc>false</UseOfMfc>
+    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
-    <CharacterSet>MultiByte</CharacterSet>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Midl>
-      <TypeLibraryName>.\..\output\Debug/Templates.tlb</TypeLibraryName>
-      <HeaderFileName>
-      </HeaderFileName>
-    </Midl>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-      <TypeLibraryName>.\..\output\Debug/Templates.tlb</TypeLibraryName>
-      <HeaderFileName>
-      </HeaderFileName>
-    </Midl>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Midl>
-      <TypeLibraryName>.\../output/Release/Templates.tlb</TypeLibraryName>
-      <HeaderFileName>
-      </HeaderFileName>
-    </Midl>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-      <TypeLibraryName>.\../output/Release/Templates.tlb</TypeLibraryName>
-      <HeaderFileName>
-      </HeaderFileName>
-    </Midl>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="Documents\Deutsch\Deckblatt.tex">
+    <CopyFileToFolders Include="Documents\Deutsch\Deckblatt.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\Deutsch\Deckblatt.tex" "$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\Deutsch\Deckblatt.tex" "$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\Deutsch\Deckblatt.tex" "$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\Deutsch\Deckblatt.tex" "$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\Deutsch\Deckblatt.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch\OptionenLayout.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch\OptionenAbkürzungen.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\Deutsch\OptionenLayout.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\Deutsch\OptionenLayout.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\Deutsch\OptionenLayout.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\Deutsch\OptionenLayout.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\Deutsch\OptionenLayout.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch erweitert\OptionenErweitert.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch\OptionenLayout.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\Deutsch erweitert\OptionenErweitert.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\Deutsch erweitert\OptionenErweitert.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\Deutsch erweitert\OptionenErweitert.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\Deutsch erweitert\OptionenErweitert.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenErweitert.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch erweitert\OptionenMath.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch erweitert\OptionenErweitert.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\Deutsch erweitert\OptionenMath.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\Deutsch erweitert\OptionenMath.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\Deutsch erweitert\OptionenMath.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\Deutsch erweitert\OptionenMath.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\Deutsch erweitert\OptionenMath.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch erweitert\PDFInfos.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\Deutsch erweitert</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch erweitert\OptionenMath.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\Deutsch erweitert\PDFInfos.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\Deutsch erweitert\PDFInfos.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\Deutsch erweitert\PDFInfos.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\Deutsch erweitert\PDFInfos.tex" "$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\Deutsch erweitert\PDFInfos.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English\OptionsAbbreviations.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\Deutsch erweitert</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch erweitert\PDFInfos.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\English\OptionsAbbreviations.tex" "$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\English\OptionsAbbreviations.tex" "$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\English\OptionsAbbreviations.tex" "$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\English\OptionsAbbreviations.tex" "$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\English\OptionsAbbreviations.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English\OptionsLayout.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\Deutsch erweitert</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English\OptionsAbbreviations.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\English\OptionsLayout.tex" "$(OutDir)Templates\Documents\English\OptionsLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\English\OptionsLayout.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\English\OptionsLayout.tex" "$(OutDir)Templates\Documents\English\OptionsLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\English\OptionsLayout.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\English\OptionsLayout.tex" "$(OutDir)Templates\Documents\English\OptionsLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\English\OptionsLayout.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\English\OptionsLayout.tex" "$(OutDir)Templates\Documents\English\OptionsLayout.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\English\OptionsLayout.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English\Titlepage.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\English</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English\OptionsLayout.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\English\Titlepage.tex" "$(OutDir)Templates\Documents\English\Titlepage.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\English\Titlepage.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\English\Titlepage.tex" "$(OutDir)Templates\Documents\English\Titlepage.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\English\Titlepage.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\English\Titlepage.tex" "$(OutDir)Templates\Documents\English\Titlepage.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\English\Titlepage.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\English\Titlepage.tex" "$(OutDir)Templates\Documents\English\Titlepage.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\English\Titlepage.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English advanced\OptionsAdvanced.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\English</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English\Titlepage.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\English advanced\OptionsAdvanced.tex" "$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\English advanced\OptionsAdvanced.tex" "$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\English advanced\OptionsAdvanced.tex" "$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\English advanced\OptionsAdvanced.tex" "$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\English advanced\OptionsAdvanced.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English advanced\OptionsMath.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\English</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English advanced\OptionsAdvanced.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\English advanced\OptionsMath.tex" "$(OutDir)Templates\Documents\English advanced\OptionsMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\English advanced\OptionsMath.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\English advanced\OptionsMath.tex" "$(OutDir)Templates\Documents\English advanced\OptionsMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\English advanced\OptionsMath.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\English advanced\OptionsMath.tex" "$(OutDir)Templates\Documents\English advanced\OptionsMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\English advanced\OptionsMath.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\English advanced\OptionsMath.tex" "$(OutDir)Templates\Documents\English advanced\OptionsMath.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\English advanced\OptionsMath.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English advanced\PDFInfos.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English advanced\OptionsMath.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\English advanced\PDFInfos.tex" "$(OutDir)Templates\Documents\English advanced\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\English advanced\PDFInfos.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\English advanced\PDFInfos.tex" "$(OutDir)Templates\Documents\English advanced\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\English advanced\PDFInfos.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\English advanced\PDFInfos.tex" "$(OutDir)Templates\Documents\English advanced\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\English advanced\PDFInfos.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\English advanced\PDFInfos.tex" "$(OutDir)Templates\Documents\English advanced\PDFInfos.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\English advanced\PDFInfos.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\Brief.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English advanced\PDFInfos.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\Deutsch\Brief.tex" "$(OutDir)Templates\Projects\Deutsch\Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\Deutsch\Brief.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\Deutsch\Brief.tex" "$(OutDir)Templates\Projects\Deutsch\Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\Deutsch\Brief.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\Deutsch\Brief.tex" "$(OutDir)Templates\Projects\Deutsch\Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\Deutsch\Brief.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\Deutsch\Brief.tex" "$(OutDir)Templates\Projects\Deutsch\Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\Deutsch\Brief.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\KOMA-Brief.tex">
+      <DestinationFolders>$(OutDir)\Templates\Documents\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\Brief.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\Deutsch\KOMA-Brief.tex" "$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\Deutsch\KOMA-Brief.tex" "$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\Deutsch\KOMA-Brief.tex" "$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\Deutsch\KOMA-Brief.tex" "$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\Deutsch\KOMA-Brief.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\KOMAArtikel.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\KOMA-Brief.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\Deutsch\KOMAArtikel.tex" "$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\Deutsch\KOMAArtikel.tex" "$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\Deutsch\KOMAArtikel.tex" "$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\Deutsch\KOMAArtikel.tex" "$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\Deutsch\KOMAArtikel.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\lebenslauf.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\KOMAArtikel.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\Deutsch\lebenslauf.tex" "$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\Deutsch\lebenslauf.tex" "$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\Deutsch\lebenslauf.tex" "$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\Deutsch\lebenslauf.tex" "$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\Deutsch\lebenslauf.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\Report.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\lebenslauf.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\Deutsch\Report.tex" "$(OutDir)Templates\Projects\Deutsch\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\Deutsch\Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\Deutsch\Report.tex" "$(OutDir)Templates\Projects\Deutsch\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\Deutsch\Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\Deutsch\Report.tex" "$(OutDir)Templates\Projects\Deutsch\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\Deutsch\Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\Deutsch\Report.tex" "$(OutDir)Templates\Projects\Deutsch\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\Deutsch\Report.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch erweitert\KOMABuch.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\Report.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\Deutsch erweitert\KOMABuch.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\Deutsch erweitert\KOMABuch.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\Deutsch erweitert\KOMABuch.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\Deutsch erweitert\KOMABuch.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\Deutsch erweitert\KOMABuch.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch erweitert\prospereinfach.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\Deutsch</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch erweitert\KOMABuch.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\Deutsch erweitert\prospereinfach.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\Deutsch erweitert\prospereinfach.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\Deutsch erweitert\prospereinfach.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\Deutsch erweitert\prospereinfach.tex" "$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\Deutsch erweitert\prospereinfach.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English\Letter.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\Deutsch erweitert</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch erweitert\prospereinfach.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English\Letter.tex" "$(OutDir)Templates\Projects\English\Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English\Letter.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English\Letter.tex" "$(OutDir)Templates\Projects\English\Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English\Letter.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English\Letter.tex" "$(OutDir)Templates\Projects\English\Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English\Letter.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English\Letter.tex" "$(OutDir)Templates\Projects\English\Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English\Letter.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English\Report.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\Deutsch erweitert</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English\Letter.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English\Report.tex" "$(OutDir)Templates\Projects\English\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English\Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English\Report.tex" "$(OutDir)Templates\Projects\English\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English\Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English\Report.tex" "$(OutDir)Templates\Projects\English\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English\Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English\Report.tex" "$(OutDir)Templates\Projects\English\Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English\Report.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English\Slides.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English\Report.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English\Slides.tex" "$(OutDir)Templates\Projects\English\Slides.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English\Slides.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English\Slides.tex" "$(OutDir)Templates\Projects\English\Slides.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English\Slides.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English\Slides.tex" "$(OutDir)Templates\Projects\English\Slides.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English\Slides.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English\Slides.tex" "$(OutDir)Templates\Projects\English\Slides.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English\Slides.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Basic Article.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English\Slides.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Basic Article.tex" "$(OutDir)Templates\Projects\English advanced\Basic Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Basic Article.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Basic Article.tex" "$(OutDir)Templates\Projects\English advanced\Basic Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Basic Article.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Basic Article.tex" "$(OutDir)Templates\Projects\English advanced\Basic Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Basic Article.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Basic Article.tex" "$(OutDir)Templates\Projects\English advanced\Basic Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Basic Article.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Book.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Basic Article.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Book.tex" "$(OutDir)Templates\Projects\English advanced\Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Book.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Book.tex" "$(OutDir)Templates\Projects\English advanced\Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Book.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Book.tex" "$(OutDir)Templates\Projects\English advanced\Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Book.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Book.tex" "$(OutDir)Templates\Projects\English advanced\Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Book.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Foils.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Book.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Foils.tex" "$(OutDir)Templates\Projects\English advanced\Foils.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Foils.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Foils.tex" "$(OutDir)Templates\Projects\English advanced\Foils.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Foils.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Foils.tex" "$(OutDir)Templates\Projects\English advanced\Foils.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Foils.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Foils.tex" "$(OutDir)Templates\Projects\English advanced\Foils.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Foils.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Mathematical Article.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Foils.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Mathematical Article.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Mathematical Article.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Mathematical Article.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Mathematical Article.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Mathematical Article.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Mathematical Book.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Mathematical Article.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Mathematical Book.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Mathematical Book.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Mathematical Book.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Mathematical Book.tex" "$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Mathematical Book.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Simple Letter.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Mathematical Book.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Simple Letter.tex" "$(OutDir)Templates\Projects\English advanced\Simple Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Simple Letter.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Simple Letter.tex" "$(OutDir)Templates\Projects\English advanced\Simple Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Simple Letter.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Simple Letter.tex" "$(OutDir)Templates\Projects\English advanced\Simple Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Simple Letter.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Simple Letter.tex" "$(OutDir)Templates\Projects\English advanced\Simple Letter.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Simple Letter.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Simple Report.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Simple Letter.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Simple Report.tex" "$(OutDir)Templates\Projects\English advanced\Simple Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Simple Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Simple Report.tex" "$(OutDir)Templates\Projects\English advanced\Simple Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Simple Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Simple Report.tex" "$(OutDir)Templates\Projects\English advanced\Simple Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Simple Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Simple Report.tex" "$(OutDir)Templates\Projects\English advanced\Simple Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Simple Report.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Technical Report.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Simple Report.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Projects\English advanced\Technical Report.tex" "$(OutDir)Templates\Projects\English advanced\Technical Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Projects\English advanced\Technical Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Projects\English advanced\Technical Report.tex" "$(OutDir)Templates\Projects\English advanced\Technical Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Projects\English advanced\Technical Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Projects\English advanced\Technical Report.tex" "$(OutDir)Templates\Projects\English advanced\Technical Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Projects\English advanced\Technical Report.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Projects\English advanced\Technical Report.tex" "$(OutDir)Templates\Projects\English advanced\Technical Report.tex"
-</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Projects\English advanced\Technical Report.tex;%(Outputs)</Outputs>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="Documents\Deutsch\OptionenAbkürzungen.tex">
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Technical Report.tex">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy "Documents\Deutsch\OptionenAbkürzungen.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy "Documents\Deutsch\OptionenAbkürzungen.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex;%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy "Documents\Deutsch\OptionenAbkürzungen.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy "Documents\Deutsch\OptionenAbkürzungen.tex" "$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex"</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex;%(Outputs)</Outputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Templates\Documents\Deutsch\OptionenAbkürzungen.tex;%(Outputs)</Outputs>
-    </CustomBuild>
+      <DestinationFolders>$(OutDir)\Templates\Projects\English advanced</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Preview\Vanilla LaTeX.tex">
+      <FileType>Document</FileType>
+      <DestinationFolders>$(OutDir)\Templates\Preview</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Preview\VGTC.tex">
+      <FileType>Document</FileType>
+      <DestinationFolders>$(OutDir)\Templates\Preview</DestinationFolders>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

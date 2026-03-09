@@ -2,171 +2,276 @@
 # -*- coding: latin-1 -*-
 
 import string
-from path import path
+from pathlib import Path
 
-DSPHEAD = """\
-# Microsoft Developer Studio Project File - Name="Templates" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
-# ** DO NOT EDIT **
-
-# TARGTYPE "Win32 (x86) Generic Project" 0x010a
-
-CFG=Templates - Win32 Debug
-!MESSAGE This is not a valid makefile. To build this project using NMAKE,
-!MESSAGE use the Export Makefile command and run
-!MESSAGE 
-!MESSAGE NMAKE /f "Templates.mak".
-!MESSAGE 
-!MESSAGE You can specify a configuration when running NMAKE
-!MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE 
-!MESSAGE NMAKE /f "Templates.mak" CFG="Templates - Win32 Debug"
-!MESSAGE 
-!MESSAGE Possible choices for configuration are:
-!MESSAGE 
-!MESSAGE "Templates - Win32 Release" (based on "Win32 (x86) Generic Project")
-!MESSAGE "Templates - Win32 Debug" (based on "Win32 (x86) Generic Project")
-!MESSAGE 
-
-# Begin Project
-# PROP AllowPerConfigDependencies 0
-# PROP Scc_ProjName ""
-# PROP Scc_LocalPath ""
-MTL=midl.exe
-
-!IF  "$(CFG)" == "Templates - Win32 Release"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release"
-# PROP BASE Intermediate_Dir "Release"
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir "../output/Release"
-# PROP Intermediate_Dir "Release"
-# PROP Target_Dir ""
-
-!ELSEIF  "$(CFG)" == "Templates - Win32 Debug"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Templates___Win32_Debug"
-# PROP BASE Intermediate_Dir "Templates___Win32_Debug"
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 1
-# PROP Output_Dir "..\output\Debug"
-# PROP Intermediate_Dir "Debug"
-# PROP Target_Dir ""
-
-!ENDIF 
-
-# Begin Target
-
-# Name "Templates - Win32 Release"
-# Name "Templates - Win32 Debug"
+VCPROJHEAD = """\
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a44a6573-df1a-4af7-a835-bbdb2ec21db0}</ProjectGuid>
+    <RootNamespace>FileCopy</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\Output\Product\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Output\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
 """
 
-DSPFOOT = """\
-# End Target
-# End Project
-"""
-
-DSPGROUPSTART = """\
-# Begin Group "%s"
-
-# PROP Default_Filter ""
-"""
-
-DSPGROUPEND = """
-# End Group
+VCPROJFOOT = """\
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
 """
 
 TEXFILETEMPLATE = """\
-# Begin Source File
-
-SOURCE="%s"
-
-!IF  "$(CFG)" == "Templates - Win32 Release"
-
-# Begin Custom Build
-OutDir=.\..\output\Release
-InputPath="%s"
-
-"$(OutDir)\Templates\%s" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy "%s" "$(OutDir)\Templates\%s"
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "Templates - Win32 Debug"
-
-# Begin Custom Build
-OutDir=.\..\output\Debug
-InputPath="%s"
-
-"$(OutDir)\Templates\%s" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	copy "%s" "$(OutDir)\Templates\%s"
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
+    <CopyFileToFolders Include="%s">
+      <FileType>Document</FileType>
+      <DestinationFolders>$(OutDir)\Templates\%s</DestinationFolders>
+    </CopyFileToFolders>
 """
 
-def WriteHead(outfile):
-    outfile.write(DSPHEAD)
+
+FILTERSHEAD = """\
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+"""
+
+FILTERDEF = """\
+    <Filter Include="%s">
+    </Filter>
+"""
+
+FILTERFILEENDGROUPSTART = """\
+  </ItemGroup>
+  <ItemGroup>
+"""
+
+FILTERFILE = """\
+    <CopyFileToFolders Include="%s">
+      <Filter>%s</Filter>
+    </CopyFileToFolders>
+"""
+
+FILTERSFOOT = """\
+  </ItemGroup>
+</Project>
+"""
+
+def WriteHeads(outfileproj, outfilefilter):
+    outfileproj.write(VCPROJHEAD)
+    outfilefilter.write(FILTERSHEAD)
 
 
-def WriteFoot(outfile):
-    outfile.write(DSPFOOT)
+def WriteFeet(outfileproj, outfilefilter):
+    outfileproj.write(VCPROJFOOT)
+    outfilefilter.write(FILTERSFOOT)
 
 
-def BeginGroup(outfile, name):
-    outfile.write(DSPGROUPSTART % name)
-
-def EndGroup(outfile, name):
-    outfile.write(DSPGROUPEND)
-
-
-def ProcessFile(outfile, texfile):
+def ProcessFile(outfileproj, outfilefilter, texfile, groupname):
     #~ .\Documents\Deutsch\OptionenLayout.tex
     SourceFileName = texfile
-    SourceFileName = SourceFileName.encode("latin-1")
-    print SourceFileName
-    outfile.write(TEXFILETEMPLATE % (SourceFileName, SourceFileName, SourceFileName, SourceFileName, SourceFileName, SourceFileName, SourceFileName, SourceFileName, SourceFileName))
+    DestFolder = texfile.parent
+    print(SourceFileName)
+    outfileproj.write(TEXFILETEMPLATE % (SourceFileName, DestFolder))
+    outfilefilter.write(FILTERFILE % (SourceFileName, groupname))
 
 
-def ProcessDir(outfile, path, OptionalPrefix = None):
+def ProcessDir(outfileproj, outfilefilter, path, OptionalPrefix = None):
     if (OptionalPrefix == None):
         groupname = path.name
     else:
-        groupname = OptionalPrefix + " " + path.name
-    print "%s: %s" % (groupname, path)
+        groupname = OptionalPrefix + "\\" + path.name
+    print("%s: %s" % (groupname, path))
     
-    BeginGroup(outfile, groupname)
-    
-    for d in path.dirs():
-        ProcessDir(outfile, d)
-    
-    for texfile in path.files("*.tex"):
-        ProcessFile(outfile, texfile)
-    
-    EndGroup(outfile, groupname)
+    allgroupnames = [groupname]
 
+    for d in path.iterdir():
+        if d.is_dir():
+            allgroupnames += ProcessDir(outfileproj, outfilefilter, d, groupname)
+            
+    for texfile in path.glob("*.tex"):
+        ProcessFile(outfileproj, outfilefilter, texfile, groupname)
+        
+    return allgroupnames
+
+
+
+def WriteGroupNames(outfilefilter, GroupNames):
+    outfilefilter.write(FILTERFILEENDGROUPSTART)
+
+    for g in GroupNames:
+        outfilefilter.write(FILTERDEF % g)
+        
+
+
+import sys
+import locale
+locale.getpreferredencoding()
 
 if __name__ == "__main__":
 
+    #~ print(locale.getpreferredencoding())
+
+    #~ Test = "Abkürzung"
+    #~ print(Test)
+    #~ print(Test.encode("cp1252"))
+    #~ print(Test.encode("latin-1").decode("utf-8"))
+    #~ print(Test.encode("latin-1"))
+    #~ print(Test.encode("utf-8"))
+    #~ print(Test)
+
+    #~ sys.exit(0)
+
     #~ Paths
-    templatepaths = [path("Documents"), path("Projects")]
+    templatepaths = [Path("Documents"), Path("Projects"), Path("Preview")]
 
-    outfile = file("Templates.dsp", "w")
+    with Path("Templates.vcxproj").open(mode="w", encoding="utf-8") as outfileproj:
+        with Path("Templates.vcxproj.filters").open(mode="w", encoding="utf-8") as outfilefilter:
 
-    WriteHead(outfile)
-    
-    for p in templatepaths:
-        for d in p.dirs():
-            ProcessDir(outfile, d, p.name)
-            
-    WriteFoot(outfile)
+            WriteHeads(outfileproj, outfilefilter)
+
+            GroupNames = list()
+            for p in templatepaths:
+                GroupNames += ProcessDir(outfileproj, outfilefilter, p)
+
+            WriteGroupNames(outfilefilter, GroupNames)
+                    
+            WriteFeet(outfileproj, outfilefilter)

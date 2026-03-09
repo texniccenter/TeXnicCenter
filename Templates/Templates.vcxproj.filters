@@ -1,121 +1,125 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Documents Deutsch">
-      <UniqueIdentifier>{11e83eec-3e87-4711-b722-41ef0fead2c5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Documents Deutsch erweitert">
-      <UniqueIdentifier>{16982bd0-50a9-4e4a-8f9a-e0fa5c6ba62a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Documents English">
-      <UniqueIdentifier>{ce2b5e54-a3dd-4b52-bfa1-161ae2e30477}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Documents English advanced">
-      <UniqueIdentifier>{d0dc7c53-9fda-4eda-8368-aee9ad4c3b8d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Projects Deutsch">
-      <UniqueIdentifier>{5674c7b4-5d81-459e-8110-ad609afd8f64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Projects Deutsch erweitert">
-      <UniqueIdentifier>{fd2e9f0a-0be7-40e6-a74d-04a2c15cf637}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Projects English">
-      <UniqueIdentifier>{44bd9f53-e726-4fef-b675-5c0a2b7c31bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Projects English advanced">
-      <UniqueIdentifier>{4879ca02-022d-43db-abcb-c37d78c6e9ac}</UniqueIdentifier>
-    </Filter>
+    <CopyFileToFolders Include="Documents\Deutsch\Deckblatt.tex">
+      <Filter>Documents\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch\OptionenAbkürzungen.tex">
+      <Filter>Documents\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch\OptionenLayout.tex">
+      <Filter>Documents\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch erweitert\OptionenErweitert.tex">
+      <Filter>Documents\Deutsch erweitert</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch erweitert\OptionenMath.tex">
+      <Filter>Documents\Deutsch erweitert</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\Deutsch erweitert\PDFInfos.tex">
+      <Filter>Documents\Deutsch erweitert</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English\OptionsAbbreviations.tex">
+      <Filter>Documents\English</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English\OptionsLayout.tex">
+      <Filter>Documents\English</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English\Titlepage.tex">
+      <Filter>Documents\English</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English advanced\OptionsAdvanced.tex">
+      <Filter>Documents\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English advanced\OptionsMath.tex">
+      <Filter>Documents\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Documents\English advanced\PDFInfos.tex">
+      <Filter>Documents\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\Brief.tex">
+      <Filter>Projects\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\KOMA-Brief.tex">
+      <Filter>Projects\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\KOMAArtikel.tex">
+      <Filter>Projects\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\lebenslauf.tex">
+      <Filter>Projects\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch\Report.tex">
+      <Filter>Projects\Deutsch</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch erweitert\KOMABuch.tex">
+      <Filter>Projects\Deutsch erweitert</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\Deutsch erweitert\prospereinfach.tex">
+      <Filter>Projects\Deutsch erweitert</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English\Letter.tex">
+      <Filter>Projects\English</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English\Report.tex">
+      <Filter>Projects\English</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English\Slides.tex">
+      <Filter>Projects\English</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Basic Article.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Book.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Foils.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Mathematical Article.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Mathematical Book.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Simple Letter.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Simple Report.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Projects\English advanced\Technical Report.tex">
+      <Filter>Projects\English advanced</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Preview\Vanilla LaTeX.tex">
+      <Filter>Preview</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Preview\VGTC.tex">
+      <Filter>Preview</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Documents\Deutsch\Deckblatt.tex">
-      <Filter>Documents Deutsch</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch\OptionenLayout.tex">
-      <Filter>Documents Deutsch</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch erweitert\OptionenErweitert.tex">
-      <Filter>Documents Deutsch erweitert</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch erweitert\OptionenMath.tex">
-      <Filter>Documents Deutsch erweitert</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch erweitert\PDFInfos.tex">
-      <Filter>Documents Deutsch erweitert</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English\OptionsAbbreviations.tex">
-      <Filter>Documents English</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English\OptionsLayout.tex">
-      <Filter>Documents English</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English\Titlepage.tex">
-      <Filter>Documents English</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English advanced\OptionsAdvanced.tex">
-      <Filter>Documents English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English advanced\OptionsMath.tex">
-      <Filter>Documents English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\English advanced\PDFInfos.tex">
-      <Filter>Documents English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\Brief.tex">
-      <Filter>Projects Deutsch</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\KOMA-Brief.tex">
-      <Filter>Projects Deutsch</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\KOMAArtikel.tex">
-      <Filter>Projects Deutsch</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\lebenslauf.tex">
-      <Filter>Projects Deutsch</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch\Report.tex">
-      <Filter>Projects Deutsch</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch erweitert\KOMABuch.tex">
-      <Filter>Projects Deutsch erweitert</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\Deutsch erweitert\prospereinfach.tex">
-      <Filter>Projects Deutsch erweitert</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English\Letter.tex">
-      <Filter>Projects English</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English\Report.tex">
-      <Filter>Projects English</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English\Slides.tex">
-      <Filter>Projects English</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Basic Article.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Book.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Foils.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Mathematical Article.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Mathematical Book.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Simple Letter.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Simple Report.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Projects\English advanced\Technical Report.tex">
-      <Filter>Projects English advanced</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Documents\Deutsch\OptionenAbkürzungen.tex">
-      <Filter>Documents Deutsch</Filter>
-    </CustomBuild>
+    <Filter Include="Documents">
+    </Filter>
+    <Filter Include="Documents\Deutsch">
+    </Filter>
+    <Filter Include="Documents\Deutsch erweitert">
+    </Filter>
+    <Filter Include="Documents\English">
+    </Filter>
+    <Filter Include="Documents\English advanced">
+    </Filter>
+    <Filter Include="Projects">
+    </Filter>
+    <Filter Include="Projects\Deutsch">
+    </Filter>
+    <Filter Include="Projects\Deutsch erweitert">
+    </Filter>
+    <Filter Include="Projects\English">
+    </Filter>
+    <Filter Include="Projects\English advanced">
+    </Filter>
+    <Filter Include="Preview">
+    </Filter>
   </ItemGroup>
 </Project>
