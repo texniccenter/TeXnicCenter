@@ -267,7 +267,7 @@
       <FileType>Document</FileType>
       <DestinationFolders>$(OutDir)\Templates\Preview</DestinationFolders>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Preview\VGTC.tex">
+    <CopyFileToFolders Include="Preview\VGTC-like.tex">
       <FileType>Document</FileType>
       <DestinationFolders>$(OutDir)\Templates\Preview</DestinationFolders>
     </CopyFileToFolders>

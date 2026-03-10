@@ -94,7 +94,7 @@
     <CopyFileToFolders Include="Preview\Vanilla LaTeX.tex">
       <Filter>Preview</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Preview\VGTC.tex">
+    <CopyFileToFolders Include="Preview\VGTC-like.tex">
       <Filter>Preview</Filter>
     </CopyFileToFolders>
   </ItemGroup>
