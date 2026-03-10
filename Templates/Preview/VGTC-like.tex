@@ -1,0 +1,172 @@
+%TeXnicCenter Preview Template by Tino Weinkauf
+%for the vgtc document class from the Visualization and Graphics Technical Community
+%used for the IEEE VIS conference and the IEEE TVCG journal.
+
+%We are emulating the 'journal' mode for the vgtc class,
+%which is used for full paper submissions/publications at the IEEE VIS conference.
+%That class is based on article.cls and applies a 9pt font.
+%Here, we use the extsizes package to get the 9pt font as well.
+\documentclass[9pt, twocolumn, twoside]{extarticle}
+
+%If you want an exact reproduction of vgtc.cls, use vgtc.cls directly,
+%My suggestion is to use this:
+%
+%\documentclass[journal]{vgtc} %this setting avoids page numbers
+%
+% <your packages>
+% <title> <abstract> <authors>
+%
+%\begin{document}
+%\graphicspath{{pdfimages/}} % where to search for the images
+%\include{macros}            % your commands and definitions
+%\firstsection{Preview}      % ask vgtc.cls to make the title...
+%\maketitle                  % ...and now the style is set perfectly
+%\enlargethispage{-100cm}    % we end this page...
+%\newpage                    % ...using these two commands
+%\input{content}             % and our preview content lands on the 2nd page.
+%\end{document}
+%
+%and then you extract the SECOND page from the generated PDF,
+%for example via:
+%pdftocairo -png -singlefile -f 2 -l 2 -r %DPI preview-crop.pdf preview
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% LOAD PACKAGES %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Language %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}
+\usepackage[american]{babel}
+\usepackage[utf8]{inputenc}
+
+%% Packages for Graphics & Figures %%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\graphicspath{{pdfimages/}} % where to search for the images; adapt to your needs
+\usepackage{sidecap}
+
+
+%% Other Packages used by VGTC %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{microtype}
+\PassOptionsToPackage{warn}{textcomp}  % to address font issues with \textrightarrow
+\usepackage{textcomp}                  % use better special symbols
+\usepackage{times}                     % we use Times as the main font
+\renewcommand*\ttdefault{txtt}         % a nicer typewriter font
+\usepackage{cite} % needed to automatically sort the references
+\usepackage{enumitem}                    % more compact lists
+\setlist[enumerate]{itemsep=1pt,topsep=3pt}
+\setlist[itemize]{itemsep=1pt,topsep=3pt}
+\setlist[description]{itemsep=1pt,topsep=3pt}
+
+%% Math Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amsbsy}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{amssymb, amsthm}  % For \varnothing, proof environment
+%\usepackage{dsfont}
+\usepackage{nicefrac}
+%\usepackage{algorithm2e}
+%\usepackage{amsthm}
+
+%% Other useful Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathptmx}                  % use matching math font
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+
+
+%% TikZ and Friends %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+\usetikzlibrary{patterns,shapes.arrows}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathreplacing}
+% \usetikzlibrary{matrix}
+% \usetikzlibrary{backgrounds}
+
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=newest}
+
+
+%% Hyperref and Friends %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[pagebackref,bookmarks]{hyperref}
+\usepackage[all]{hypcap}% makes hyperlinks go to top of floats rather than the caption
+\usepackage[svgnames]{xcolor}
+\hypersetup{
+	pdfpagemode=UseNone,
+	%pdftitle={\@title},
+	%pdfauthor={\@author},
+	%pdfsubject={VGTC Special Issue Paper for TVCG},
+	%pdfkeywords={\vgtc@keywords},
+	pageanchor=true,
+	plainpages=false,       % for problems with page referencing
+	hypertexnames=false,    % for handling subfigures correctly
+	bookmarksnumbered=false,% include the section numbers in the list
+	bookmarksopen=true,     % In the list, display highest level only
+	bookmarksopenlevel=3,   % display three levels of bookmarks
+	pdfpagemode=UseNone,    % show just the page
+	pdfstartview=Fit,       % defail page view is the whole page at once
+	pdfborder={0 0 0},      % we don't want those silly boxes for links
+	breaklinks=true,        % allow breaking links
+	colorlinks=true,        % color all links blue
+	linkcolor=NavyBlue,
+	urlcolor=NavyBlue,
+	citecolor=NavyBlue,
+	anchorcolor=black,      % changing this colors te teaser caption using dvips
+	nesting=true,
+	linktocpage}
+
+\usepackage[nameinlink,capitalise]{cleveref}
+\crefname{table}{Tab.}{Tabs.}
+\Crefname{table}{Table}{Tables}
+\crefname{section}{Sec.}{Secs.}
+\Crefname{section}{Section}{Sections}
+
+%\usepackage{scalerel}
+
+\usepackage{caption}
+\usepackage[aboveskip=4pt, belowskip=4pt]{subcaption}                % for subfigures
+\captionsetup{subrefformat=parens,font={scriptsize,sf}}
+\newcommand{\subfigsCaption}[1]{\vspace{-.9em}\caption{#1}}
+
+
+%These settings are based on journal mode of the vgtc class,
+%which is what you use when you submit to the IEEE VIS conference.
+\renewcommand{\figurename}{Fig.}
+
+\setlength{\textheight}{9.625in}
+\setlength{\topmargin}{-0.625in}
+\setlength{\headheight}{0.0625in}
+\setlength{\headsep}{0.250in}
+\setlength{\footskip}{0.25in}
+\flushbottom
+\setlength{\textwidth}{7.125in}
+\setlength{\columnsep}{0.17in}
+%\newlength{\captionmargin}
+\setlength{\captionmargin}{0in}
+
+\setlength\paperheight {11in}
+\setlength\paperwidth  {8.5in}
+\setlength{\evensidemargin}{-0.375in} %1-(0.3125+0.3125)
+\setlength{\oddsidemargin}{-.25in} %1-(0.4375+0.3125)
+
+\addtolength{\marginparwidth}{-1.5mm} % fix margin
+\addtolength{\marginparsep}{-2mm} % fix margin
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% START OF THE PAPER %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\pagestyle{empty}
+
+\input{content}
+
+\end{document}
