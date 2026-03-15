@@ -35,7 +35,6 @@
 #include "stdafx.h"
 #include "process.h"
 #include "ProcessCommand.h"
-#include "PlaceHolder.h"
 #include "RegistryStack.h"
 
 #ifdef _DEBUG
@@ -62,19 +61,14 @@ void CProcessCommand::Set(LPCTSTR lpszExecutable,LPCTSTR lpszArguments)
 	m_strArguments = lpszArguments;
 }
 
-CProcess *CProcessCommand::Execute(LPCTSTR lpszWorkingDir,LPCTSTR lpszMainPath,
-                                   LPCTSTR lpszCurrentPath /*= NULL*/,
-                                   long lCurrentLine,/*= -1*/
-                                   LPCTSTR lpszCurrentSelection,/*= NULL*/
-                                   bool bExpandPlaceholderSets /*= false*/) const
+CProcess* CProcessCommand::Execute(const CPlaceholderInfo& PInfo) const
 {
-	CString strArguments = AfxExpandPlaceholders(m_strArguments,lpszMainPath,
-	                       lpszCurrentPath,lCurrentLine,
-	                       lpszCurrentSelection,bExpandPlaceholderSets);
+	CString strArguments = AfxExpandPlaceholders(m_strArguments, PInfo);
 	CProcessCommand * const localThis = (CProcessCommand * const)this;
 	CProcess* p = new CProcess;
 
-	if (p->Create(m_strExecutable + _T(' ') + strArguments,NULL,NULL,FALSE,CREATE_NEW_PROCESS_GROUP,NULL,lpszWorkingDir))
+	if (p->Create(m_strExecutable + _T(' ') + strArguments,
+		NULL, NULL, FALSE, CREATE_NEW_PROCESS_GROUP, NULL, PInfo.strWorkingDir))
 	{
 		localThis->m_nLastError = 0;
 		return p;
@@ -86,22 +80,15 @@ CProcess *CProcessCommand::Execute(LPCTSTR lpszWorkingDir,LPCTSTR lpszMainPath,
 	return NULL;
 }
 
-CProcess *CProcessCommand::Execute(HANDLE hOutput,LPCTSTR lpszWorkingDir,LPCTSTR lpszMainPath,
-                                   LPCTSTR lpszCurrentPath /*= NULL*/,
-                                   long lCurrentLine,/*= -1*/
-                                   LPCTSTR lpszCurrentSelection,/*= NULL*/
-                                   bool bExpandPlaceholderSets /*= false*/) const
+CProcess *CProcessCommand::Execute(HANDLE hOutput, const CPlaceholderInfo& PInfo) const
 {
-	CString strArguments = AfxExpandPlaceholders(m_strArguments,lpszMainPath,
-	                       lpszCurrentPath,lCurrentLine,
-	                       lpszCurrentSelection,bExpandPlaceholderSets,
-	                       lpszWorkingDir);
+	CString strArguments = AfxExpandPlaceholders(m_strArguments, PInfo);
 
 	CProcessCommand * const localThis = (CProcessCommand * const)this;
 	CProcess* p = new CProcess;
 
 	if (p->CreateHiddenConsole(m_strExecutable + _T(' ') + strArguments,
-		INVALID_HANDLE_VALUE,hOutput,hOutput,CREATE_NO_WINDOW,lpszWorkingDir))
+							   INVALID_HANDLE_VALUE, hOutput, hOutput, CREATE_NO_WINDOW, PInfo.strWorkingDir))
 	{
 		localThis->m_nLastError = 0;
 		return p;

@@ -148,13 +148,20 @@ protected:
 	/** Prepares a run of LaTeX, BibTex, MakeIndex
 		by saving files, starting progress animations, and so on.
 
+		@param PInfo
+		Storage for information for expanding placeholders.
+		The caller can expect to have proper information about
+		filenames, paths, and more in this object after a successful
+		run of this function.
+
 		@param bRemoveErrorMarks
 		Whether to remove the error marks from the open documents.
 
 		@param bCloseViewer
 		Whether to close the (PDF) viewer before the run.
 	*/
-	bool PrepareProductionRun(const bool bRemoveErrorMarks = false,
+	bool PrepareProductionRun(CPlaceholderInfo& PInfo,
+							  const bool bRemoveErrorMarks = false,
 							  const bool bCloseViewer = false);
 
 	/**

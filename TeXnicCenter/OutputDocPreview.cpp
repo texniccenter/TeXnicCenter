@@ -65,16 +65,17 @@ CString COutputDoc::GetPreviewImagePath() const
 	ASSERT(pProfile);
 	if (!pProfile) return CString();
 
-	// Collect necessary information
-	// - project information
-	CLaTeXProject* pProject = theApp.GetProject();
-	if (!pProject) return CString();
-	CString strMainPath = pProject->GetMainPath();
+	//Collect necessary information including placeholder information.
+	CPlaceholderInfo PInfo;
+	PInfo.strMainPath = GetMainPath();
+	PInfo.strWorkingDir = GetWorkingDir();
+	if (CDocument* doc = GetActiveDocument()) PInfo.strCurrentPath = doc->GetPathName();
+	PInfo.bExpandPlaceholderSets = false;
 
-	//Replace any placeholders. We only allow placeholders based on the project.
-	CString ExpandedPath = AfxExpandPlaceholders(pProfile->GetPreviewImagePath(), strMainPath);
+	//Expand placeholders
+	CString ExpandedPath = AfxExpandPlaceholders(pProfile->GetPreviewImagePath(), PInfo);
 	//Get an absolute path
-	ExpandedPath = CPathTool::GetAbsolutePath(pProject->GetWorkingDirectory(), ExpandedPath, true);
+	ExpandedPath = CPathTool::GetAbsolutePath(PInfo.strWorkingDir, ExpandedPath, true);
 
 	return ExpandedPath;
 }
@@ -571,9 +572,14 @@ bool COutputDoc::DoPreviewRun()
 		m_preview_builder.MsgsAfterTermination.AddMessage(true, m_pPreviewImagePane->m_hWnd, AfxUserMessages::PreviewImageViewStopProgressAnimation, 2, 0, true, 2);
 	}
 
+	//Get information for expanding the placeholders
+	CPlaceholderInfo PInfo;
+	PInfo.FillWithInformation();
+	PInfo.strWorkingDir = PreviewDir;
+
 	//Build the preview
 	//For previews, we do not scan the errors, warnings, etc.
 	//We also do not activate the output.
-	//m_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
-	return m_preview_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
+	//return m_preview_builder.BuildPreview(this, m_pPreviewView, PreviewDir, strPreviewMainPath);
+	return m_preview_builder.BuildPreview(this, m_pPreviewView, PInfo);
 }

@@ -206,31 +206,29 @@ void CPlaceholderSingleOptDlg::ShowExample()
 
 	/////////////////////////////////
 	//Construct a real world example
-	CString strMainPath;
-	CString strCurrentPath;
+	CPlaceholderInfo PInfo;
 
 	//Problem: For constructing a short path using AfxExpandPlaceholders(),
 	// the file needs to exist.
 	// So we take a different (=short) MainFileName in this case.
 	if (m_bShortFormat)
 	{
-		strMainPath.LoadString(STE_PLACEHOLDER_EXAMPLE_MAIN_SHORT);
-		strCurrentPath.LoadString(STE_PLACEHOLDER_EXAMPLE_CURRENT_SHORT);
+		PInfo.strMainPath.LoadString(STE_PLACEHOLDER_EXAMPLE_MAIN_SHORT);
+		PInfo.strCurrentPath.LoadString(STE_PLACEHOLDER_EXAMPLE_CURRENT_SHORT);
+		PInfo.strPreviewTemplatePath.LoadString(STE_PLACEHOLDER_EXAMPLE_PREVIEW_SHORT);
 	}
 	else
 	{
-		strMainPath.LoadString(STE_PLACEHOLDER_EXAMPLE_MAIN);
-		strCurrentPath.LoadString(STE_PLACEHOLDER_EXAMPLE_CURRENT);
+		PInfo.strMainPath.LoadString(STE_PLACEHOLDER_EXAMPLE_MAIN);
+		PInfo.strCurrentPath.LoadString(STE_PLACEHOLDER_EXAMPLE_CURRENT);
+		PInfo.strPreviewTemplatePath.LoadString(STE_PLACEHOLDER_EXAMPLE_PREVIEW);
 	}
+	PInfo.strWorkingDir = CPathTool::GetDirectory(CPathTool::GetDirectory(PInfo.strMainPath));
 
 	CString strExampleFileName;
 	try
 	{
-		strExampleFileName = AfxExpandPlaceholders(strPlaceholder,
-		                     strMainPath,
-		                     strCurrentPath,
-		                     -1,NULL,false,
-		                     CPathTool::GetDirectory(CPathTool::GetDirectory(strMainPath)));
+		strExampleFileName = AfxExpandPlaceholders(strPlaceholder, PInfo);
 		//Show this example
 		m_ExampleEdit.SetWindowText(strExampleFileName);
 	}

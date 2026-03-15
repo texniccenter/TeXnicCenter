@@ -26,21 +26,63 @@
  *
  *********************************************************************/
 
-/********************************************************************
- *
- * $Id$
- *
- ********************************************************************/
-
-#if !defined(AFX_PLACEHOLDER_H__65CF1821_0593_11D5_A222_006097239934__INCLUDED_)
-#define AFX_PLACEHOLDER_H__65CF1821_0593_11D5_A222_006097239934__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-//Includes
 #include "LatexProject.h"
+
+
+/** Holds information from throughout TeXnicCenter for expanding placeholders.
+* 
+*   Use FillWithInformation() to put useful information into this class.
+*   Then pass it on when calling LaTeX and friends.
+*   Classes like PProcessor use this to call AfxExpandPlacerHolders().
+* 
+* @author Tino Weinkauf
+*/
+class CPlaceholderInfo
+{
+//Friends
+//Types
+public:
+
+//Construction / Deconstruction
+public:
+	CPlaceholderInfo(){};
+	virtual ~CPlaceholderInfo() = default;
+
+//Methods
+public:
+	void FillWithInformation();
+
+//Attributes
+public:
+	///Path to the project's main file.
+	CString strMainPath;
+
+	///Path to the current file in the editor.
+	CString strCurrentPath;
+
+	///Path to the template file for compiling the preview.
+	CString strPreviewTemplatePath;
+
+	///Working directory used for relative path calculations.
+	CString strWorkingDir;
+
+	///Line index of the cursor in the current file.
+	long lCurrentLine{-1};
+
+	///Selected text in the current document.
+	CString strCurrentSelection;
+
+	///DPI value used for preview generation.
+	int nPreviewDPIValue{300};
+
+	///Whether to expand placeholder sets like "$qrAPF".
+	bool bExpandPlaceholderSets{true};
+
+	///If true, use the current path as if it was the main path. Ignores the main path completely.
+	bool bUseCurrentPathAsMainPath{false};
+};
 
 
 /**
@@ -48,30 +90,14 @@ Expands the placeholders in the given string and returns the result.
 
 @param lpszStringWithPlaceholders
         String that contains the placeholders to expand.
-@param lpszMainPath
-        Path of the project's main file.
-@param lpszCurrentPath
-        Path of the current file in the editor. Set to NULL to prevent the
-        function from replacing	the current file specific placeholders.
-@param lCurrentLine
-        Line index of the cursor in the current file in the editor. Set to
-        -1 to prevent the function from replacing the line specific place
-        holders
-@param lpszCurrentSelection
-        Selected text in the current document.
-@param bExpandPlaceholderSets
-        Set to True, if you want Sets-Placeholders like "$qrAPF" to be expanded.
+@param Info
+        Object containing information for expanding the placeholders.
 
 @author Sven Wiegand
 @author Tino Weinkauf
  */
-CString AfxExpandPlaceholders(LPCTSTR lpszStringWithPlaceholders,
-                              LPCTSTR lpszMainPath = NULL,
-                              LPCTSTR lpszCurrentPath = NULL,
-                              long lCurrentLine = -1,
-                              LPCTSTR lpszCurrentSelection = NULL,
-                              bool bExpandPlaceholderSets = false,
-                              LPCTSTR lpszWorkingDir = NULL);
+CString AfxExpandPlaceholders(LPCTSTR lpszStringWithPlaceholders, const CPlaceholderInfo& Info);
+
 
 /**
 Returns true, if lpszPattern contains Wildcards like "*" and "?"
@@ -330,4 +356,4 @@ private:
 	const tregex m_regexPS;
 };
 
-#endif // !defined(AFX_PLACEHOLDER_H__65CF1821_0593_11D5_A222_006097239934__INCLUDED_)
+

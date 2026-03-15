@@ -26,20 +26,10 @@
  *
  *********************************************************************/
 
-/********************************************************************
- *
- * $Id$
- *
- ********************************************************************/
-
-#if !defined(AFX_FILECLEAN_H__E8317B14_4FD2_11D6_AF02_00201855324E__INCLUDED_)
-#define AFX_FILECLEAN_H__E8317B14_4FD2_11D6_AF02_00201855324E__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
 #include "LatexProject.h"
+#include "Placeholder.h"
 
 class RegistryStack;
 
@@ -151,7 +141,7 @@ public:
 	/**
 	Resolves the filenames from the pattern and adds them to the given StringList.
 	 */
-	bool Expand(CLaTeXProject* argpProject, LPCTSTR lpszCurrentPath, CUniqueStringList* pSList);
+	bool Expand(CLaTeXProject* argpProject, const CPlaceholderInfo& PInfo, CUniqueStringList* pSList);
 
 	/**
 	Saves this Item to the registry.
@@ -281,5 +271,3 @@ protected:
 	CUniqueStringList m_FilesToProtect;
 };
 
-
-#endif // !defined(AFX_FILECLEAN_H__E8317B14_4FD2_11D6_AF02_00201855324E__INCLUDED_)

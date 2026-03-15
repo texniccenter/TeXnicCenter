@@ -34,7 +34,6 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include "Placeholder.h"
 #include "FileClean.h"
 #include "LaTeXDocument.h"
 #include "LatexProject.h"
@@ -108,7 +107,7 @@ bool CFileCleanItem::PatternIsValid()
 	return true;
 }
 
-bool CFileCleanItem::Expand(CLaTeXProject* argpProject,LPCTSTR lpszCurrentPath,CUniqueStringList* pSList)
+bool CFileCleanItem::Expand(CLaTeXProject* argpProject, const CPlaceholderInfo& PInfo, CUniqueStringList* pSList)
 {
 	//Safety
 	ASSERT(argpProject);
@@ -122,12 +121,12 @@ bool CFileCleanItem::Expand(CLaTeXProject* argpProject,LPCTSTR lpszCurrentPath,C
 	//Expand the Placeholders
 	if (AfxContainsPlaceholders(strPattern))
 	{
-		CString strToAdd = AfxExpandPlaceholders(strPattern,argpProject->GetMainPath(),lpszCurrentPath,0,NULL,false);
+		CString strToAdd = AfxExpandPlaceholders(strPattern, PInfo);
 
 		//May contain Wildcards as well
 		if (AfxContainsWildcards(strToAdd))
 		{
-			AfxExpandWildcard(strToAdd,bRecursive,argpProject->GetWorkingDirectory(),pSList);
+			AfxExpandWildcard(strToAdd, bRecursive, argpProject->GetWorkingDirectory(), pSList);
 			return true;
 		}
 
@@ -142,8 +141,7 @@ bool CFileCleanItem::Expand(CLaTeXProject* argpProject,LPCTSTR lpszCurrentPath,C
 				strToAdd = argpProject->GetFilePath(strToAdd);
 			}
 
-			if (CPathTool::Exists(strToAdd))
-				pSList->AddHead(strToAdd);
+			if (CPathTool::Exists(strToAdd)) pSList->AddHead(strToAdd);
 		}
 		return true;
 	}
@@ -154,12 +152,12 @@ bool CFileCleanItem::Expand(CLaTeXProject* argpProject,LPCTSTR lpszCurrentPath,C
 		CPlaceholderSets ps(argpProject);
 		//To get absolute paths only, we just need to ignore
 		// the options of the Set-Placeholder.
-		ps.ExpandAllSets(strPattern,pSList,true);
+		ps.ExpandAllSets(strPattern, pSList, true);
 		return true;
 	}
 
 	//Expand the Wildcards or just take the file in strPattern
-	AfxExpandWildcard(strPattern,bRecursive,argpProject->GetWorkingDirectory(),pSList);
+	AfxExpandWildcard(strPattern, bRecursive, argpProject->GetWorkingDirectory(), pSList);
 
 	return true;
 }
@@ -440,18 +438,13 @@ bool CFileClean::Initialize(CFileCleanItemArray& ItemArray)
 	CLaTeXProject* pProject = theApp.GetProject();
 	if (!pProject) return false; //No Project = nothing to clean
 
-	CString strCurrentPath;
-	CodeView* pEdit = theApp.GetActiveCodeView();
-	if (pEdit)
-	{
-		strCurrentPath = pEdit->GetDocument()->GetPathName();
-	}
-
+	CPlaceholderInfo PInfo;
+	PInfo.FillWithInformation();
+	PInfo.bExpandPlaceholderSets = false;
 
 	//Init the lists
 	m_FilesToClean.RemoveAll();
 	m_FilesToProtect.RemoveAll();
-
 
 	//Iterate through the pattern array
 	int i;
@@ -461,18 +454,14 @@ bool CFileClean::Initialize(CFileCleanItemArray& ItemArray)
 		//Filling the List of files to be deleted
 		if (ItemArray[i].GetFileHandling() == CFileCleanItem::clean)
 		{
-			ItemArray[i].Expand(pProject,
-			                    strCurrentPath.IsEmpty() ? (LPCTSTR) NULL : strCurrentPath,
-			                    &m_FilesToClean);
+			ItemArray[i].Expand(pProject, PInfo, &m_FilesToClean);
 		}
 
 		//Filling the List of files to be protected
 		if ((ItemArray[i].GetFileHandling() == CFileCleanItem::protect)
 		        || (ItemArray[i].GetFileHandling() == CFileCleanItem::protectbydefault))
 		{
-			ItemArray[i].Expand(pProject,
-			                    strCurrentPath.IsEmpty() ? (LPCTSTR) NULL : strCurrentPath,
-			                    &m_FilesToProtect);
+			ItemArray[i].Expand(pProject, PInfo, &m_FilesToProtect);
 		}
 	}
 

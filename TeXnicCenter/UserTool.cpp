@@ -129,40 +129,16 @@ BOOL UserTool::Invoke()
 		return FALSE;
 	}
 
-	//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	// Collect necessary information
-	CString strMainPath, strCurrentPath, strCurrentSelection;
-	long lCurrentLine = -1;
-
-	// project information
-	CLaTeXProject	*pProject = theApp.GetProject();
-
-	if (pProject)
-		strMainPath = pProject->GetMainPath();
-
-	// current document specific information
-	strCurrentSelection = theApp.GetCurrentWordOrSelection(false, true, true);
-	CodeView* pEdit = theApp.GetActiveCodeView();
-
-	if (pEdit)
-	{
-		strCurrentPath = pEdit->GetDocument()->GetPathName();
-		lCurrentLine = pEdit->GetCurrentLine() + 1;
-	}
+	//Get info for Placeholders
+	CPlaceholderInfo PInfo;
+	PInfo.FillWithInformation();
 
 	try
 	{
-		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		// Invoke tool
 		//Be careful with the InitialDirectory: With CreateProcess it is not allowed
 		// to be quoted or empty or elsewise non-valid.
-		CString	strInitialDirectory = AfxExpandPlaceholders(
-		                                  m_strInitialDirectory,
-		                                  strMainPath.IsEmpty()? (LPCTSTR)NULL : strMainPath,
-		                                  strCurrentPath.IsEmpty()? (LPCTSTR)NULL : strCurrentPath,
-		                                  lCurrentLine,
-		                                  strCurrentSelection.IsEmpty()? (LPCTSTR)NULL : strCurrentSelection,
-		                                  false);
+		PInfo.bExpandPlaceholderSets = false;
+		CString strInitialDirectory = AfxExpandPlaceholders(m_strInitialDirectory, PInfo);
 		strInitialDirectory.TrimLeft(_T('\"'));
 		strInitialDirectory.TrimRight(_T('\"'));
 
@@ -173,11 +149,14 @@ BOOL UserTool::Invoke()
 			strInitialDirectory = AfxGetDefaultDirectory(true);
 		};
 
+		//Adjust placeholder info
+		PInfo.strWorkingDir = strInitialDirectory;
+		PInfo.bExpandPlaceholderSets = true;
+
 		//Execute the tool
 		CProcessCommand	pc;
-		pc.Set(m_strCommand, m_strArguments);//Args will be expanded by Execute
-		CProcess *p = pc.Execute(strInitialDirectory, strMainPath, strCurrentPath,
-		                         lCurrentLine, strCurrentSelection, true);
+		pc.Set(m_strCommand, m_strArguments); //Args will be expanded by Execute
+		CProcess* p = pc.Execute(PInfo);
 		if (!p)
 		{
 			TCHAR systemError[100];

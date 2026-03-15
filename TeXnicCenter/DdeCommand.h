@@ -26,20 +26,11 @@
  *
  *********************************************************************/
 
-/********************************************************************
- *
- * $Id$
- *
- ********************************************************************/
-
-#if !defined(AFX_DDECOMMAND_H__6FC6E482_04F2_11D5_A222_006097239934__INCLUDED_)
-#define AFX_DDECOMMAND_H__6FC6E482_04F2_11D5_A222_006097239934__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
 
 #include "RegistryStack.h"
+#include "PlaceHolder.h"
 
 
 /**
@@ -107,19 +98,13 @@ public:
 	to start the specified executable and try to send the command
 	again.
 
-	@param lpszMainPath
-	        Path of the project's main file.
-	@param lpszCurrentPath
-	        Path of the current file in the editor or NULL to prevent the
-	        method from replacing current file related placeholders.
-	@param lCurrentLine
-	        Lineindex of the cursor in the current file or -1 to prevent
-	        the method from replacing current line related placeholders.
+	@param PInfo
+	        Information for expanding placeholders.
 
 	@return
 	        TRUE on success, FALSE oterhwise.
 	 */
-	BOOL SendCommand(LPCTSTR lpszMainPath, LPCTSTR lpszCurrentPath = NULL, long lCurrentLine = -1) const;
+	BOOL SendCommand(const CPlaceholderInfo& PInfo) const;
 
 	/**
 	Removes the directory specifications from all path specifications
@@ -235,4 +220,3 @@ CString CDdeCommand::GetCommand() const
 	return m_strCmd;
 }
 
-#endif // !defined(AFX_DDECOMMAND_H__6FC6E482_04F2_11D5_A222_006097239934__INCLUDED_)

@@ -98,12 +98,11 @@ void CDdeCommand::SetCommand(LPCTSTR lpszCmd)
 	m_strCmd = lpszCmd;
 }
 
-BOOL CDdeCommand::SendCommand(LPCTSTR lpszMainPath,
-                              LPCTSTR lpszCurrentPath /*= NULL*/,long lCurrentLine /*= -1*/) const
+BOOL CDdeCommand::SendCommand(const CPlaceholderInfo& PInfo) const
 {
 	return SendCommandHelper(
 	           m_strServerName,
-	           AfxExpandPlaceholders(m_strCmd,lpszMainPath,lpszCurrentPath,lCurrentLine),
+	           AfxExpandPlaceholders(m_strCmd, PInfo),
 	           m_strTopic,
 	           m_strExecutable.IsEmpty() ? (LPCTSTR) NULL : (LPCTSTR) m_strExecutable,
 	           theApp.GetProfileInt(_T("Settings"),_T("DdeConnectTimeOut"),DDE_DEFTIMEOUT));

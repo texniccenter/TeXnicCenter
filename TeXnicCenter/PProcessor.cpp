@@ -42,18 +42,6 @@ static char THIS_FILE[] = __FILE__;
 // class CPProcessorArray
 //-------------------------------------------------------------------
 
-int CPProcessorArray::ExecuteAll(LPCTSTR lpszMainPath,LPCTSTR lpszWorkingDir,HANDLE hOutput)
-{
-	for (int i = 0; i < GetSize(); i++)
-	{
-		if (!GetAt(i).Execute(lpszMainPath,lpszWorkingDir,hOutput))
-			return i;
-	}
-
-	// all processors have been executed successfully
-	return -1;
-}
-
 void CPProcessorArray::RemoveDirectorySpecifications()
 {
 	for (int i = 0; i < GetSize(); ++i)
@@ -173,7 +161,7 @@ void CPProcessor::SetOutputFile(LPCTSTR lpszOutputFile)
 	m_strOutputFile = lpszOutputFile;
 }
 
-BOOL CPProcessor::Execute(LPCTSTR lpszMainPath,LPCTSTR lpszWorkingDir,HANDLE hOutput,PHANDLE phProcess /*= NULL*/)
+BOOL CPProcessor::Execute(CPlaceholderInfo PInfo, HANDLE hOutput, PHANDLE phProcess /*= NULL*/)
 {
 	HANDLE hStdInput = INVALID_HANDLE_VALUE;
 	HANDLE hStdOutput = INVALID_HANDLE_VALUE;
@@ -194,21 +182,21 @@ BOOL CPProcessor::Execute(LPCTSTR lpszMainPath,LPCTSTR lpszWorkingDir,HANDLE hOu
 		// Opening file, if input redirection should be used
 		if (!m_strInputFile.IsEmpty())
 		{
-			hStdInput = CreateFile(
-			                GetExpandedInputFile(lpszMainPath),GENERIC_READ,FILE_SHARE_READ,
-			                &sa,OPEN_EXISTING,0,NULL);
-			if (hStdInput == INVALID_HANDLE_VALUE)
-				throw FALSE;
+			PInfo.bExpandPlaceholderSets = false;
+			const CString strInputFilename = AfxExpandPlaceholders(m_strInputFile, PInfo);
+			hStdInput = CreateFile(strInputFilename, GENERIC_READ, FILE_SHARE_READ,
+								   &sa, OPEN_EXISTING, 0, NULL);
+			if (hStdInput == INVALID_HANDLE_VALUE) throw FALSE;
 		}
 
 		// Creating new file, if output redirection should be used
 		if (!m_strOutputFile.IsEmpty())
 		{
-			hStdOutput = CreateFile(
-			                 GetExpandedOutputFile(lpszMainPath),GENERIC_WRITE,0,
-			                 &sa,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
-			if (hStdOutput == INVALID_HANDLE_VALUE)
-				throw FALSE;
+			PInfo.bExpandPlaceholderSets = false;
+			const CString strOutputFilename = AfxExpandPlaceholders(m_strOutputFile, PInfo);
+			hStdOutput = CreateFile(strOutputFilename, GENERIC_WRITE, 0,
+									&sa, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (hStdOutput == INVALID_HANDLE_VALUE) throw FALSE;
 		}
 
 		if (hStdOutput == INVALID_HANDLE_VALUE)
@@ -221,15 +209,13 @@ BOOL CPProcessor::Execute(LPCTSTR lpszMainPath,LPCTSTR lpszWorkingDir,HANDLE hOu
 
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// create process
+		PInfo.bExpandPlaceholderSets = true;
+		const CString strArgs = AfxExpandPlaceholders(m_strArguments, PInfo);
 		CProcess p;
-		BOOL bResult;
-
-		bResult = p.CreateHiddenConsole(
-		              m_strPath + _T(' ') + GetExpandedArguments(lpszMainPath),
-		              hStdInput,hStdOutput,hOutput,
-		              CREATE_NO_WINDOW,lpszWorkingDir);
-		if (!bResult)
-			throw FALSE;
+		BOOL bResult = p.CreateHiddenConsole(m_strPath + _T(' ') + strArgs,
+											 hStdInput, hStdOutput, hOutput,
+											 CREATE_NO_WINDOW, PInfo.strWorkingDir);
+		if (!bResult) throw FALSE;
 
 		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		// wait for process
@@ -263,21 +249,6 @@ void CPProcessor::RemoveDirectorySpecifications()
 	m_strPath = CPathTool::GetFile(m_strPath);
 	m_strInputFile = CPathTool::GetFile(m_strInputFile);
 	m_strOutputFile = CPathTool::GetFile(m_strOutputFile);
-}
-
-CString CPProcessor::GetExpandedArguments(LPCTSTR lpszPath) const
-{
-	return AfxExpandPlaceholders(m_strArguments, lpszPath, NULL, -1, NULL, true);
-}
-
-CString CPProcessor::GetExpandedInputFile(LPCTSTR lpszPath) const
-{
-	return AfxExpandPlaceholders(m_strInputFile,lpszPath);
-}
-
-CString CPProcessor::GetExpandedOutputFile(LPCTSTR lpszPath) const
-{
-	return AfxExpandPlaceholders(m_strOutputFile,lpszPath);
 }
 
 CString CPProcessor::SerializeToStringDeprecated() const

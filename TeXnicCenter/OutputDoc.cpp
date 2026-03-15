@@ -633,30 +633,23 @@ CDocument* COutputDoc::GetActiveDocument() const
 
 void COutputDoc::OnLatexView()
 {
-	// check if there is an open document
-	CodeView* pView = theApp.GetActiveCodeView();
-	CodeDocument* pDoc = NULL;
-	CString strCurrentPath;
-	long lCurrentLine = -1;
-
-	if (pView)
-		pDoc = pView->GetDocument();
-
-	if (pDoc)
-	{
-		strCurrentPath = pDoc->GetPathName();
-		lCurrentLine = pView->GetCurrentLine() + 1;
-	}
+	//Basic info for expanding placeholders
+	CPlaceholderInfo PInfo;
+	PInfo.FillWithInformation();
+	PInfo.strWorkingDir = GetWorkingDir();
+	PInfo.strMainPath = GetMainPath();
+	PInfo.bUseCurrentPathAsMainPath = m_bActiveFileOperation;
 
 	// execute command
-	CProfile *pProfile = CProfileMap::GetInstance()->GetActiveProfile();
+	CProfile* pProfile = CProfileMap::GetInstance()->GetActiveProfile();
 	ASSERT(pProfile);
-	if (!pProfile)
-		return;
+	if (!pProfile) return;
 
-	CProfile::CCommand *pCmd = NULL;
-	if (strCurrentPath.IsEmpty())
+	CProfile::CCommand* pCmd = NULL;
+	if (PInfo.strCurrentPath.IsEmpty())
+	{
 		pCmd = &pProfile->GetViewProjectCmd();
+	}
 	else
 	{
 		pCmd = &pProfile->GetViewCurrentCmd();
@@ -668,9 +661,11 @@ void COutputDoc::OnLatexView()
 
 	if (pCmd && pCmd->GetActiveCommand() == CProfile::CCommand::typeProcess)
 	{
-		CProcess *p = pCmd->GetProcessCommand().Execute(GetWorkingDir(),GetMainPath(),strCurrentPath,lCurrentLine);
+		CProcess* p = pCmd->GetProcessCommand().Execute(PInfo);
 		if (p)
+		{
 			delete p;
+		}
 		else
 		{
 			CString strFormat;
@@ -680,7 +675,7 @@ void COutputDoc::OnLatexView()
 	}
 	else if (pCmd && pCmd->GetActiveCommand() == CProfile::CCommand::typeDde)
 	{
-		if (!pCmd->GetDdeCommand().SendCommand(GetMainPath(),strCurrentPath,lCurrentLine))
+		if (!pCmd->GetDdeCommand().SendCommand(PInfo))
 		{
 			CString strFormat;
 			strFormat.Format(STE_LATEX_START_FAILED, (LPCTSTR)pCmd->GetDdeCommand().GetCommand());
@@ -1123,7 +1118,7 @@ void COutputDoc::OnUpdateFileMakeIndex(CCmdUI* pCmdUI)
 	    !CProfileMap::GetInstance()->GetActiveProfileKey().IsEmpty() && CProfileMap::GetInstance()->GetActiveProfile()->GetRunMakeIndex());
 }
 
-bool COutputDoc::PrepareProductionRun(const bool bRemoveErrorMarks, const bool bCloseViewer)
+bool COutputDoc::PrepareProductionRun(CPlaceholderInfo& PInfo, const bool bRemoveErrorMarks, const bool bCloseViewer)
 {
 	if (m_builder.IsStillRunning()) return false;
 
@@ -1134,6 +1129,12 @@ bool COutputDoc::PrepareProductionRun(const bool bRemoveErrorMarks, const bool b
 
 	//Save main file, even if not saved before
 	if (!AssureExistingMainFile()) return false;
+
+	//Fill info for expanding placeholders
+	PInfo.FillWithInformation();
+	PInfo.bUseCurrentPathAsMainPath = m_bActiveFileOperation;
+	PInfo.strWorkingDir = GetWorkingDir();
+	PInfo.strMainPath = GetMainPath();
 
 	//Remove all error marks
 	if (bRemoveErrorMarks)
@@ -1166,7 +1167,7 @@ bool COutputDoc::PrepareProductionRun(const bool bRemoveErrorMarks, const bool b
 
 			if (cmd.GetActiveCommand() == CProfile::CCommand::typeProcess)
 			{
-				CProcess* p = cmd.GetProcessCommand().Execute(GetWorkingDir(), GetMainPath());
+				CProcess* p = cmd.GetProcessCommand().Execute(PInfo);
 				if (p) delete p;
 			}
 			else
@@ -1174,7 +1175,7 @@ bool COutputDoc::PrepareProductionRun(const bool bRemoveErrorMarks, const bool b
 				//Prevent executable from being started, if not already running
 				CDdeCommand dde = cmd.GetDdeCommand();
 				dde.SetExecutable(_T(""));
-				dde.SendCommand(GetMainPath());
+				dde.SendCommand(PInfo);
 			}
 
 			// set focus back to window that had the focus before
@@ -1204,35 +1205,35 @@ bool COutputDoc::PrepareProductionRun(const bool bRemoveErrorMarks, const bool b
 		m_builder.MsgsAfterTermination.AddMessage(true, pwndMainFrame->m_hWnd, AfxUserMessages::StopPaneAnimationMessageID, 0, 0, false, 0);
 	}
 
-   return true;
+	return true;
 }
 
 
 void COutputDoc::DoLaTeXRun()
 {
-	if (!PrepareProductionRun(true, true)) return;
+	CPlaceholderInfo PInfo;
+	if (!PrepareProductionRun(PInfo, true, true)) return;
 
 	//Run latex
-	m_builder.BuildAll(
-	    this,m_pBuildView,
-	    GetWorkingDir(),GetMainPath(),
-	    GetRunBibTex(),GetRunMakeIndex());
+	m_builder.BuildAll(this, m_pBuildView, PInfo, GetRunBibTex(), GetRunMakeIndex());
 }
 
 void COutputDoc::DoBibTexRun()
 {
-	if (!PrepareProductionRun()) return;
+	CPlaceholderInfo PInfo;
+	if (!PrepareProductionRun(PInfo)) return;
 
 	//Run bibtex
-	m_builder.RunBibTex(this,m_pBuildView,GetWorkingDir(),GetMainPath());
+	m_builder.RunBibTex(this, m_pBuildView, PInfo);
 }
 
 void COutputDoc::DoMakeIndexRun()
 {
-	if (!PrepareProductionRun()) return;
+	CPlaceholderInfo PInfo;
+	if (!PrepareProductionRun(PInfo)) return;
 
 	//Run makeindex
-	m_builder.RunMakeIndex(this,m_pBuildView,GetWorkingDir(),GetMainPath());
+	m_builder.RunMakeIndex(this, m_pBuildView, PInfo);
 }
 
 void COutputDoc::OnUpdateLatexStopBuild(CCmdUI *pCmdUI)

@@ -26,18 +26,9 @@
  *
  *********************************************************************/
 
-/********************************************************************
- *
- * $Id$
- *
- ********************************************************************/
-
-#if !defined(AFX_PREPROCESSOR_H__6FC6E481_04F2_11D5_A222_006097239934__INCLUDED_)
-#define AFX_PREPROCESSOR_H__6FC6E481_04F2_11D5_A222_006097239934__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+
+#include "PlaceHolder.h"
 
 class RegistryStack;
 
@@ -45,39 +36,8 @@ class RegistryStack;
 */
 class CPProcessorArray : public CArray<class CPProcessor, class CPProcessor&>
 {
-	// operations
+// operations
 public:
-	/**
-	Executes all pre-/postprocessors in the array in the index order.
-
-	Calls Execute() for each pre-/postprocessor in the array.
-
-	The Method will return when all pre-/postprocessors has been executed or
-	one has returned an error. In that case the returned value will
-	specify the index of the pre-/postprocessor in the array that has
-	returned an error.
-
-	@param lpszMainPath
-		    Path of the project's main file. This parameter will be used
-		    to expand the placeholders in the several properties of the
-		    object.
-	@param lpszWorkingDir
-		    Path of the directory that should be used as the initial
-		    directory for the pre-/postprocessor.
-	@param hOutput
-		    Handle informative output should be directed to.
-
-	@return
-		    Will return -1 if all pre-/postprocessor have been executed
-		    successfully or a value >= 0 if the Execute()-method for one
-		    pre-/postprocessor has returned FALSE. In this case the return value
-		    will specify the index of the pre-/postprocessor in the array that
-		    caused the error.
-
-	@see CPProcessor::Execute
-		*/
-	int ExecuteAll(LPCTSTR lpszMainPath, LPCTSTR lpszWorkingDir, HANDLE hOutput);
-
 	/**
 	Removes the directory specifications from all path specifications
 	of this processor array.
@@ -174,7 +134,7 @@ public:
 	/**
 	Executes the processor.
 
-	First this method expands the placeholders in the argumengts, the
+	First this method expands the placeholders in the arguments, the
 	input-file and the output-file properties and then it starts the
 	processor.
 
@@ -185,13 +145,8 @@ public:
 
 	The Method will return when the process has finished.
 
-	@param lpszMainPath
-	        Path of the project's main file. This parameter will be used
-	        to expand the placeholders in the several properties of the
-	        object.
-	@param lpszWorkingDir
-	        Path of the directory that should be used as the initial
-	        directory for the processor.
+	@param PInfo
+			Information for expanding placeholders.
 	@param hOutput
 	        Handle informative output should be directed to.
 	@param phProcess
@@ -202,7 +157,7 @@ public:
 	        process to terminate. Therefore the handle can be used to
 	        terminate the process, while the method is blocking.
 	 */
-	BOOL Execute(LPCTSTR lpszMainPath, LPCTSTR lpszWorkingDir, HANDLE hOutput, PHANDLE phProcess = NULL);
+	BOOL Execute(CPlaceholderInfo PInfo, HANDLE hOutput, PHANDLE phProcess = NULL);
 
 	/**
 	Returns the process-ID of the currently executed processor.
@@ -227,26 +182,6 @@ public:
 	This is useful when exporting profiles.
 	 */
 	void RemoveDirectorySpecifications();
-
-// implementation
-protected:
-	/**
-	Gets the argument list, where the place holders are replaced by
-	the properties of the given path.
-	 */
-	CString GetExpandedArguments(LPCTSTR lpszPath) const;
-
-	/**
-	Gets the input file property, where the optional place holders are
-	replaced by the properties of the given path.
-	 */
-	CString GetExpandedInputFile(LPCTSTR lpszPath) const;
-
-	/**
-	Gets the output file property, where the optional place holders are
-	replaced by the properties of the given path.
-	 */
-	CString GetExpandedOutputFile(LPCTSTR lpszPath) const;
 
 // string serialization
 public:
@@ -318,4 +253,3 @@ private:
 };
 
 
-#endif // !defined(AFX_POSTPROCESSOR_H__6FC6E481_04F2_11D5_A222_006097239934__INCLUDED_)

@@ -3992,6 +3992,10 @@ BEGIN
     STE_PLACEHOLDER_EXAMPLE_MAIN 
                             "C:\\LaTeX Dokumente\\Promotion\\Promotion.tex"
     STE_PLACEHOLDER_EXAMPLE_MAIN_SHORT "C:\\LATEXD~1\\PROMOT~1\\PROMOT~1.TEX"
+    STE_PLACEHOLDER_EXAMPLE_PREVIEW 
+                            "C:\\LaTeX Dokumente\\txcpreview\\preview.tex"
+    STE_PLACEHOLDER_EXAMPLE_PREVIEW_SHORT 
+                            "C:\\LATEXD~1\\TXCPRE~1\\PREVIE~1.TEX"
 END
 
 STRINGTABLE
@@ -8193,6 +8197,10 @@ BEGIN
                             "C:\\LATEXD~1\\PHDTHE~1\\INTROD~1.TEX"
     STE_PLACEHOLDER_EXAMPLE_MAIN "C:\\LaTeX Documents\\PHD Thesis\\PHD.tex"
     STE_PLACEHOLDER_EXAMPLE_MAIN_SHORT "C:\\LATEXD~1\\PHDTHE~1\\PHD.TEX"
+    STE_PLACEHOLDER_EXAMPLE_PREVIEW 
+                            "C:\\LaTeX Documents\\txcpreview\\preview.tex"
+    STE_PLACEHOLDER_EXAMPLE_PREVIEW_SHORT 
+                            "C:\\LATEXD~1\\TXCPRE~1\\PREVIE~1.TEX"
 END
 
 STRINGTABLE

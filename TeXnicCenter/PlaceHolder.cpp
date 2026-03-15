@@ -26,28 +26,174 @@
  *
  *********************************************************************/
 
-/********************************************************************
- *
- * $Id$
- *
- ********************************************************************/
-
 #include "stdafx.h"
 #include "ChildFrm.h"
 #include "MainFrm.h"
+#include "OutputDoc.h"
 #include "PlaceHolder.h"
 #include "TeXnicCenter.h"
+#include "CodeDocument.h"
 #include "configuration.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
-#define new DEBUG_NEW
-#endif
 
 //-------------------------------------------------------------------
 // global functions
 //-------------------------------------------------------------------
+
+CString AfxExpandPlaceholders(LPCTSTR lpszStringWithPlaceholders, const CPlaceholderInfo& Info)
+{
+	//Construct the new string by replacing all placeholders with their actual values.
+	CString strCmdLine(lpszStringWithPlaceholders);
+
+	//Swap main - current file semantics?
+	const CString slashPathToWorkingDir = CPathTool::GetSlashPath(Info.strWorkingDir);
+	const CString shortPathToWorkingDir = CPathTool::GetShortPath(Info.strWorkingDir);
+	const CString shortslashPathToWorkingDir = CPathTool::GetShortPath(slashPathToWorkingDir);
+
+	// store "%%"
+	strCmdLine.Replace(_T("%%"),_T("\a"));
+
+	// replace place holders
+	if (!Info.strMainPath.IsEmpty())
+	{
+		CPathTool MainPath(Info.strMainPath);
+
+		MainPath.EnsureBackslashPath();
+		MainPath.EnsureLongPath();
+		strCmdLine.Replace(_T("%pm"), MainPath.GetPath());
+		strCmdLine.Replace(_T("%dm"), MainPath.GetDirectory());
+		strCmdLine.Replace(_T("%nm"), MainPath.GetFile());
+		strCmdLine.Replace(_T("%tm"), MainPath.GetFileTitle());
+		strCmdLine.Replace(_T("%em"), MainPath.GetFileExtension());
+		strCmdLine.Replace(_T("%bm"), CPathTool::Cat(MainPath.GetDirectory(), MainPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%rm"), MainPath.GetDrive());
+		strCmdLine.Replace(_T("%wm"), CPathTool::GetRelativePath(Info.strWorkingDir, MainPath.GetPath(), true, false));
+
+		MainPath.EnsureSlashPath();
+		strCmdLine.Replace(_T("%Pm"), MainPath.GetPath());
+		strCmdLine.Replace(_T("%Dm"), MainPath.GetDirectory());
+		strCmdLine.Replace(_T("%Bm"), CPathTool::Cat(MainPath.GetDirectory(), MainPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%Wm"), CPathTool::GetRelativePath(slashPathToWorkingDir, MainPath.GetPath(), true, false));
+
+		MainPath.EnsureBackslashPath();
+		MainPath.EnsureShortPath();
+		strCmdLine.Replace(_T("%spm"), MainPath.GetPath());
+		strCmdLine.Replace(_T("%sdm"), MainPath.GetDirectory());
+		strCmdLine.Replace(_T("%snm"), MainPath.GetFile());
+		strCmdLine.Replace(_T("%stm"), MainPath.GetFileTitle());
+		strCmdLine.Replace(_T("%sem"), MainPath.GetFileExtension());
+		strCmdLine.Replace(_T("%sbm"), CPathTool::Cat(MainPath.GetDirectory(), MainPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%swm"), CPathTool::GetRelativePath(shortPathToWorkingDir, MainPath.GetPath(), true, false));
+
+		MainPath.EnsureSlashPath();
+		strCmdLine.Replace(_T("%sPm"), MainPath.GetPath());
+		strCmdLine.Replace(_T("%sDm"), MainPath.GetDirectory());
+		strCmdLine.Replace(_T("%sBm"), CPathTool::Cat(MainPath.GetDirectory(), MainPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%sWm"), CPathTool::GetRelativePath(shortslashPathToWorkingDir, MainPath.GetPath(), true, false));
+	}
+
+	if (!Info.strCurrentPath.IsEmpty())
+	{
+		CPathTool CurrentPath(Info.strCurrentPath);
+
+		CurrentPath.EnsureBackslashPath();
+		CurrentPath.EnsureLongPath();
+		strCmdLine.Replace(_T("%pc"), CurrentPath.GetPath());
+		strCmdLine.Replace(_T("%dc"), CurrentPath.GetDirectory());
+		strCmdLine.Replace(_T("%nc"), CurrentPath.GetFile());
+		strCmdLine.Replace(_T("%tc"), CurrentPath.GetFileTitle());
+		strCmdLine.Replace(_T("%ec"), CurrentPath.GetFileExtension());
+		strCmdLine.Replace(_T("%bc"), CPathTool::Cat(CurrentPath.GetDirectory(), CurrentPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%rc"), CurrentPath.GetDrive());
+		strCmdLine.Replace(_T("%wc"), CPathTool::GetRelativePath(Info.strWorkingDir, CurrentPath.GetPath(), true, false));
+
+		CurrentPath.EnsureSlashPath();
+		strCmdLine.Replace(_T("%Pc"), CurrentPath.GetPath());
+		strCmdLine.Replace(_T("%Dc"), CurrentPath.GetDirectory());
+		strCmdLine.Replace(_T("%Bc"), CPathTool::Cat(CurrentPath.GetDirectory(), CurrentPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%Wc"), CPathTool::GetRelativePath(slashPathToWorkingDir, CurrentPath.GetPath(), true, false));
+
+		CurrentPath.EnsureBackslashPath();
+		CurrentPath.EnsureShortPath();
+		strCmdLine.Replace(_T("%spc"), CurrentPath.GetPath());
+		strCmdLine.Replace(_T("%sdc"), CurrentPath.GetDirectory());
+		strCmdLine.Replace(_T("%snc"), CurrentPath.GetFile());
+		strCmdLine.Replace(_T("%stc"), CurrentPath.GetFileTitle());
+		strCmdLine.Replace(_T("%sec"), CurrentPath.GetFileExtension());
+		strCmdLine.Replace(_T("%sbc"), CPathTool::Cat(CurrentPath.GetDirectory(), CurrentPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%swc"), CPathTool::GetRelativePath(shortPathToWorkingDir, CurrentPath.GetPath(), true, false));
+
+		CurrentPath.EnsureSlashPath();
+		strCmdLine.Replace(_T("%sPc"), CurrentPath.GetPath());
+		strCmdLine.Replace(_T("%sDc"), CurrentPath.GetDirectory());
+		strCmdLine.Replace(_T("%sBc"), CPathTool::Cat(CurrentPath.GetDirectory(), CurrentPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%sWc"), CPathTool::GetRelativePath(shortslashPathToWorkingDir, CurrentPath.GetPath(), true, false));
+	}
+
+	if (!Info.strPreviewTemplatePath.IsEmpty())
+	{
+		CPathTool PreviewPath(Info.strPreviewTemplatePath);
+
+		PreviewPath.EnsureBackslashPath();
+		PreviewPath.EnsureLongPath();
+		strCmdLine.Replace(_T("%pp"), PreviewPath.GetPath());
+		strCmdLine.Replace(_T("%dp"), PreviewPath.GetDirectory());
+		strCmdLine.Replace(_T("%np"), PreviewPath.GetFile());
+		strCmdLine.Replace(_T("%tp"), PreviewPath.GetFileTitle());
+		strCmdLine.Replace(_T("%ep"), PreviewPath.GetFileExtension());
+		strCmdLine.Replace(_T("%bp"), CPathTool::Cat(PreviewPath.GetDirectory(), PreviewPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%rp"), PreviewPath.GetDrive());
+		strCmdLine.Replace(_T("%wp"), CPathTool::GetRelativePath(Info.strWorkingDir, PreviewPath.GetPath(), true, false));
+
+		PreviewPath.EnsureSlashPath();
+		strCmdLine.Replace(_T("%Pp"), PreviewPath.GetPath());
+		strCmdLine.Replace(_T("%Dp"), PreviewPath.GetDirectory());
+		strCmdLine.Replace(_T("%Bp"), CPathTool::Cat(PreviewPath.GetDirectory(), PreviewPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%Wp"), CPathTool::GetRelativePath(slashPathToWorkingDir, PreviewPath.GetPath(), true, false));
+
+		PreviewPath.EnsureBackslashPath();
+		PreviewPath.EnsureShortPath();
+		strCmdLine.Replace(_T("%spp"), PreviewPath.GetPath());
+		strCmdLine.Replace(_T("%sdp"), PreviewPath.GetDirectory());
+		strCmdLine.Replace(_T("%snp"), PreviewPath.GetFile());
+		strCmdLine.Replace(_T("%stp"), PreviewPath.GetFileTitle());
+		strCmdLine.Replace(_T("%sep"), PreviewPath.GetFileExtension());
+		strCmdLine.Replace(_T("%sbp"), CPathTool::Cat(PreviewPath.GetDirectory(), PreviewPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%swp"), CPathTool::GetRelativePath(shortPathToWorkingDir, PreviewPath.GetPath(), true, false));
+
+		PreviewPath.EnsureSlashPath();
+		strCmdLine.Replace(_T("%sPp"), PreviewPath.GetPath());
+		strCmdLine.Replace(_T("%sDp"), PreviewPath.GetDirectory());
+		strCmdLine.Replace(_T("%sBp"), CPathTool::Cat(PreviewPath.GetDirectory(), PreviewPath.GetFileTitle()));
+		strCmdLine.Replace(_T("%sWp"), CPathTool::GetRelativePath(shortslashPathToWorkingDir, PreviewPath.GetPath(), true, false));
+	}
+
+	//Current line and selected text in the editor
+	CString strLine;
+	strLine.Format(_T("%d"), Info.lCurrentLine);
+	strCmdLine.Replace(_T("%l"), strLine);
+	strCmdLine.Replace(_T("%s"), Info.strCurrentSelection);
+
+	//DPI setting for preview
+	CString strDPI;
+	strDPI.Format(_T("%d"), Info.nPreviewDPIValue);
+	strCmdLine.Replace(_T("%DPI"), strDPI);
+
+	// restore "%"
+	strCmdLine.Replace(_T("\a"), _T("%"));
+
+	//Expand the Sets
+	if (Info.bExpandPlaceholderSets)
+	{
+		CPlaceholderSets ps(theApp.GetProject());
+
+		return ps.ExpandAllSets(strCmdLine);
+	}
+
+	return strCmdLine;
+}
+
+
 
 CString AfxExpandPlaceholders(LPCTSTR lpszStringWithPlaceholders,
                               LPCTSTR lpszMainPath /*= NULL*/,
@@ -646,4 +792,41 @@ void CPlaceholderSets::ConvertAndAdd(CString& strToAdd, CUniqueStringList* pStrL
 bool CPlaceholderSets::IsValid() const
 {
 	return (m_pProject != NULL);
+}
+
+
+void CPlaceholderInfo::FillWithInformation()
+{
+	//Get project
+	CLaTeXProject* pProject = theApp.GetProject();
+
+	//Try to get the main path and dir from the project
+	strMainPath.Empty();
+	strWorkingDir.Empty();
+	if (pProject)
+	{
+		strMainPath = pProject->GetMainPath();
+		strWorkingDir = pProject->GetWorkingDirectory();
+	}
+
+	//Get information regarding the current document
+	strCurrentSelection = theApp.GetCurrentWordOrSelection(false, true, true);
+	CodeView* pEdit = theApp.GetActiveCodeView();
+	if (pEdit)
+	{
+		strCurrentPath = pEdit->GetDocument()->GetPathName();
+		lCurrentLine = pEdit->GetCurrentLine() + 1;
+	}
+
+	//Try getting a proper working directory
+	if (strCurrentPath && !strWorkingDir) strWorkingDir = CPathTool::GetDirectory(strCurrentPath);
+
+	//Get information regarding preview
+	strPreviewTemplatePath = CConfiguration::GetInstance()->m_strPreviewTemplate; //Not the actual file name, just a stem.
+	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetMainWnd());
+	if (pMainFrame && pMainFrame->GetOutputDoc())
+	{
+		strPreviewTemplatePath = pMainFrame->GetOutputDoc()->GetPreviewTemplatePath();
+	}
+	nPreviewDPIValue = CConfiguration::GetInstance()->m_nPreviewDPIValue;
 }

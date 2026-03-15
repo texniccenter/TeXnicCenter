@@ -35,6 +35,7 @@
 #pragma once
 
 #include "profile.h"
+#include "PlaceHolder.h"
 
 class COutputDoc;
 class COutputView;
@@ -74,7 +75,7 @@ public:
 	 */
 	BOOL BuildAll(
 	    COutputDoc *pDoc, COutputView *pView,
-	    LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath,
+	    const CPlaceholderInfo& PInfo,
 	    BOOL bRunBibTex, BOOL bRunMakeIndex,
 	    int nPriority = THREAD_PRIORITY_BELOW_NORMAL);
 
@@ -85,7 +86,7 @@ public:
 	 */
 	BOOL RunBibTex(
 	    COutputDoc *pDoc, COutputView *pView,
-	    LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath,
+	    const CPlaceholderInfo& PInfo,
 	    int nPriority = THREAD_PRIORITY_BELOW_NORMAL);
 
 	/**
@@ -95,7 +96,7 @@ public:
 	 */
 	BOOL RunMakeIndex(
 	    COutputDoc *pDoc, COutputView *pView,
-	    LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath,
+	    const CPlaceholderInfo& PInfo,
 	    int nPriority = THREAD_PRIORITY_BELOW_NORMAL);
 
 	/** Executes the processors to build a preview.
@@ -108,7 +109,7 @@ public:
 	 */
 	BOOL BuildPreview(
 	    COutputDoc* pDoc, COutputView* pView,
-	    LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath,
+	    const CPlaceholderInfo& PInfo,
 	    int nPriority = THREAD_PRIORITY_BELOW_NORMAL);
 
 	/**
@@ -143,7 +144,7 @@ protected:
 	BOOL Create(
 	    int nMode,
 	    COutputDoc *pDoc, COutputView *pView,
-	    LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath,
+	    const CPlaceholderInfo& PInfo,
 	    BOOL bRunBibTex, BOOL bRunMakeIndex,
 	    int nPriority = THREAD_PRIORITY_BELOW_NORMAL);
 
@@ -204,11 +205,14 @@ protected:
 	/** output profile to use */
 	CProfile* m_pProfile;
 
+	/** Contains information for expanding placeholders when running processes. */
+	CPlaceholderInfo m_PInfo;
+
 	/** main-file path */
-	CString m_strMainPath;
+	//CString m_strMainPath;
 
 	/** current file path*/
-	CString m_strWorkingDir;
+	//CString m_strWorkingDir;
 
 	/** Should BibTeX be run? */
 	BOOL m_bRunBibTex;

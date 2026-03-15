@@ -62,8 +62,8 @@ COutputBuilder::COutputBuilder()
 }
 
 BOOL COutputBuilder::Create(int nMode,
-                            COutputDoc* pDoc,COutputView* pView,
-                            LPCTSTR lpszWorkingDir,LPCTSTR lpszMainPath,
+                            COutputDoc* pDoc, COutputView* pView,
+                            const CPlaceholderInfo& PInfo,
                             BOOL bRunBibTex,BOOL bRunMakeIndex,
                             int nPriority /*= THREAD_PRIORITY_BELOW_NORMAL*/)
 {
@@ -71,8 +71,7 @@ BOOL COutputBuilder::Create(int nMode,
 
 	m_pDoc = pDoc;
 	m_pView = pView;
-	m_strWorkingDir = lpszWorkingDir;
-	m_strMainPath = lpszMainPath;
+	m_PInfo = PInfo;
 	m_bRunBibTex = bRunBibTex;
 	m_bRunMakeIndex = bRunMakeIndex;
 
@@ -108,32 +107,31 @@ BOOL COutputBuilder::Create(int nMode,
 	return CWorkerThread::Create(TRUE,nPriority);
 }
 
-BOOL COutputBuilder::BuildAll(COutputDoc* pDoc,COutputView* pView,
-                              LPCTSTR lpszWorkingDir,LPCTSTR lpszMainPath,
-                              BOOL bRunBibTex,BOOL bRunMakeIndex,
-                              int nPriority /*= THREA_PRIORITY_BELOW_NORMAL*/)
+BOOL COutputBuilder::BuildAll(COutputDoc* pDoc, COutputView* pView,
+							  const CPlaceholderInfo& PInfo,
+							  BOOL bRunBibTex, BOOL bRunMakeIndex,
+							  int nPriority /*= THREA_PRIORITY_BELOW_NORMAL*/)
 {
-	return Create(modeBuildAll,pDoc,pView,lpszWorkingDir,lpszMainPath,bRunBibTex,bRunMakeIndex,nPriority);
+	return Create(modeBuildAll, pDoc, pView, PInfo, bRunBibTex, bRunMakeIndex, nPriority);
 }
 
-BOOL COutputBuilder::RunBibTex(COutputDoc* pDoc,COutputView* pView,
-                               LPCTSTR lpszWorkingDir,LPCTSTR lpszMainPath,
-                               int nPriority /*= THREAD_PRIORITY_BELOW_NORMAL*/)
+BOOL COutputBuilder::RunBibTex(COutputDoc* pDoc, COutputView* pView,
+							   const CPlaceholderInfo& PInfo,
+							   int nPriority /*= THREAD_PRIORITY_BELOW_NORMAL*/)
 {
-	return Create(modeRunBibTexOnly,pDoc,pView,lpszWorkingDir,lpszMainPath,TRUE,FALSE,nPriority);
+	return Create(modeRunBibTexOnly, pDoc, pView, PInfo, TRUE, FALSE, nPriority);
 }
 
-BOOL COutputBuilder::RunMakeIndex(COutputDoc* pDoc,COutputView* pView,
-                                  LPCTSTR lpszWorkingDir,LPCTSTR lpszMainPath,
-                                  int nPriority /*= THREAD_PRIORITY_BELOW_NORMAL*/)
+BOOL COutputBuilder::RunMakeIndex(COutputDoc* pDoc, COutputView* pView,
+								  const CPlaceholderInfo& PInfo,
+								  int nPriority /*= THREAD_PRIORITY_BELOW_NORMAL*/)
 {
-	return Create(modeRunMakeIndexOnly,pDoc,pView,lpszWorkingDir,lpszMainPath,FALSE,TRUE,nPriority);
+	return Create(modeRunMakeIndexOnly, pDoc, pView, PInfo, FALSE, TRUE, nPriority);
 }
 
-BOOL COutputBuilder::BuildPreview(COutputDoc* pDoc, COutputView* pView, LPCTSTR lpszWorkingDir, LPCTSTR lpszMainPath, int nPriority)
+BOOL COutputBuilder::BuildPreview(COutputDoc* pDoc, COutputView* pView, const CPlaceholderInfo& PInfo, int nPriority)
 {
-	return Create(modeBuildPreview, pDoc, pView, lpszWorkingDir, lpszMainPath, FALSE, FALSE,
-				  nPriority);
+	return Create(modeBuildPreview, pDoc, pView, PInfo, FALSE, FALSE, nPriority);
 }
 
 BOOL COutputBuilder::CancelExecution()
@@ -247,18 +245,16 @@ UINT COutputBuilder::OnTerminate(UINT unExitCode)
 
 BOOL COutputBuilder::RunLatex()
 {
-	if (!m_pProfile->GetRunLatex())
-		return TRUE;
+	if (!m_pProfile->GetRunLatex()) return TRUE;
 
 	CLaTeXOutputFilter filter;
 	HANDLE hOutput;
 
-	if (!filter.Create(&hOutput,m_pDoc,m_pView,FALSE))
-		return FALSE;
+	if (!filter.Create(&hOutput, m_pDoc, m_pView, FALSE)) return FALSE;
 
 	CProcessCommand pc;
-	pc.Set(m_pProfile->GetLatexPath(),m_pProfile->GetLatexArguments());
-	CProcess *p = pc.Execute(hOutput,m_strWorkingDir,m_strMainPath,NULL,-1);
+	pc.Set(m_pProfile->GetLatexPath(), m_pProfile->GetLatexArguments());
+	CProcess* p = pc.Execute(hOutput, m_PInfo);
 
 	if (!p)
 	{
@@ -311,18 +307,16 @@ BOOL COutputBuilder::RunLatex()
 
 BOOL COutputBuilder::RunBibTex()
 {
-	if (!m_bRunBibTex || !m_pProfile->GetRunBibTex())
-		return TRUE;
+	if (!m_bRunBibTex || !m_pProfile->GetRunBibTex()) return TRUE;
 
 	BibTeXOutputFilter filter;
 	HANDLE hOutput;
 
-	if (!filter.Create(&hOutput,m_pDoc,m_pView,FALSE))
-		return FALSE;
+	if (!filter.Create(&hOutput, m_pDoc, m_pView, FALSE)) return FALSE;
 
 	CProcessCommand pc;
-	pc.Set(m_pProfile->GetBibTexPath(),m_pProfile->GetBibTexArguments());
-	CProcess *p = pc.Execute(hOutput,m_strWorkingDir,m_strMainPath,NULL,-1);
+	pc.Set(m_pProfile->GetBibTexPath(), m_pProfile->GetBibTexArguments());
+	CProcess* p = pc.Execute(hOutput, m_PInfo);
 
 	if (!p)
 	{
@@ -372,12 +366,12 @@ BOOL COutputBuilder::RunMakeIndex()
 
 	COutputFilter filter;
 	HANDLE hOutput;
-	if (!filter.Create(&hOutput,m_pDoc,m_pView,FALSE))
-		return FALSE;
+	if (!filter.Create(&hOutput, m_pDoc, m_pView, FALSE)) return FALSE;
 
 	CProcessCommand pc;
-	pc.Set(m_pProfile->GetMakeIndexPath(),m_pProfile->GetMakeIndexArguments());
-	CProcess *p = pc.Execute(hOutput,m_strWorkingDir,m_strMainPath,NULL,-1);
+	pc.Set(m_pProfile->GetMakeIndexPath(), m_pProfile->GetMakeIndexArguments());
+	CProcess* p = pc.Execute(hOutput, m_PInfo);
+
 	if (!p)
 	{
 		::CloseHandle(hOutput);
@@ -423,8 +417,7 @@ BOOL COutputBuilder::RunPreProcessors()
 {
 	COutputFilter filter;
 	HANDLE hOutput;
-	if (!filter.Create(&hOutput,m_pDoc,m_pView,FALSE))
-		return FALSE;
+	if (!filter.Create(&hOutput, m_pDoc, m_pView, FALSE)) return FALSE;
 
 	CPProcessorArray &a = m_pProfile->GetPreProcessorArray();
 	BOOL bResult = TRUE;
@@ -433,7 +426,7 @@ BOOL COutputBuilder::RunPreProcessors()
 	{
 		current_process_name_ = a[i].GetTitle();
 
-		if (!a[i].Execute(m_strMainPath,m_strWorkingDir,hOutput,&m_hCurrentProcess) || m_bCancel)
+		if (!a[i].Execute(m_PInfo, hOutput, &m_hCurrentProcess) || m_bCancel)
 		{
 			bResult = FALSE;
 			break;
@@ -451,8 +444,7 @@ BOOL COutputBuilder::RunPostProcessors()
 {
 	COutputFilter filter;
 	HANDLE hOutput;
-	if (!filter.Create(&hOutput,m_pDoc,m_pView,FALSE))
-		return FALSE;
+	if (!filter.Create(&hOutput, m_pDoc, m_pView, FALSE)) return FALSE;
 
 	CPProcessorArray &a = m_pProfile->GetPostProcessorArray();
 	BOOL bResult = TRUE;
@@ -461,7 +453,7 @@ BOOL COutputBuilder::RunPostProcessors()
 	{
 		current_process_name_ = a[i].GetTitle();
 
-		if (!a[i].Execute(m_strMainPath,m_strWorkingDir,hOutput,&m_hCurrentProcess) || m_bCancel)
+		if (!a[i].Execute(m_PInfo, hOutput, &m_hCurrentProcess) || m_bCancel)
 		{
 			bResult = FALSE;
 			break;
@@ -481,7 +473,7 @@ BOOL COutputBuilder::RunPreviewProcessors()
 	HANDLE hOutput;
 	//The filter does not get the doc, since this would add errors
 	// from the preview build process to the global error list.
-	// An alternative is to write a new output filter that does not do that.
+	// TODO: An alternative is to write a new output filter that does not do that.
 	// And then the COutputDoc would need extra arrays for errors from the preview.
 	if (!filter.Create(&hOutput, NULL/*m_pDoc*/, m_pView, FALSE)) return FALSE;
 
@@ -491,7 +483,7 @@ BOOL COutputBuilder::RunPreviewProcessors()
 	for (int i = 0; ((i < a.GetSize()) && (!m_bCancel)); i++)
 	{
 		current_process_name_ = a[i].GetTitle();
-		const bool bIndividualResult = a[i].Execute(m_strMainPath, m_strWorkingDir, hOutput, &m_hCurrentProcess);
+		const bool bIndividualResult = a[i].Execute(m_PInfo, hOutput, &m_hCurrentProcess);
 		bResult = bResult && bIndividualResult;
 
 		if (m_bCancel) //only cancel on user request
