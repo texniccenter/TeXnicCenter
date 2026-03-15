@@ -2,7 +2,7 @@
 #define GDS_INCLUDE_SHELLUTILXP_H 
  
  
-/*****************************************************************************\ 
+/***************************************************************************** 
  *  Shell Utility Functions for Windows XP. 
  * 
  *  by Giovanni Dicanio <giovanni.dicanio@gmail.com> 
@@ -18,7 +18,7 @@
  *  These functions have a pure C interface, so they don't throw  
  *  C++ exceptions. 
  * 
-\*****************************************************************************/ 
+\***************************************************************************** 
  
  
 #include <Windows.h>        /* Win32 Platform SDK header */ 
